@@ -3,7 +3,7 @@ import { mocked } from "ts-jest/utils";
 import { setFailed } from "@actions/core";
 
 import { checkPreConditions } from "../logic/checkPreConditions";
-import { pushNewVersion } from "../logic/git/pushPackage";
+import { pushPackage } from "../logic/git/pushPackage";
 import { updatePackage } from "../logic/updatePackage";
 import { bumpPackageVersion } from "./bumpPackageVersion";
 
@@ -21,7 +21,7 @@ describe("bumpPackageVersion function", () => {
     await bumpPackageVersion();
 
     expect(updatePackage).toHaveBeenCalledTimes(0);
-    expect(pushNewVersion).toHaveBeenCalledTimes(0);
+    expect(pushPackage).toHaveBeenCalledTimes(0);
   });
 
   it("should complete the task", async () => {
@@ -31,8 +31,8 @@ describe("bumpPackageVersion function", () => {
 
     await bumpPackageVersion();
 
-    expect(pushNewVersion).toHaveBeenCalledTimes(1);
-    expect(pushNewVersion).toHaveBeenCalledWith(version);
+    expect(pushPackage).toHaveBeenCalledTimes(1);
+    expect(pushPackage).toHaveBeenCalledWith(version);
   });
 
   it("should report on errors", async () => {
