@@ -12023,10 +12023,10 @@ exports.TaskConfigurationError = TaskConfigurationError;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.gitInstanceFactory = exports.gitExportFactory = exports.esModuleFactory = void 0;
-const Git = __nccwpck_require__(4966);
 const api_1 = __nccwpck_require__(4732);
 const plugins_1 = __nccwpck_require__(8078);
 const utils_1 = __nccwpck_require__(847);
+const Git = __nccwpck_require__(4966);
 /**
  * Adds the necessary properties to the supplied object to enable it for use as
  * the default export of a module.
@@ -12057,6 +12057,8 @@ function gitInstanceFactory(baseDir, options) {
     }
     config.progress && plugins.add(plugins_1.progressMonitorPlugin(config.progress));
     config.timeout && plugins.add(plugins_1.timeoutPlugin(config.timeout));
+    plugins.add(plugins_1.errorDetectionPlugin(plugins_1.errorDetectionHandler(true)));
+    config.errors && plugins.add(plugins_1.errorDetectionPlugin(config.errors));
     return new Git(config, plugins);
 }
 exports.gitInstanceFactory = gitInstanceFactory;
@@ -12203,8 +12205,8 @@ const parsers = [
         result.branches[branch] = deletion;
     }),
 ];
-const parseBranchDeletions = (stdOut) => {
-    return utils_1.parseStringResponse(new BranchDeleteSummary_1.BranchDeletionBatch(), parsers, stdOut);
+const parseBranchDeletions = (stdOut, stdErr) => {
+    return utils_1.parseStringResponse(new BranchDeleteSummary_1.BranchDeletionBatch(), parsers, stdOut, stdErr);
 };
 exports.parseBranchDeletions = parseBranchDeletions;
 function hasBranchDeletionError(data, processExitCode) {
@@ -12753,6 +12755,52 @@ exports.commandConfigPrefixingPlugin = commandConfigPrefixingPlugin;
 
 /***/ }),
 
+/***/ 6713:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.errorDetectionPlugin = exports.errorDetectionHandler = void 0;
+const git_error_1 = __nccwpck_require__(5757);
+function isTaskError(result) {
+    return !!(result.exitCode && result.stdErr.length);
+}
+function getErrorMessage(result) {
+    return Buffer.concat([...result.stdOut, ...result.stdErr]);
+}
+function errorDetectionHandler(overwrite = false, isError = isTaskError, errorMessage = getErrorMessage) {
+    return (error, result) => {
+        if ((!overwrite && error) || !isError(result)) {
+            return error;
+        }
+        return errorMessage(result);
+    };
+}
+exports.errorDetectionHandler = errorDetectionHandler;
+function errorDetectionPlugin(config) {
+    return {
+        type: 'task.error',
+        action(data, context) {
+            const error = config(data.error, {
+                stdErr: context.stdErr,
+                stdOut: context.stdOut,
+                exitCode: context.exitCode
+            });
+            if (Buffer.isBuffer(error)) {
+                return { error: new git_error_1.GitError(undefined, error.toString('utf-8')) };
+            }
+            return {
+                error
+            };
+        },
+    };
+}
+exports.errorDetectionPlugin = errorDetectionPlugin;
+//# sourceMappingURL=error-detection.plugin.js.map
+
+/***/ }),
+
 /***/ 8078:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -12770,6 +12818,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 __exportStar(__nccwpck_require__(2581), exports);
+__exportStar(__nccwpck_require__(6713), exports);
 __exportStar(__nccwpck_require__(5067), exports);
 __exportStar(__nccwpck_require__(1738), exports);
 __exportStar(__nccwpck_require__(8436), exports);
@@ -13601,7 +13650,7 @@ class GitExecutorChain {
         return __awaiter(this, void 0, void 0, function* () {
             const args = this._plugins.exec('spawn.args', [...task.commands], pluginContext(task, task.commands));
             const raw = yield this.gitResponse(task, this.binary, args, this.outputHandler, logger.step('SPAWN'));
-            const outputStreams = yield this.handleTaskData(task, raw, logger.step('HANDLE'));
+            const outputStreams = yield this.handleTaskData(task, args, raw, logger.step('HANDLE'));
             logger(`passing response to task's parser as a %s`, task.format);
             if (task_1.isBufferTask(task)) {
                 return utils_1.callTaskParser(task.parser, outputStreams);
@@ -13615,27 +13664,22 @@ class GitExecutorChain {
             return task.parser();
         });
     }
-    handleTaskData({ onError, concatStdErr }, { exitCode, rejection, stdOut, stdErr }, logger) {
+    handleTaskData(task, args, result, logger) {
+        const { exitCode, rejection, stdOut, stdErr } = result;
         return new Promise((done, fail) => {
             logger(`Preparing to handle process response exitCode=%d stdOut=`, exitCode);
-            const failed = !!(rejection || (exitCode && stdErr.length));
-            if (failed && onError) {
+            const { error } = this._plugins.exec('task.error', { error: rejection }, Object.assign(Object.assign({}, pluginContext(task, args)), result));
+            if (error && task.onError) {
                 logger.info(`exitCode=%s handling with custom error handler`);
-                logger(`concatenate stdErr to stdOut: %j`, concatStdErr);
-                return onError(exitCode, Buffer.concat([...(concatStdErr ? stdOut : []), ...stdErr]).toString('utf-8'), (result) => {
+                return task.onError(result, error, (newStdOut) => {
                     logger.info(`custom error handler treated as success`);
-                    logger(`custom error returned a %s`, utils_1.objectToString(result));
-                    done(new utils_1.GitOutputStreams(Buffer.isBuffer(result) ? result : Buffer.from(String(result)), Buffer.concat(stdErr)));
+                    logger(`custom error returned a %s`, utils_1.objectToString(newStdOut));
+                    done(new utils_1.GitOutputStreams(Array.isArray(newStdOut) ? Buffer.concat(newStdOut) : newStdOut, Buffer.concat(stdErr)));
                 }, fail);
             }
-            if (failed) {
+            if (error) {
                 logger.info(`handling as error: exitCode=%s stdErr=%s rejection=%o`, exitCode, stdErr.length, rejection);
-                return fail(rejection || Buffer.concat(stdErr).toString('utf-8'));
-            }
-            if (concatStdErr) {
-                logger(`concatenating stdErr onto stdOut before processing`);
-                logger(`stdErr: $O`, stdErr);
-                stdOut.push(...stdErr);
+                return fail(error);
             }
             logger.info(`retrieving task output complete`);
             done(new utils_1.GitOutputStreams(Buffer.concat(stdOut), Buffer.concat(stdErr)));
@@ -14132,6 +14176,7 @@ exports.deleteBranchTask = exports.deleteBranchesTask = exports.branchLocalTask 
 const git_response_error_1 = __nccwpck_require__(5131);
 const parse_branch_delete_1 = __nccwpck_require__(6086);
 const parse_branch_1 = __nccwpck_require__(9264);
+const utils_1 = __nccwpck_require__(847);
 function containsDeleteBranchCommand(commands) {
     const deleteCommands = ['-d', '-D', '--delete'];
     return commands.some(command => deleteCommands.includes(command));
@@ -14174,13 +14219,12 @@ function deleteBranchesTask(branches, forceDelete = false) {
         parser(stdOut, stdErr) {
             return parse_branch_delete_1.parseBranchDeletions(stdOut, stdErr);
         },
-        onError(exitCode, error, done, fail) {
-            if (!parse_branch_delete_1.hasBranchDeletionError(error, exitCode)) {
+        onError({ exitCode, stdOut }, error, done, fail) {
+            if (!parse_branch_delete_1.hasBranchDeletionError(String(error), exitCode)) {
                 return fail(error);
             }
-            done(error);
+            done(stdOut);
         },
-        concatStdErr: true,
     };
 }
 exports.deleteBranchesTask = deleteBranchesTask;
@@ -14191,13 +14235,12 @@ function deleteBranchTask(branch, forceDelete = false) {
         parser(stdOut, stdErr) {
             return parse_branch_delete_1.parseBranchDeletions(stdOut, stdErr).branches[branch];
         },
-        onError(exitCode, error, _, fail) {
-            if (!parse_branch_delete_1.hasBranchDeletionError(error, exitCode)) {
+        onError({ exitCode, stdErr, stdOut }, error, _, fail) {
+            if (!parse_branch_delete_1.hasBranchDeletionError(String(error), exitCode)) {
                 return fail(error);
             }
-            throw new git_response_error_1.GitResponseError(task.parser(error, ''), error);
+            throw new git_response_error_1.GitResponseError(task.parser(utils_1.bufferToString(stdOut), utils_1.bufferToString(stdErr)), String(error));
         },
-        concatStdErr: true,
     };
     return task;
 }
@@ -14240,11 +14283,11 @@ var CheckRepoActions;
     CheckRepoActions["IN_TREE"] = "tree";
     CheckRepoActions["IS_REPO_ROOT"] = "root";
 })(CheckRepoActions = exports.CheckRepoActions || (exports.CheckRepoActions = {}));
-const onError = (exitCode, stdErr, done, fail) => {
-    if (exitCode === utils_1.ExitCodes.UNCLEAN && isNotRepoMessage(stdErr)) {
-        return done('false');
+const onError = ({ exitCode }, error, done, fail) => {
+    if (exitCode === utils_1.ExitCodes.UNCLEAN && isNotRepoMessage(error)) {
+        return done(Buffer.from('false'));
     }
-    fail(stdErr);
+    fail(error);
 };
 const parser = (text) => {
     return text.trim() === 'true';
@@ -14287,8 +14330,8 @@ function checkIsBareRepoTask() {
     };
 }
 exports.checkIsBareRepoTask = checkIsBareRepoTask;
-function isNotRepoMessage(message) {
-    return /(Not a git repository|Kein Git-Repository)/i.test(message);
+function isNotRepoMessage(error) {
+    return /(Not a git repository|Kein Git-Repository)/i.test(String(error));
 }
 //# sourceMappingURL=check-is-repo.js.map
 
@@ -14563,7 +14606,6 @@ function initTask(bare = false, path, customArgs) {
     }
     return {
         commands,
-        concatStdErr: false,
         format: 'utf-8',
         parser(text) {
             return InitSummary_1.parseInit(commands.includes('--bare'), path, text);
@@ -15374,7 +15416,7 @@ exports.parseStringResponse = parseStringResponse;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.prefixedArray = exports.asNumber = exports.asStringArray = exports.asArray = exports.objectToString = exports.remove = exports.including = exports.append = exports.folderExists = exports.forEachLineWithContent = exports.toLinesWithContent = exports.last = exports.first = exports.splitOn = exports.isUserFunction = exports.asFunction = exports.NOOP = void 0;
+exports.bufferToString = exports.prefixedArray = exports.asNumber = exports.asStringArray = exports.asArray = exports.objectToString = exports.remove = exports.including = exports.append = exports.folderExists = exports.forEachLineWithContent = exports.toLinesWithContent = exports.last = exports.first = exports.splitOn = exports.isUserFunction = exports.asFunction = exports.NOOP = void 0;
 const file_exists_1 = __nccwpck_require__(4751);
 const NOOP = () => {
 };
@@ -15501,6 +15543,10 @@ function prefixedArray(input, prefix) {
     return output;
 }
 exports.prefixedArray = prefixedArray;
+function bufferToString(input) {
+    return (Array.isArray(input) ? Buffer.concat(input) : input).toString('utf-8');
+}
+exports.bufferToString = bufferToString;
 //# sourceMappingURL=util.js.map
 
 /***/ }),
