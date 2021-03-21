@@ -5,9 +5,6 @@ inputs:
   keywords:
     description: "Keywords to look for in last commit message"
     default: "[Major],[Minor],[Patch]"
-  branch:
-    description: "The branch to use"
-    default: "master"
 
 runs:
   using: "node12"
