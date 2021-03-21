@@ -2,41 +2,119 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 1087:
+/***/ 2101:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.checkPreConditions = void 0;
+const core_1 = __nccwpck_require__(2186);
+const getHeadCommitMessage_1 = __nccwpck_require__(8782);
+const buildMask_1 = __nccwpck_require__(2503);
+const checkPreConditions = () => __awaiter(void 0, void 0, void 0, function* () {
+    const keywords = core_1.getInput("keywords").split(",");
+    if (keywords.length !== 3) {
+        core_1.warning(`> Task dropped: expecting 3 keywords but got ${keywords.length}. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`);
+        return undefined;
+    }
+    const commitMessage = yield getHeadCommitMessage_1.getHeadCommitMessage();
+    if (!commitMessage || commitMessage.length === 0) {
+        core_1.warning(`> Task dropped: no HEAD commit message found.`);
+        return undefined;
+    }
+    const mask = buildMask_1.buildMask(commitMessage, keywords);
+    if (!mask.includes(1)) {
+        core_1.info("> Task dropped: no version bump requested.");
+        return undefined;
+    }
+    return mask;
+});
+exports.checkPreConditions = checkPreConditions;
+
+
+/***/ }),
+
+/***/ 7148:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.readPackage = void 0;
+const fs_extra_1 = __nccwpck_require__(5630);
+const readPackage = () => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield fs_extra_1.readJson("./package.json");
+    return data;
+});
+exports.readPackage = readPackage;
+
+
+/***/ }),
+
+/***/ 9378:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.writePackage = void 0;
+const fs_extra_1 = __nccwpck_require__(5630);
+const writePackage = (packageJson, newVersion) => __awaiter(void 0, void 0, void 0, function* () {
+    yield fs_extra_1.writeJson("./package.json", Object.assign(Object.assign({}, packageJson), { version: newVersion }));
+});
+exports.writePackage = writePackage;
+
+
+/***/ }),
+
+/***/ 1895:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.buildMask = void 0;
-const buildMask = (commitMessage, keywords) => Array.from({ length: 3 }, (_, index) => +commitMessage.includes(keywords[index]));
-exports.buildMask = buildMask;
-
-
-/***/ }),
-
-/***/ 8970:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.extractInputs = void 0;
-const core_1 = __nccwpck_require__(2186);
-const extractInputs = () => {
-    const branch = core_1.getInput("branch");
-    const rawKeywords = core_1.getInput("keywords");
-    return {
-        branch,
-        rawKeywords,
-    };
+exports.getBranchName = void 0;
+const getBranchName = () => {
+    const ref = process.env.GITHUB_REF;
+    if (!ref || !ref.startsWith("refs/heads/")) {
+        return undefined;
+    }
+    return ref.split("/").slice(2).join("/");
 };
-exports.extractInputs = extractInputs;
+exports.getBranchName = getBranchName;
 
 
 /***/ }),
 
-/***/ 3909:
+/***/ 8782:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -56,11 +134,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getHeadCommitMessage = void 0;
 const simple_git_1 = __importDefault(__nccwpck_require__(1477));
-const getHeadCommitMessage = (branch) => __awaiter(void 0, void 0, void 0, function* () {
+const getBranchName_1 = __nccwpck_require__(1895);
+const getHeadCommitMessage = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const git = simple_git_1.default({
         baseDir: process.cwd(),
     });
+    const branch = getBranchName_1.getBranchName();
+    if (!branch) {
+        return undefined;
+    }
     const result = yield git.log([branch, "-1", "--pretty=%B"]);
     return (_a = result.latest) === null || _a === void 0 ? void 0 : _a.hash;
 });
@@ -69,7 +152,60 @@ exports.getHeadCommitMessage = getHeadCommitMessage;
 
 /***/ }),
 
-/***/ 3885:
+/***/ 4856:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.pushNewVersion = void 0;
+const simple_git_1 = __importDefault(__nccwpck_require__(1477));
+const core_1 = __nccwpck_require__(2186);
+const github_1 = __nccwpck_require__(5438);
+const pushNewVersion = (version) => __awaiter(void 0, void 0, void 0, function* () {
+    const git = simple_git_1.default({ baseDir: process.cwd() });
+    core_1.info(`> Pushing new version ...`);
+    yield git
+        .addConfig("user.name", `${github_1.context.actor}`)
+        .addConfig("user.email", `${github_1.context.actor}@users.noreply.github.com`);
+    core_1.info(`> Creating a tag ...`);
+    yield git
+        .add("./package.json")
+        .commit(`[bump-package]: bumping package version to ${version}`)
+        .push();
+    yield git.addTag(version).pushTags();
+});
+exports.pushNewVersion = pushNewVersion;
+
+
+/***/ }),
+
+/***/ 2503:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.buildMask = void 0;
+const buildMask = (commitMessage, keywords) => Array.from({ length: 3 }, (_, index) => +commitMessage.includes(keywords[index]));
+exports.buildMask = buildMask;
+
+
+/***/ }),
+
+/***/ 158:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -102,7 +238,7 @@ exports.getNewVersion = getNewVersion;
 
 /***/ }),
 
-/***/ 8249:
+/***/ 2464:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -116,79 +252,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.pushNewVersion = void 0;
-const simple_git_1 = __importDefault(__nccwpck_require__(1477));
+exports.updatePackage = void 0;
 const core_1 = __nccwpck_require__(2186);
-const github_1 = __nccwpck_require__(5438);
-const pushNewVersion = (version) => __awaiter(void 0, void 0, void 0, function* () {
-    const git = simple_git_1.default({ baseDir: process.cwd() });
-    core_1.info(`> Pushing new version ...`);
-    yield git
-        .addConfig("user.name", `${github_1.context.actor}`)
-        .addConfig("user.email", `${github_1.context.actor}@users.noreply.github.com`);
-    core_1.info(`> Creating a tag ...`);
-    yield git
-        .add("./package.json")
-        .commit(`Bumping package version to ${version}`)
-        .push();
-    yield git.addTag(version).pushTags();
+const readPackage_1 = __nccwpck_require__(7148);
+const writePackage_1 = __nccwpck_require__(9378);
+const getNewVersion_1 = __nccwpck_require__(158);
+const updatePackage = (mask) => __awaiter(void 0, void 0, void 0, function* () {
+    const packageJson = yield readPackage_1.readPackage();
+    const newVersion = getNewVersion_1.getNewVersion(mask, packageJson.version);
+    yield writePackage_1.writePackage(packageJson, newVersion);
+    core_1.info(`> Version has been bumped to ${newVersion}`);
+    return newVersion;
 });
-exports.pushNewVersion = pushNewVersion;
-
-
-/***/ }),
-
-/***/ 3196:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.readPackage = void 0;
-const fs_extra_1 = __nccwpck_require__(5630);
-const readPackage = () => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield fs_extra_1.readJson("./package.json");
-    return data;
-});
-exports.readPackage = readPackage;
-
-
-/***/ }),
-
-/***/ 2624:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.writePackage = void 0;
-const fs_extra_1 = __nccwpck_require__(5630);
-const writePackage = (packageJson, newVersion) => __awaiter(void 0, void 0, void 0, function* () {
-    yield fs_extra_1.writeJson("./package.json", Object.assign(Object.assign({}, packageJson), { version: newVersion }));
-});
-exports.writePackage = writePackage;
+exports.updatePackage = updatePackage;
 
 
 /***/ }),
@@ -222,36 +299,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.bumpPackageVersion = void 0;
 const core_1 = __nccwpck_require__(2186);
-const buildMask_1 = __nccwpck_require__(1087);
-const extractInputs_1 = __nccwpck_require__(8970);
-const getHeadCommitMessage_1 = __nccwpck_require__(3909);
-const getNewVersion_1 = __nccwpck_require__(3885);
-const gitPushPackage_1 = __nccwpck_require__(8249);
-const readPackage_1 = __nccwpck_require__(3196);
-const writePackage_1 = __nccwpck_require__(2624);
+const checkPreConditions_1 = __nccwpck_require__(2101);
+const pushPackage_1 = __nccwpck_require__(4856);
+const updatePackage_1 = __nccwpck_require__(2464);
 const bumpPackageVersion = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { branch, rawKeywords } = extractInputs_1.extractInputs();
-        const commitMessage = yield getHeadCommitMessage_1.getHeadCommitMessage(branch);
-        if (!commitMessage || commitMessage.length === 0) {
-            return core_1.warning(`> Task dropped: no HEAD commit message found.`);
+        const mask = yield checkPreConditions_1.checkPreConditions();
+        if (!mask) {
+            return;
         }
-        const keywords = rawKeywords.split(",");
-        if (keywords.length !== 3) {
-            return core_1.warning(`> Task dropped: expecting 3 keywords but got ${keywords.length}. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`);
-        }
-        const mask = buildMask_1.buildMask(commitMessage, keywords);
-        if (!mask.includes(1)) {
-            return core_1.info("> Task dropped: no version bump requested.");
-        }
-        const packageJson = yield readPackage_1.readPackage();
-        const newVersion = getNewVersion_1.getNewVersion(mask, packageJson.version);
-        yield writePackage_1.writePackage(packageJson, newVersion);
-        core_1.info(`> Version has been bumped to ${newVersion}`);
-        yield gitPushPackage_1.pushNewVersion(newVersion);
+        const version = yield updatePackage_1.updatePackage(mask);
+        yield pushPackage_1.pushNewVersion(version);
     }
     catch (error) {
-        return core_1.setFailed(error.message);
+        return core_1.setFailed(`Oh no! An error occured: ${error.message}`);
     }
 });
 exports.bumpPackageVersion = bumpPackageVersion;
@@ -6135,7 +6196,7 @@ if (Object.getOwnPropertyDescriptor(fs, 'promises')) {
 
 
 const u = __nccwpck_require__(9046).fromPromise
-const jsonFile = __nccwpck_require__(2544)
+const jsonFile = __nccwpck_require__(8970)
 
 jsonFile.outputJson = u(__nccwpck_require__(531))
 jsonFile.outputJsonSync = __nccwpck_require__(9421)
@@ -6152,7 +6213,7 @@ module.exports = jsonFile
 
 /***/ }),
 
-/***/ 2544:
+/***/ 8970:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
