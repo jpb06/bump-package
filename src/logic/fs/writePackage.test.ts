@@ -1,6 +1,6 @@
 import { writeJson } from "fs-extra";
 
-import mockedPackage from "../tests-related/data/package.mock.json";
+import mockedPackage from "../../tests-related/data/package.mock.json";
 import { writePackage } from "./writePackage";
 
 jest.mock("fs-extra");

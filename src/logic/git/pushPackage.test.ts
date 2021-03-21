@@ -1,7 +1,7 @@
 import { info } from "@actions/core";
 
-import { mockSimpleGit } from "../tests-related/mocks/simpleGit.mock";
-import { pushNewVersion } from "./gitPushPackage";
+import { mockSimpleGit } from "../../tests-related/mocks/simpleGit.mock";
+import { pushNewVersion } from "./pushPackage";
 
 jest.mock("simple-git");
 jest.mock("@actions/github");

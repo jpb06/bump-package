@@ -1,6 +1,6 @@
 import { writeJson } from "fs-extra";
 
-import { Versionable } from "../types/versionable";
+import { Versionable } from "../../types/versionable";
 
 export const writePackage = async (
   packageJson: Versionable,

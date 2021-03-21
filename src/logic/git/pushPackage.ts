@@ -14,7 +14,7 @@ export const pushNewVersion = async (version: string): Promise<void> => {
   info(`> Creating a tag ...`);
   await git
     .add("./package.json")
-    .commit(`Bumping package version to ${version}`)
+    .commit(`[bump-package]: bumping package version to ${version}`)
     .push();
 
   await git.addTag(version).pushTags();

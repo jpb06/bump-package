@@ -7,10 +7,11 @@
    "author": "jpb06 <jpb.06@outlook.com>",
    "license": "MIT",
    "scripts": {
-      "build": "tsc && ncc build",
+      "build": "tsc --project tsconfig.prod.json && ncc build",
       "lint": "eslint src/**/*.ts",
       "test": "jest",
-      "test:dev": "jest --watchAll --coverage"
+      "test:dev": "jest --watchAll --coverage",
+      "test:ci": "jest --ci --runInBand"
    },
    "dependencies": {
       "@actions/core": "^1.2.6",
