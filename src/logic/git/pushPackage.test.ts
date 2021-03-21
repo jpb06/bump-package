@@ -14,8 +14,6 @@ describe("gitPushPackage function", () => {
     const version = "1.0.0";
     await pushPackage(version);
 
-    expect(mocks.addConfig).toHaveBeenCalledTimes(2);
-
     expect(mocks.add).toHaveBeenCalledTimes(1);
     expect(mocks.commit).toHaveBeenCalledTimes(1);
     expect(mocks.push).toHaveBeenCalledTimes(1);

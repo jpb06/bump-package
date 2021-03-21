@@ -2,6 +2,7 @@ import { setFailed } from "@actions/core";
 
 import { checkPreConditions } from "../logic/checkPreConditions";
 import { pushPackage } from "../logic/git/pushPackage";
+import { setupConfig } from "../logic/git/setupConfig";
 import { updatePackage } from "../logic/updatePackage";
 
 export const bumpPackageVersion = async (): Promise<void> => {
@@ -10,6 +11,8 @@ export const bumpPackageVersion = async (): Promise<void> => {
     if (!mask) {
       return;
     }
+
+    await setupConfig();
 
     const version = await updatePackage(mask);
     await pushPackage(version);

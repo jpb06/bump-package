@@ -4,6 +4,7 @@ import { setFailed } from "@actions/core";
 
 import { checkPreConditions } from "../logic/checkPreConditions";
 import { pushPackage } from "../logic/git/pushPackage";
+import { setupConfig } from "../logic/git/setupConfig";
 import { updatePackage } from "../logic/updatePackage";
 import { bumpPackageVersion } from "./bumpPackageVersion";
 
@@ -11,6 +12,7 @@ jest.mock("@actions/core");
 jest.mock("../logic/checkPreConditions");
 jest.mock("../logic/git/pushPackage");
 jest.mock("../logic/updatePackage");
+jest.mock("../logic/git/setupConfig");
 
 describe("bumpPackageVersion function", () => {
   afterEach(() => jest.resetAllMocks());
@@ -20,6 +22,7 @@ describe("bumpPackageVersion function", () => {
 
     await bumpPackageVersion();
 
+    expect(setupConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
     expect(pushPackage).toHaveBeenCalledTimes(0);
   });
@@ -31,6 +34,7 @@ describe("bumpPackageVersion function", () => {
 
     await bumpPackageVersion();
 
+    expect(setupConfig).toHaveBeenCalledTimes(1);
     expect(pushPackage).toHaveBeenCalledTimes(1);
     expect(pushPackage).toHaveBeenCalledWith(version);
   });
@@ -42,6 +46,7 @@ describe("bumpPackageVersion function", () => {
 
     await bumpPackageVersion();
 
+    expect(setupConfig).toHaveBeenCalledTimes(0);
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
       `Oh no! An error occured: Big bad error`
