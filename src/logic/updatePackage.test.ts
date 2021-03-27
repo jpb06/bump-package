@@ -21,11 +21,11 @@ describe("updatePackage function", () => {
     expect(exec).toHaveBeenCalledTimes(3);
     expect(exec).toHaveBeenNthCalledWith(
       1,
-      `git config user.name ${context.actor}`
+      `git config --global user.name ${context.actor}`
     );
     expect(exec).toHaveBeenNthCalledWith(
       2,
-      `git config user.email ${context.actor}@users.noreply.github.com`
+      `git config --global user.email ${context.actor}@users.noreply.github.com`
     );
     expect(exec).toHaveBeenNthCalledWith(3, "yarn version", [
       "--new-version",
