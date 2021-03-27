@@ -19,14 +19,16 @@ describe("updatePackage function", () => {
     await updatePackage([1, 0, 0]);
 
     expect(exec).toHaveBeenCalledTimes(3);
-    expect(exec).toHaveBeenNthCalledWith(
-      1,
-      `git config --global user.name ${context.actor}`
-    );
-    expect(exec).toHaveBeenNthCalledWith(
-      2,
-      `git config --global user.email ${context.actor}@users.noreply.github.com`
-    );
+    expect(exec).toHaveBeenNthCalledWith(1, "git config", [
+      "--global",
+      "user.name",
+      context.actor,
+    ]);
+    expect(exec).toHaveBeenNthCalledWith(2, "git config", [
+      "--global",
+      "user.email",
+      `${context.actor}@users.noreply.github.com`,
+    ]);
     expect(exec).toHaveBeenNthCalledWith(3, "yarn version", [
       "--new-version",
       "2.0.0",
