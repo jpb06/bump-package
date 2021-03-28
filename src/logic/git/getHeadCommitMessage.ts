@@ -1,18 +1,17 @@
-import simpleGit from "simple-git";
-
+import { execFile } from "../shell/execFile";
 import { getBranchName } from "./getBranchName";
 
 export const getHeadCommitMessage = async (): Promise<string | undefined> => {
-  const git = simpleGit({
-    baseDir: process.cwd(),
-  });
-
   const branch = getBranchName();
   if (!branch) {
     return undefined;
   }
 
-  const result = await git.log([branch, "-1", "--pretty=%B"]);
+  const { stdout: commitMessage } = await execFile("git log", [
+    branch,
+    "-1",
+    "--pretty=%B",
+  ]);
 
-  return result.latest?.hash;
+  return commitMessage;
 };

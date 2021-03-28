@@ -3,13 +3,13 @@ import { mocked } from "ts-jest/utils";
 import { setFailed } from "@actions/core";
 
 import { checkPreConditions } from "../logic/checkPreConditions";
-import { pushPackage } from "../logic/git/pushPackage";
+import { setConfig } from "../logic/git/setConfig";
 import { updatePackage } from "../logic/updatePackage";
 import { bumpPackageVersion } from "./bumpPackageVersion";
 
 jest.mock("@actions/core");
 jest.mock("../logic/checkPreConditions");
-jest.mock("../logic/git/pushPackage");
+jest.mock("../logic/git/setConfig");
 jest.mock("../logic/updatePackage");
 
 describe("bumpPackageVersion function", () => {
@@ -21,30 +21,32 @@ describe("bumpPackageVersion function", () => {
     await bumpPackageVersion();
 
     expect(updatePackage).toHaveBeenCalledTimes(0);
-    expect(pushPackage).toHaveBeenCalledTimes(0);
   });
 
   it("should complete the task", async () => {
     const version = "1.2.3";
-    mocked(checkPreConditions).mockResolvedValueOnce([1, 0, 0]);
+    const mask = [1, 0, 0];
+    mocked(checkPreConditions).mockResolvedValueOnce(mask);
     mocked(updatePackage).mockResolvedValueOnce(version);
 
     await bumpPackageVersion();
 
-    expect(pushPackage).toHaveBeenCalledTimes(1);
-    expect(pushPackage).toHaveBeenCalledWith(version);
+    expect(setConfig).toHaveBeenCalledTimes(1);
+    expect(updatePackage).toHaveBeenCalledTimes(1);
+    expect(updatePackage).toHaveBeenCalledWith(mask);
   });
 
   it("should report on errors", async () => {
-    mocked(checkPreConditions).mockRejectedValueOnce(
-      new Error("Big bad error")
-    );
+    const errorMessage = "Big bad error";
+    mocked(checkPreConditions).mockRejectedValueOnce(new Error(errorMessage));
 
     await bumpPackageVersion();
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
-      `Oh no! An error occured: Big bad error`
+      `Oh no! An error occured: ${errorMessage}`
     );
+
+    expect(updatePackage).toHaveBeenCalledTimes(0);
   });
 });

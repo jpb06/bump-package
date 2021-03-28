@@ -1,7 +1,7 @@
 import { setFailed } from "@actions/core";
 
 import { checkPreConditions } from "../logic/checkPreConditions";
-import { pushPackage } from "../logic/git/pushPackage";
+import { setConfig } from "../logic/git/setConfig";
 import { updatePackage } from "../logic/updatePackage";
 
 export const bumpPackageVersion = async (): Promise<void> => {
@@ -11,8 +11,9 @@ export const bumpPackageVersion = async (): Promise<void> => {
       return;
     }
 
-    const version = await updatePackage(mask);
-    await pushPackage(version);
+    await setConfig();
+
+    await updatePackage(mask);
   } catch (error) {
     return setFailed(`Oh no! An error occured: ${error.message}`);
   }
