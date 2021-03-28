@@ -112,7 +112,8 @@ const getHeadCommitMessage = () => __awaiter(void 0, void 0, void 0, function* (
     if (!branch) {
         return undefined;
     }
-    const { stdout: commitMessage } = yield execFile_1.execFile("git log", [
+    const { stdout: commitMessage } = yield execFile_1.execFile("git", [
+        "log",
         branch,
         "-1",
         "--pretty=%B",

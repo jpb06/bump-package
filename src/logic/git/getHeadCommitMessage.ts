@@ -7,7 +7,8 @@ export const getHeadCommitMessage = async (): Promise<string | undefined> => {
     return undefined;
   }
 
-  const { stdout: commitMessage } = await execFile("git log", [
+  const { stdout: commitMessage } = await execFile("git", [
+    "log",
     branch,
     "-1",
     "--pretty=%B",
