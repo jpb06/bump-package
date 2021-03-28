@@ -243,7 +243,7 @@ const updatePackage = (mask) => __awaiter(void 0, void 0, void 0, function* () {
     const packageJson = yield readPackage_1.readPackage();
     const newVersion = getNewVersion_1.getNewVersion(mask, packageJson.version);
     yield exec_1.exec("yarn version", ["--new-version", newVersion]);
-    return newVersion;
+    yield exec_1.exec("git push");
 });
 exports.updatePackage = updatePackage;
 

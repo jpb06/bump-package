@@ -24,10 +24,8 @@ describe("bumpPackageVersion function", () => {
   });
 
   it("should complete the task", async () => {
-    const version = "1.2.3";
     const mask = [1, 0, 0];
     mocked(checkPreConditions).mockResolvedValueOnce(mask);
-    mocked(updatePackage).mockResolvedValueOnce(version);
 
     await bumpPackageVersion();
 
