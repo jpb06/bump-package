@@ -5,12 +5,14 @@ import { setFailed } from "@actions/core";
 import { checkPreConditions } from "../logic/checkPreConditions";
 import { setConfig } from "../logic/git/setConfig";
 import { updatePackage } from "../logic/updatePackage";
+import { publish } from "../logic/yarn/publish";
 import { bumpPackageVersion } from "./bumpPackageVersion";
 
 jest.mock("@actions/core");
 jest.mock("../logic/checkPreConditions");
 jest.mock("../logic/git/setConfig");
 jest.mock("../logic/updatePackage");
+jest.mock("../logic/yarn/publish");
 
 describe("bumpPackageVersion function", () => {
   afterEach(() => jest.resetAllMocks());
@@ -21,17 +23,26 @@ describe("bumpPackageVersion function", () => {
     await bumpPackageVersion();
 
     expect(updatePackage).toHaveBeenCalledTimes(0);
+    expect(publish).toHaveBeenCalledTimes(0);
   });
 
-  it("should complete the task", async () => {
+  it("should perform subtasks", async () => {
     const mask = [1, 0, 0];
-    mocked(checkPreConditions).mockResolvedValueOnce(mask);
+    const isPublishRequested = false;
+    const publishFolder = "dist";
+    mocked(checkPreConditions).mockResolvedValueOnce({
+      mask,
+      isPublishRequested,
+      publishFolder,
+    });
 
     await bumpPackageVersion();
 
     expect(setConfig).toHaveBeenCalledTimes(1);
     expect(updatePackage).toHaveBeenCalledTimes(1);
     expect(updatePackage).toHaveBeenCalledWith(mask);
+    expect(publish).toHaveBeenCalledTimes(1);
+    expect(publish).toHaveBeenCalledWith(isPublishRequested, publishFolder);
   });
 
   it("should report on errors", async () => {
