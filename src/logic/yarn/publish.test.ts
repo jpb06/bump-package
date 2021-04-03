@@ -15,7 +15,8 @@ describe("publish function", () => {
     const folder = "dist";
     await publish(true, folder);
 
-    expect(exec).toHaveBeenCalledTimes(1);
-    expect(exec).toHaveBeenCalledWith(`yarn publish ./${folder}`);
+    expect(exec).toHaveBeenCalledTimes(2);
+    expect(exec).toHaveBeenNthCalledWith(1, `yarn build`);
+    expect(exec).toHaveBeenNthCalledWith(2, `yarn publish ./${folder}`);
   });
 });
