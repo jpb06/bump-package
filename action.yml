@@ -5,6 +5,14 @@ inputs:
   keywords:
     description: "Keywords to look for in last commit message"
     default: "[Major],[Minor],[Patch]"
+  create-tag: "Whether a tag should be created for the new version"
+    default: "false"
+  publish:
+    description: "Whether a publish of the package should be performed after a version bump"
+    default: "false"
+  publish-root:
+    description: "The folder to publish"
+    default: "dist"
 
 runs:
   using: "node12"
