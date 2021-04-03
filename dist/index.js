@@ -284,7 +284,7 @@ exports.publish = void 0;
 const exec_1 = __nccwpck_require__(8747);
 const publish = (isPublishRequested, publishFolder) => __awaiter(void 0, void 0, void 0, function* () {
     if (isPublishRequested) {
-        yield exec_1.exec(`cd ./${publishFolder} && yarn publish`);
+        yield exec_1.exec(`yarn publish ./${publishFolder}`);
     }
 });
 exports.publish = publish;
