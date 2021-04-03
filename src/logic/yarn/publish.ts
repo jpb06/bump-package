@@ -5,6 +5,6 @@ export const publish = async (
   publishFolder: string
 ): Promise<void> => {
   if (isPublishRequested) {
-    await exec(`cd ./${publishFolder} && yarn publish`);
+    await exec(`yarn publish ./${publishFolder}`);
   }
 };

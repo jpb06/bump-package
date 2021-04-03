@@ -16,6 +16,6 @@ describe("publish function", () => {
     await publish(true, folder);
 
     expect(exec).toHaveBeenCalledTimes(1);
-    expect(exec).toHaveBeenCalledWith(`cd ./${folder} && yarn publish`);
+    expect(exec).toHaveBeenCalledWith(`yarn publish ./${folder}`);
   });
 });
