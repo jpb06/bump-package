@@ -18,41 +18,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.checkPreConditions = void 0;
-const fs_extra_1 = __nccwpck_require__(4240);
 const core_1 = __nccwpck_require__(6832);
 const getHeadCommitMessage_1 = __nccwpck_require__(2670);
 const buildMask_1 = __nccwpck_require__(1562);
+const res = (error, isActionNeeded) => ({
+    mask: [],
+    isPublishRequested: false,
+    publishFolder: ".",
+    error,
+    isActionNeeded,
+});
 const checkPreConditions = () => __awaiter(void 0, void 0, void 0, function* () {
     const keywords = core_1.getInput("keywords").split(",");
     if (keywords.length !== 3) {
-        core_1.warning(`> Task cancelled: expecting 3 keywords but got ${keywords.length}. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`);
-        return undefined;
+        return res(`> Task cancelled: expecting 3 keywords but got ${keywords.length}. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`);
     }
     const publishFolder = core_1.getInput("publish-root");
     const isPublishRequested = core_1.getInput("publish") === "true";
     if (isPublishRequested) {
-        const token = process.env.NODE_AUTH_TOKEN;
-        if (!token || token.length === 0) {
-            core_1.warning(`> Task cancelled: no npm token provided.`);
-            return undefined;
-        }
-        const exists = publishFolder === "." ? true : yield fs_extra_1.pathExists(`./${publishFolder}`);
-        if (!exists) {
-            core_1.warning(`> Task cancelled: the folder to publish is missing. Did you forget to build the package before calling this action?`);
-            return undefined;
+        const token = process.env.NODE_AUTH_TOKEN || "";
+        if (token.length === 0) {
+            return res(`> Task cancelled: no npm token provided to publish the package.`);
         }
     }
     const commitMessage = yield getHeadCommitMessage_1.getHeadCommitMessage();
     if (!commitMessage || commitMessage.length === 0) {
-        core_1.warning(`> Task cancelled: no HEAD commit message found.`);
-        return undefined;
+        return res(`> Task cancelled: no HEAD commit message found.`);
     }
     const mask = buildMask_1.buildMask(commitMessage, keywords);
     if (!mask.includes(1)) {
         core_1.info("> Task cancelled: no version bump requested.");
-        return undefined;
+        return res();
     }
-    return { mask, isPublishRequested, publishFolder };
+    return { mask, isPublishRequested, publishFolder, isActionNeeded: true };
 });
 exports.checkPreConditions = checkPreConditions;
 
@@ -178,7 +176,7 @@ exports.setConfig = setConfig;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.buildMask = void 0;
-const buildMask = (commitMessage, keywords) => Array.from({ length: 3 }, (_, index) => +commitMessage.includes(keywords[index]));
+const buildMask = (commitMessage, keywords) => Array.from({ length: 3 }, (_, index) => +commitMessage.startsWith(keywords[index]));
 exports.buildMask = buildMask;
 
 
@@ -283,9 +281,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.publish = void 0;
 const exec_1 = __nccwpck_require__(8747);
 const publish = (isPublishRequested, publishFolder) => __awaiter(void 0, void 0, void 0, function* () {
-    if (isPublishRequested) {
-        yield exec_1.exec(`yarn publish ./${publishFolder}`);
+    if (!isPublishRequested) {
+        return;
     }
+    yield exec_1.exec(`yarn build`);
+    yield exec_1.exec(`yarn publish ./${publishFolder}`);
 });
 exports.publish = publish;
 
@@ -298,13 +298,13 @@ exports.publish = publish;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const bumpPackageVersion_1 = __nccwpck_require__(3368);
-bumpPackageVersion_1.bumpPackageVersion();
+const actionWorkflow_1 = __nccwpck_require__(4520);
+actionWorkflow_1.actionWorkflow();
 
 
 /***/ }),
 
-/***/ 3368:
+/***/ 4520:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -319,27 +319,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.bumpPackageVersion = void 0;
+exports.actionWorkflow = void 0;
 const core_1 = __nccwpck_require__(6832);
 const checkPreConditions_1 = __nccwpck_require__(7553);
 const setConfig_1 = __nccwpck_require__(5004);
 const updatePackage_1 = __nccwpck_require__(8868);
 const publish_1 = __nccwpck_require__(6251);
-const bumpPackageVersion = () => __awaiter(void 0, void 0, void 0, function* () {
+const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const inputs = yield checkPreConditions_1.checkPreConditions();
-        if (!inputs) {
+        const { error, isActionNeeded, isPublishRequested, publishFolder, mask, } = yield checkPreConditions_1.checkPreConditions();
+        if (error) {
+            return core_1.setFailed(error);
+        }
+        if (!isActionNeeded) {
             return;
         }
         yield setConfig_1.setConfig();
-        yield updatePackage_1.updatePackage(inputs.mask);
-        yield publish_1.publish(inputs.isPublishRequested, inputs.publishFolder);
+        yield updatePackage_1.updatePackage(mask);
+        yield publish_1.publish(isPublishRequested, publishFolder);
     }
     catch (error) {
         return core_1.setFailed(`Oh no! An error occured: ${error.message}`);
     }
 });
-exports.bumpPackageVersion = bumpPackageVersion;
+exports.actionWorkflow = actionWorkflow;
 
 
 /***/ }),

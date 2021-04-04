@@ -1,14 +1,12 @@
-import { pathExists } from "fs-extra";
 import { mocked } from "ts-jest/utils";
 
-import { getInput, info, warning } from "@actions/core";
+import { getInput, info } from "@actions/core";
 
 import { checkPreConditions } from "./checkPreConditions";
 import { getHeadCommitMessage } from "./git/getHeadCommitMessage";
 import { buildMask } from "./semver/buildMask";
 
 jest.mock("@actions/core");
-jest.mock("fs-extra");
 jest.mock("./git/getHeadCommitMessage");
 jest.mock("./semver/buildMask");
 
@@ -20,15 +18,34 @@ describe("checkPreConditions function", () => {
 
     const result = await checkPreConditions();
 
-    expect(warning).toHaveBeenCalledTimes(1);
-    expect(warning).toHaveBeenCalledWith(
-      `> Task cancelled: expecting 3 keywords but got 1. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`
-    );
-
-    expect(result).toBeUndefined();
+    expect(result).toStrictEqual({
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+      error: `> Task cancelled: expecting 3 keywords but got 1. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`,
+      isActionNeeded: undefined,
+    });
   });
 
   it("should drop the task if publish was requested and no npm token has been provided", async () => {
+    delete process.env.NODE_AUTH_TOKEN;
+    mocked(getInput)
+      .mockReturnValueOnce("a,b,c")
+      .mockReturnValueOnce("dist")
+      .mockReturnValueOnce("true");
+
+    const result = await checkPreConditions();
+
+    expect(result).toStrictEqual({
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+      error: `> Task cancelled: no npm token provided to publish the package.`,
+      isActionNeeded: undefined,
+    });
+  });
+
+  it("should drop the task if publish was requested and the provided npm token is empty", async () => {
     process.env.NODE_AUTH_TOKEN = "";
     mocked(getInput)
       .mockReturnValueOnce("a,b,c")
@@ -37,57 +54,31 @@ describe("checkPreConditions function", () => {
 
     const result = await checkPreConditions();
 
-    expect(warning).toHaveBeenCalledTimes(1);
-    expect(warning).toHaveBeenCalledWith(
-      `> Task cancelled: no npm token provided.`
-    );
-
-    expect(result).toBeUndefined();
-  });
-
-  it("should drop the task if the folder to publish does not exist", async () => {
-    process.env.NODE_AUTH_TOKEN = "yolo";
-    mocked(getInput)
-      .mockReturnValueOnce("a,b,c")
-      .mockReturnValueOnce("dist")
-      .mockReturnValueOnce("true");
-    mocked(pathExists).mockImplementationOnce(() => false);
-
-    const result = await checkPreConditions();
-
-    expect(pathExists).toHaveBeenCalledTimes(1);
-    expect(warning).toHaveBeenCalledTimes(1);
-    expect(warning).toHaveBeenCalledWith(
-      `> Task cancelled: the folder to publish is missing. Did you forget to build the package before calling this action?`
-    );
-
-    expect(result).toBeUndefined();
-  });
-
-  it("should not check if publish folder exists if path equals '.'", async () => {
-    process.env.NODE_AUTH_TOKEN = "yolo";
-    mocked(getInput)
-      .mockReturnValueOnce("a,b,c")
-      .mockReturnValueOnce(".")
-      .mockReturnValueOnce("true");
-    mocked(pathExists).mockImplementationOnce(() => false);
-
-    await checkPreConditions();
-    expect(pathExists).toHaveBeenCalledTimes(0);
+    expect(result).toStrictEqual({
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+      error: `> Task cancelled: no npm token provided to publish the package.`,
+      isActionNeeded: undefined,
+    });
   });
 
   it("should drop the task if last commit could not be provided", async () => {
-    mocked(getInput).mockReturnValueOnce("a,b,c");
+    mocked(getInput)
+      .mockReturnValueOnce("a,b,c")
+      .mockReturnValueOnce("dist")
+      .mockReturnValueOnce("false");
     mocked(getHeadCommitMessage).mockResolvedValueOnce(undefined);
 
     const result = await checkPreConditions();
 
-    expect(warning).toHaveBeenCalledTimes(1);
-    expect(warning).toHaveBeenCalledWith(
-      `> Task cancelled: no HEAD commit message found.`
-    );
-
-    expect(result).toBeUndefined();
+    expect(result).toStrictEqual({
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+      error: `> Task cancelled: no HEAD commit message found.`,
+      isActionNeeded: undefined,
+    });
   });
 
   it("should drop the task if no bump was requested", async () => {
@@ -95,6 +86,7 @@ describe("checkPreConditions function", () => {
       .mockReturnValueOnce("a,b,c")
       .mockReturnValueOnce(".")
       .mockReturnValueOnce("false");
+
     mocked(getHeadCommitMessage).mockResolvedValueOnce("yolo");
     mocked(buildMask).mockReturnValueOnce([0, 0, 0]);
 
@@ -105,7 +97,13 @@ describe("checkPreConditions function", () => {
       `> Task cancelled: no version bump requested.`
     );
 
-    expect(result).toBeUndefined();
+    expect(result).toStrictEqual({
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+      isActionNeeded: undefined,
+      error: undefined,
+    });
   });
 
   it("should return the mask", async () => {
@@ -114,6 +112,7 @@ describe("checkPreConditions function", () => {
       .mockReturnValueOnce("a,b,c")
       .mockReturnValueOnce(".")
       .mockReturnValueOnce("false");
+
     mocked(getHeadCommitMessage).mockResolvedValueOnce("yolo");
     mocked(buildMask).mockReturnValueOnce(mask);
 
@@ -125,6 +124,30 @@ describe("checkPreConditions function", () => {
       mask,
       isPublishRequested: false,
       publishFolder: ".",
+      isActionNeeded: true,
+    });
+  });
+
+  it("should return the mask (publish case)", async () => {
+    process.env.NODE_AUTH_TOKEN = "yolo";
+    const mask = [1, 0, 0];
+    mocked(getInput)
+      .mockReturnValueOnce("a,b,c")
+      .mockReturnValueOnce(".")
+      .mockReturnValueOnce("true");
+
+    mocked(getHeadCommitMessage).mockResolvedValueOnce("yolo");
+    mocked(buildMask).mockReturnValueOnce(mask);
+
+    const result = await checkPreConditions();
+
+    expect(info).toHaveBeenCalledTimes(0);
+
+    expect(result).toStrictEqual({
+      mask,
+      isPublishRequested: true,
+      publishFolder: ".",
+      isActionNeeded: true,
     });
   });
 });

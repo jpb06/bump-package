@@ -1,3 +1,3 @@
-import { bumpPackageVersion } from "./workflow/bumpPackageVersion";
+import { actionWorkflow } from "./workflow/actionWorkflow";
 
-bumpPackageVersion();
+actionWorkflow();

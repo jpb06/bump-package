@@ -1,55 +1,54 @@
-import { pathExists } from "fs-extra";
-
-import { getInput, info, warning } from "@actions/core";
+import { getInput, info } from "@actions/core";
 
 import { getHeadCommitMessage } from "./git/getHeadCommitMessage";
 import { buildMask } from "./semver/buildMask";
 
-interface Inputs {
+export interface Inputs {
   mask: Array<number>;
   isPublishRequested: boolean;
   publishFolder: string;
+
+  error?: string;
+  isActionNeeded?: boolean;
 }
 
-export const checkPreConditions = async (): Promise<Inputs | undefined> => {
+const res = (error?: string, isActionNeeded?: boolean): Inputs => ({
+  mask: [],
+  isPublishRequested: false,
+  publishFolder: ".",
+  error,
+  isActionNeeded,
+});
+
+export const checkPreConditions = async (): Promise<Inputs> => {
   const keywords = getInput("keywords").split(",");
   if (keywords.length !== 3) {
-    warning(
+    return res(
       `> Task cancelled: expecting 3 keywords but got ${keywords.length}. Keywords should be separated by a comma. Example : "Major,Minor,Patch".`
     );
-    return undefined;
   }
 
   const publishFolder = getInput("publish-root");
   const isPublishRequested = getInput("publish") === "true";
   if (isPublishRequested) {
-    const token = process.env.NODE_AUTH_TOKEN;
-    if (!token || token.length === 0) {
-      warning(`> Task cancelled: no npm token provided.`);
-      return undefined;
-    }
-
-    const exists =
-      publishFolder === "." ? true : await pathExists(`./${publishFolder}`);
-    if (!exists) {
-      warning(
-        `> Task cancelled: the folder to publish is missing. Did you forget to build the package before calling this action?`
+    const token = process.env.NODE_AUTH_TOKEN || "";
+    if (token.length === 0) {
+      return res(
+        `> Task cancelled: no npm token provided to publish the package.`
       );
-      return undefined;
     }
   }
 
   const commitMessage = await getHeadCommitMessage();
   if (!commitMessage || commitMessage.length === 0) {
-    warning(`> Task cancelled: no HEAD commit message found.`);
-    return undefined;
+    return res(`> Task cancelled: no HEAD commit message found.`);
   }
 
   const mask = buildMask(commitMessage, keywords);
   if (!mask.includes(1)) {
     info("> Task cancelled: no version bump requested.");
-    return undefined;
+    return res();
   }
 
-  return { mask, isPublishRequested, publishFolder };
+  return { mask, isPublishRequested, publishFolder, isActionNeeded: true };
 };

@@ -4,5 +4,5 @@ export const buildMask = (
 ): Array<number> =>
   Array.from(
     { length: 3 },
-    (_, index) => +commitMessage.includes(keywords[index])
+    (_, index) => +commitMessage.startsWith(keywords[index])
   );

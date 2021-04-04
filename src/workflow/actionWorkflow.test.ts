@@ -6,7 +6,7 @@ import { checkPreConditions } from "../logic/checkPreConditions";
 import { setConfig } from "../logic/git/setConfig";
 import { updatePackage } from "../logic/updatePackage";
 import { publish } from "../logic/yarn/publish";
-import { bumpPackageVersion } from "./bumpPackageVersion";
+import { actionWorkflow } from "./actionWorkflow";
 
 jest.mock("@actions/core");
 jest.mock("../logic/checkPreConditions");
@@ -14,13 +14,34 @@ jest.mock("../logic/git/setConfig");
 jest.mock("../logic/updatePackage");
 jest.mock("../logic/yarn/publish");
 
-describe("bumpPackageVersion function", () => {
+describe("actionWorkflow function", () => {
   afterEach(() => jest.resetAllMocks());
 
-  it("should drop the task if pre conditions are not met", async () => {
-    mocked(checkPreConditions).mockResolvedValueOnce(undefined);
+  it("should fail the task if pre conditions are invalid", async () => {
+    mocked(checkPreConditions).mockResolvedValueOnce({
+      isActionNeeded: false,
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+      error: "Oh no!",
+    });
 
-    await bumpPackageVersion();
+    await actionWorkflow();
+
+    expect(updatePackage).toHaveBeenCalledTimes(0);
+    expect(publish).toHaveBeenCalledTimes(0);
+    expect(setFailed).toHaveBeenCalledTimes(1);
+  });
+
+  it("should drop the task if pre conditions are not met", async () => {
+    mocked(checkPreConditions).mockResolvedValueOnce({
+      isActionNeeded: false,
+      mask: [],
+      isPublishRequested: false,
+      publishFolder: ".",
+    });
+
+    await actionWorkflow();
 
     expect(updatePackage).toHaveBeenCalledTimes(0);
     expect(publish).toHaveBeenCalledTimes(0);
@@ -34,9 +55,10 @@ describe("bumpPackageVersion function", () => {
       mask,
       isPublishRequested,
       publishFolder,
+      isActionNeeded: true,
     });
 
-    await bumpPackageVersion();
+    await actionWorkflow();
 
     expect(setConfig).toHaveBeenCalledTimes(1);
     expect(updatePackage).toHaveBeenCalledTimes(1);
@@ -49,7 +71,7 @@ describe("bumpPackageVersion function", () => {
     const errorMessage = "Big bad error";
     mocked(checkPreConditions).mockRejectedValueOnce(new Error(errorMessage));
 
-    await bumpPackageVersion();
+    await actionWorkflow();
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(

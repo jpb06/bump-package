@@ -10,19 +10,19 @@ describe("buildMask function", () => {
   });
 
   it("should return an array starting with one", () => {
-    const result = buildMask("yolomajor", keywords);
+    const result = buildMask("majoryolo", keywords);
 
     expect(result).toStrictEqual([1, 0, 0]);
   });
 
   it("should return an array having one at index 1", () => {
-    const result = buildMask("yolominor", keywords);
+    const result = buildMask("minoryolo", keywords);
 
     expect(result).toStrictEqual([0, 1, 0]);
   });
 
   it("should return an array having one at index 2", () => {
-    const result = buildMask("yolopatch", keywords);
+    const result = buildMask("patchyolo", keywords);
 
     expect(result).toStrictEqual([0, 0, 1]);
   });
@@ -30,6 +30,6 @@ describe("buildMask function", () => {
   it("should return an array filled with ones", () => {
     const result = buildMask("majoryominorlopatch", keywords);
 
-    expect(result).toStrictEqual([1, 1, 1]);
+    expect(result).toStrictEqual([1, 0, 0]);
   });
 });
