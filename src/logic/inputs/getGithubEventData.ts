@@ -11,9 +11,9 @@ export interface GithubEventData {
 export const getGithubEventData = async (): Promise<GithubEventData> => {
   let event: GithubEvent;
   try {
-    event = await JSON.parse(process.env.GITHUB_EVENT_PATH as string);
+    event = JSON.parse(process.env.GITHUB_EVENT_PATH as string);
   } catch (err) {
-    debug(err);
+    console.log("err", err);
     return { hasErrors: true } as GithubEventData;
   }
 
