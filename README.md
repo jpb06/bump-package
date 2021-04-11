@@ -18,19 +18,19 @@ This github action bumps package.json version after a commit is pushed or a pull
 
 Commits messages starting with these keywords will trigger a major bump. Commas may be used to specify more than one keyword
 
-> Default value: **[Major]**
+> Default value: **[Major]:**
 
 ### :diamonds: `minor-keywords`
 
 Commits messages starting with these keywords will trigger a minor bump. Commas may be used to specify more than one keyword
 
-> Default value: **[Minor]**
+> Default value: **[Minor]:**
 
 ### :diamonds: `patch-keywords`
 
 Commits messages starting with these keywords will trigger a patch bump. Commas may be used to specify more than one keyword
 
-> Default value: **[Patch]**
+> Default value: **[Patch]:**
 
 ## :zap: Usage
 
@@ -48,7 +48,7 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v2
     [...]
-    - uses: actions/bump-package@v2.1
+    - uses: actions/bump-package@v2.1.1
 ```
 
 ### :diamonds: Using custom inputs
@@ -70,7 +70,7 @@ jobs:
   - name: Check out repository code
     uses: actions/checkout@v2
   [...]
-  - uses: actions/bump-package@v2.1
+  - uses: actions/bump-package@v2.1.1
     with:
       major-keywords: BREAKING CHANGE
       minor-keywords: feat,minor
