@@ -10,12 +10,9 @@ describe("getGithubEventData function", () => {
   it("should send an error message when there is no github event", async () => {
     process.env.GITHUB_EVENT_PATH = undefined;
 
-    await getGithubEventData();
+    const result = await getGithubEventData();
 
-    expect(error).toHaveBeenCalledTimes(1);
-    expect(error).toHaveBeenCalledWith(
-      `> Error: Event data could not be retrieved.`
-    );
+    expect(result.hasErrors).toBe(true);
   });
 
   it("should send an error message when commit messages are missing", async () => {
@@ -29,9 +26,7 @@ describe("getGithubEventData function", () => {
     await getGithubEventData();
 
     expect(error).toHaveBeenCalledTimes(1);
-    expect(error).toHaveBeenCalledWith(
-      `> Error: No commits found in the github event.`
-    );
+    expect(error).toHaveBeenCalledWith(`No commits found in the github event.`);
   });
 
   it("should send an error message if the master branch is missing in repository infos", async () => {
@@ -49,7 +44,7 @@ describe("getGithubEventData function", () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `> Error: Unable to get master branch from github event.`
+      `Unable to get master branch from github event.`
     );
   });
 
@@ -67,7 +62,7 @@ describe("getGithubEventData function", () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `> Error: Unable to get master branch from github event.`
+      `Unable to get master branch from github event.`
     );
   });
 
@@ -87,7 +82,7 @@ describe("getGithubEventData function", () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `> Error: Unable to get current branch from github event.`
+      `Unable to get current branch from github event.`
     );
   });
 

@@ -1,4 +1,4 @@
-import { error, info } from "@actions/core";
+import { debug, error, info } from "@actions/core";
 
 import { GithubEvent } from "../../types/github";
 
@@ -13,7 +13,7 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
   try {
     event = await JSON.parse(process.env.GITHUB_EVENT_PATH as string);
   } catch (err) {
-    error(`> Error: Event data could not be retrieved.`);
+    debug(err);
     return { hasErrors: true } as GithubEventData;
   }
 
@@ -25,15 +25,15 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
 
   let hasErrors = false;
   if (messages.length === 0) {
-    error(`> Error: No commits found in the github event.`);
+    error(`No commits found in the github event.`);
     hasErrors = true;
   }
   if (!masterBranch || masterBranch.length === 0) {
-    error(`> Error: Unable to get master branch from github event.`);
+    error(`Unable to get master branch from github event.`);
     hasErrors = true;
   }
   if (!currentBranch || currentBranch.length === 0) {
-    error(`> Error: Unable to get current branch from github event.`);
+    error(`Unable to get current branch from github event.`);
     hasErrors = true;
   }
 

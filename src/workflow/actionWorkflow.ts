@@ -10,12 +10,12 @@ export const actionWorkflow = async (): Promise<void> => {
   try {
     const keywords = getKeywords();
     if (keywords.hasErrors) {
-      return setFailed("Missing keywords");
+      return setFailed(`> Error: Event data could not be retrieved.`);
     }
 
     const { messages, hasErrors, isMasterBranch } = await getGithubEventData();
     if (hasErrors) {
-      return setFailed("Github event fetching failure");
+      return setFailed("> Error: Github event fetching failure");
     }
 
     if (!isMasterBranch) {

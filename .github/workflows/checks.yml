@@ -37,3 +37,8 @@ jobs:
 
       - name: Tests
         run: yarn test:ci
+
+      - name: Bump package
+        run: dist/index.js
+        with:
+          create-tag: true
