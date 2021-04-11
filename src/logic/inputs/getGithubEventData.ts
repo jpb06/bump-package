@@ -19,7 +19,6 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
       })
     );
   } catch (err) {
-    console.log("err", err);
     return { hasErrors: true } as GithubEventData;
   }
 

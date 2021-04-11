@@ -166,7 +166,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updatePackage = void 0;
 const exec_1 = __nccwpck_require__(4909);
 const updatePackage = (bumpType) => __awaiter(void 0, void 0, void 0, function* () {
-    yield exec_1.exec("npm version", [bumpType]);
+    yield exec_1.exec("npm version", [bumpType, "--force"]);
     yield exec_1.exec("git push");
     yield exec_1.exec("git push", ["--tags"]);
 });
