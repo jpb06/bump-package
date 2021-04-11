@@ -1,12 +1,9 @@
 import { exec } from "@actions/exec";
 
-import { readPackage } from "./fs/readPackage";
-import { getNewVersion } from "./semver/getNewVersion";
+import { BumpType } from "./semver/getBumpType";
 
-export const updatePackage = async (mask: Array<number>): Promise<void> => {
-  const packageJson = await readPackage();
-  const newVersion = getNewVersion(mask, packageJson.version);
-
-  await exec("yarn version", ["--new-version", newVersion]);
+export const updatePackage = async (bumpType: BumpType): Promise<void> => {
+  await exec("npm version", [bumpType]);
   await exec("git push");
+  await exec("git push", ["--tags"]);
 };

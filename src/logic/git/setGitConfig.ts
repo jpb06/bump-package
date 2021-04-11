@@ -1,7 +1,7 @@
 import { exec } from "@actions/exec";
 import { context } from "@actions/github";
 
-export const setConfig = async (): Promise<void> => {
+export const setGitConfig = async (): Promise<void> => {
   await exec("git config", ["--global", "user.name", context.actor]);
   await exec("git config", [
     "--global",

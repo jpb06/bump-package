@@ -1,25 +1,17 @@
-import { mocked } from "ts-jest/utils";
-
 import { exec } from "@actions/exec";
 
-import json from "../tests-related/data/package.mock.json";
-import { readPackage } from "./fs/readPackage";
 import { updatePackage } from "./updatePackage";
 
 jest.mock("@actions/exec");
-jest.mock("./fs/readPackage");
 
 describe("updatePackage function", () => {
   it("should update package.json", async () => {
-    mocked(readPackage).mockResolvedValueOnce(json);
+    const bumpType = "major";
+    await updatePackage(bumpType);
 
-    await updatePackage([1, 0, 0]);
-
-    expect(exec).toHaveBeenCalledTimes(2);
-    expect(exec).toHaveBeenNthCalledWith(1, "yarn version", [
-      "--new-version",
-      "2.0.0",
-    ]);
+    expect(exec).toHaveBeenCalledTimes(3);
+    expect(exec).toHaveBeenNthCalledWith(1, "npm version", [bumpType]);
     expect(exec).toHaveBeenNthCalledWith(2, "git push");
+    expect(exec).toHaveBeenNthCalledWith(3, "git push", ["--tags"]);
   });
 });

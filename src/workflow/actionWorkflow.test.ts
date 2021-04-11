@@ -1,75 +1,106 @@
 import { mocked } from "ts-jest/utils";
 
-import { setFailed } from "@actions/core";
+import { info, setFailed } from "@actions/core";
 
-import { checkPreConditions } from "../logic/checkPreConditions";
-import { setConfig } from "../logic/git/setConfig";
+import { setGitConfig } from "../logic/git/setGitConfig";
+import { getGithubEventData, GithubEventData } from "../logic/inputs/getGithubEventData";
+import { getKeywords, Keywords } from "../logic/inputs/getKeywords";
+import { getBumpType } from "../logic/semver/getBumpType";
 import { updatePackage } from "../logic/updatePackage";
-import { publish } from "../logic/yarn/publish";
 import { actionWorkflow } from "./actionWorkflow";
 
 jest.mock("@actions/core");
-jest.mock("../logic/checkPreConditions");
-jest.mock("../logic/git/setConfig");
+jest.mock("../logic/git/setGitConfig");
 jest.mock("../logic/updatePackage");
-jest.mock("../logic/yarn/publish");
+jest.mock("../logic/inputs/getKeywords");
+jest.mock("../logic/inputs/getGithubEventData");
+jest.mock("../logic/semver/getBumpType");
 
 describe("actionWorkflow function", () => {
   afterEach(() => jest.resetAllMocks());
 
-  it("should fail the task if pre conditions are invalid", async () => {
-    mocked(checkPreConditions).mockResolvedValueOnce({
-      isActionNeeded: false,
-      mask: [],
-      isPublishRequested: false,
-      publishFolder: ".",
-      error: "Oh no!",
-    });
+  it("should fail the task if some keywords are missing", async () => {
+    mocked(getKeywords).mockReturnValueOnce({ hasErrors: true } as Keywords);
 
     await actionWorkflow();
 
+    expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
-    expect(publish).toHaveBeenCalledTimes(0);
     expect(setFailed).toHaveBeenCalledTimes(1);
   });
 
-  it("should drop the task if pre conditions are not met", async () => {
-    mocked(checkPreConditions).mockResolvedValueOnce({
-      isActionNeeded: false,
-      mask: [],
-      isPublishRequested: false,
-      publishFolder: ".",
-    });
+  it("should fail the task if github event data is missing", async () => {
+    mocked(getKeywords).mockReturnValueOnce({ hasErrors: false } as Keywords);
+    mocked(getGithubEventData).mockResolvedValueOnce({
+      hasErrors: true,
+    } as GithubEventData);
 
     await actionWorkflow();
 
+    expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(setFailed).toHaveBeenCalledTimes(1);
   });
 
-  it("should perform subtasks", async () => {
-    const mask = [1, 0, 0];
-    const isPublishRequested = false;
-    const publishFolder = "dist";
-    mocked(checkPreConditions).mockResolvedValueOnce({
-      mask,
-      isPublishRequested,
-      publishFolder,
-      isActionNeeded: true,
+  it("should drop the task if the action is not run on master branch", async () => {
+    mocked(getKeywords).mockReturnValueOnce({ hasErrors: false } as Keywords);
+    mocked(getGithubEventData).mockResolvedValueOnce({
+      hasErrors: false,
+      isMasterBranch: false,
+      messages: [],
     });
 
     await actionWorkflow();
 
-    expect(setConfig).toHaveBeenCalledTimes(1);
+    expect(setGitConfig).toHaveBeenCalledTimes(0);
+    expect(updatePackage).toHaveBeenCalledTimes(0);
+    expect(setFailed).toHaveBeenCalledTimes(0);
+  });
+
+  it("should drop the task if no bump has been requested", async () => {
+    mocked(getKeywords).mockReturnValueOnce({ hasErrors: false } as Keywords);
+    mocked(getGithubEventData).mockResolvedValueOnce({
+      hasErrors: false,
+      isMasterBranch: true,
+      messages: [],
+    });
+    mocked(getBumpType).mockReturnValueOnce("none");
+
+    await actionWorkflow();
+
+    expect(setGitConfig).toHaveBeenCalledTimes(0);
+    expect(updatePackage).toHaveBeenCalledTimes(0);
+    expect(setFailed).toHaveBeenCalledTimes(0);
+    expect(info).toHaveBeenCalledTimes(1);
+    expect(info).toHaveBeenCalledWith(
+      "> Task cancelled: no version bump requested."
+    );
+  });
+
+  it("should bump the package", async () => {
+    const bumpType = "major";
+    mocked(getKeywords).mockReturnValueOnce({ hasErrors: false } as Keywords);
+    mocked(getGithubEventData).mockResolvedValueOnce({
+      hasErrors: false,
+      isMasterBranch: true,
+      messages: [],
+    });
+    mocked(getBumpType).mockReturnValueOnce(bumpType);
+
+    await actionWorkflow();
+
+    expect(setGitConfig).toHaveBeenCalledTimes(1);
     expect(updatePackage).toHaveBeenCalledTimes(1);
-    expect(updatePackage).toHaveBeenCalledWith(mask);
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith(isPublishRequested, publishFolder);
+    expect(updatePackage).toHaveBeenCalledWith(bumpType);
+    expect(setFailed).toHaveBeenCalledTimes(0);
+    expect(info).toHaveBeenCalledTimes(0);
   });
 
   it("should report on errors", async () => {
     const errorMessage = "Big bad error";
-    mocked(checkPreConditions).mockRejectedValueOnce(new Error(errorMessage));
+    mocked(getKeywords).mockImplementationOnce(() => {
+      throw new Error(errorMessage);
+    });
 
     await actionWorkflow();
 
@@ -78,6 +109,7 @@ describe("actionWorkflow function", () => {
       `Oh no! An error occured: ${errorMessage}`
     );
 
+    expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
   });
 });

@@ -8,50 +8,78 @@
 
 ## :zap: Description
 
-This github action mainly bumps package.json version depending on keywords present in last commit message. The updated package.json file is then pushed to the repo.
-Optionally, it can also publish the package to npm registry.
+This github action bumps package.json version after a commit is pushed or a pull request is merged to the repo master branch. The updated package.json file is then pushed to master. Optionally, it can create a tag as well.
+
+**Warning**: This action requires [the checkout action](https://github.com/actions/checkout) to work.
 
 ## :zap: Inputs
 
-### :diamonds: `keywords`
+### :diamonds: `major-keywords`
 
-Keywords triggering a version bump to look for in commits messages. The action expects three keywords separated by commas: one for a major bump, one for a minor bump and one for a patch bump.
+Commits messages starting with these keywords will trigger a major bump. Commas may be used to specify more than one keyword
 
-> Default value: **[Major],[Minor],[Patch]**
+> Default value: **[Major]**
 
-### :diamonds: `publish`
+### :diamonds: `minor-keywords`
 
-Specifies whether the package should be published to the npm registry. If set to `true`, the package will be published.
-Please note you will have to pass an automation token through the env variable `NODE_AUTH_TOKEN`, so that publish can be performed.
+Commits messages starting with these keywords will trigger a minor bump. Commas may be used to specify more than one keyword
+
+> Default value: **[Minor]**
+
+### :diamonds: `patch-keywords`
+
+Commits messages starting with these keywords will trigger a patch bump. Commas may be used to specify more than one keyword
+
+> Default value: **[Patch]**
+
+### :diamonds: `create-tag`
+
+If set to `true`, a tag will be created on the bump commit.
 
 > Default value: **false**
-
-### :diamonds: `publish-root`
-
-Defines the folder to publish. Typically, this would be the dist folder. The action runs the build script in order to make sure the transpiled payload will be ready for publish.
-
-> Default value: **dist**
 
 ## :zap: Usage
 
 ### :diamonds: Using defaults
 
-If the action runs on a commit whose message starts with either `[Major]`, `[Minor]` or `[Patch]`, the version will be bumped. No build followed by a publish will be performed.
+If the action runs on a commit whose message starts with either `[Major]`, `[Minor]` or `[Patch]`, the version will be bumped.
 
 ```yaml
-- uses: actions/bump-package@v1.2.5
+name: package bump
+on: [push]
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+    [...]
+    - uses: actions/bump-package@v2.0
 ```
 
 ### :diamonds: Using custom inputs
 
-The action will bump the package, build it and then publish it if the commit either starts with `BREAKING CHANGE:`, `feat` or `fix`. We are here using the secret `NPM_TOKEN` defined on the repo.
+The action will bump the package depending on commits present in the pull request when it is merged to the master branch. By priority order:
+
+- if any commit message contains `BREAKING CHANGE`, then there will be a major bump.
+- if any commit message contains `feat` or `minor` but none of the above, then there will be a minor bump.
+- if any commit message contains `fix` or `chore` but none of the above, then there will be a patch bump.
+
+A tag will also be created by the action.
 
 ```yaml
-- uses: actions/bump-package@v1.2.5
-  with:
-    keywords: BREAKING CHANGE:, feat, fix
-    publish: true
-    publish-root: dist
-  env:
-    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+name: package bump
+on: [push]
+jobs:
+  bump:
+  - name: Check out repository code
+    uses: actions/checkout@v2
+  [...]
+  - uses: actions/bump-package@v2.0
+    with:
+      major-keywords: BREAKING CHANGE
+      minor-keywords: feat,minor
+      patch-keywords: fix,chore
+      create-tag: true
 ```

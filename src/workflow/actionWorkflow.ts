@@ -1,30 +1,35 @@
-import { setFailed } from "@actions/core";
+import { info, setFailed } from "@actions/core";
 
-import { checkPreConditions } from "../logic/checkPreConditions";
-import { setConfig } from "../logic/git/setConfig";
+import { setGitConfig } from "../logic/git/setGitConfig";
+import { getGithubEventData } from "../logic/inputs/getGithubEventData";
+import { getKeywords } from "../logic/inputs/getKeywords";
+import { getBumpType } from "../logic/semver/getBumpType";
 import { updatePackage } from "../logic/updatePackage";
-import { publish } from "../logic/yarn/publish";
 
 export const actionWorkflow = async (): Promise<void> => {
   try {
-    const {
-      error,
-      isActionNeeded,
-      isPublishRequested,
-      publishFolder,
-      mask,
-    } = await checkPreConditions();
-
-    if (error) {
-      return setFailed(error);
+    const keywords = getKeywords();
+    if (keywords.hasErrors) {
+      return setFailed("Missing keywords");
     }
-    if (!isActionNeeded) {
+
+    const { messages, hasErrors, isMasterBranch } = await getGithubEventData();
+    if (hasErrors) {
+      return setFailed("Github event fetching failure");
+    }
+
+    if (!isMasterBranch) {
       return;
     }
 
-    await setConfig();
-    await updatePackage(mask);
-    await publish(isPublishRequested, publishFolder);
+    const bumpType = getBumpType(messages, keywords);
+    if (bumpType === "none") {
+      info("> Task cancelled: no version bump requested.");
+      return;
+    }
+
+    await setGitConfig();
+    await updatePackage(bumpType);
   } catch (error) {
     return setFailed(`Oh no! An error occured: ${error.message}`);
   }
