@@ -1,4 +1,6 @@
-import { debug, error, info } from "@actions/core";
+import { readFileSync } from "fs";
+
+import { error, info } from "@actions/core";
 
 import { GithubEvent } from "../../types/github";
 
@@ -11,7 +13,11 @@ export interface GithubEventData {
 export const getGithubEventData = async (): Promise<GithubEventData> => {
   let event: GithubEvent;
   try {
-    event = JSON.parse(process.env.GITHUB_EVENT_PATH as string);
+    event = JSON.parse(
+      readFileSync(process.env.GITHUB_EVENT_PATH as string, {
+        encoding: "utf8",
+      })
+    );
   } catch (err) {
     console.log("err", err);
     return { hasErrors: true } as GithubEventData;

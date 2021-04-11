@@ -1,14 +1,18 @@
+import { readFileSync } from "fs";
+import { mocked } from "ts-jest/utils";
+
 import { error, info } from "@actions/core";
 
 import { getGithubEventData } from "./getGithubEventData";
 
 jest.mock("@actions/core");
+jest.mock("fs");
 
 describe("getGithubEventData function", () => {
   beforeEach(() => jest.resetAllMocks());
 
   it("should send an error message when there is no github event", async () => {
-    process.env.GITHUB_EVENT_PATH = undefined;
+    mocked(readFileSync).mockReturnValueOnce("");
 
     const result = await getGithubEventData();
 
@@ -16,12 +20,14 @@ describe("getGithubEventData function", () => {
   });
 
   it("should send an error message when commit messages are missing", async () => {
-    process.env.GITHUB_EVENT_PATH = JSON.stringify({
-      ref: "refs/heads/pr",
-      repository: {
-        master_branch: "master",
-      },
-    });
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        ref: "refs/heads/pr",
+        repository: {
+          master_branch: "master",
+        },
+      })
+    );
 
     await getGithubEventData();
 
@@ -30,15 +36,17 @@ describe("getGithubEventData function", () => {
   });
 
   it("should send an error message if the master branch is missing in repository infos", async () => {
-    process.env.GITHUB_EVENT_PATH = JSON.stringify({
-      ref: "refs/heads/pr",
-      commits: [
-        {
-          message: "yolo",
-        },
-      ],
-      repository: {},
-    });
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        ref: "refs/heads/pr",
+        commits: [
+          {
+            message: "yolo",
+          },
+        ],
+        repository: {},
+      })
+    );
 
     await getGithubEventData();
 
@@ -49,14 +57,16 @@ describe("getGithubEventData function", () => {
   });
 
   it("should send an error message if repository infos are missing", async () => {
-    process.env.GITHUB_EVENT_PATH = JSON.stringify({
-      ref: "refs/heads/pr",
-      commits: [
-        {
-          message: "yolo",
-        },
-      ],
-    });
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        ref: "refs/heads/pr",
+        commits: [
+          {
+            message: "yolo",
+          },
+        ],
+      })
+    );
 
     await getGithubEventData();
 
@@ -67,16 +77,18 @@ describe("getGithubEventData function", () => {
   });
 
   it("should send an error message if the current branch cannot be defined", async () => {
-    process.env.GITHUB_EVENT_PATH = JSON.stringify({
-      commits: [
-        {
-          message: "yolo",
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        commits: [
+          {
+            message: "yolo",
+          },
+        ],
+        repository: {
+          master_branch: "master",
         },
-      ],
-      repository: {
-        master_branch: "master",
-      },
-    });
+      })
+    );
 
     await getGithubEventData();
 
@@ -87,20 +99,22 @@ describe("getGithubEventData function", () => {
   });
 
   it("should return relevant data", async () => {
-    process.env.GITHUB_EVENT_PATH = JSON.stringify({
-      ref: "refs/heads/master",
-      commits: [
-        {
-          message: "yolo",
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        ref: "refs/heads/master",
+        commits: [
+          {
+            message: "yolo",
+          },
+          {
+            message: "bro",
+          },
+        ],
+        repository: {
+          master_branch: "master",
         },
-        {
-          message: "bro",
-        },
-      ],
-      repository: {
-        master_branch: "master",
-      },
-    });
+      })
+    );
 
     const { isMasterBranch, messages, hasErrors } = await getGithubEventData();
 
@@ -113,20 +127,22 @@ describe("getGithubEventData function", () => {
   });
 
   it("should send an info when branch is not master", async () => {
-    process.env.GITHUB_EVENT_PATH = JSON.stringify({
-      ref: "refs/heads/pr",
-      commits: [
-        {
-          message: "yolo",
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        ref: "refs/heads/pr",
+        commits: [
+          {
+            message: "yolo",
+          },
+          {
+            message: "bro",
+          },
+        ],
+        repository: {
+          master_branch: "master",
         },
-        {
-          message: "bro",
-        },
-      ],
-      repository: {
-        master_branch: "master",
-      },
-    });
+      })
+    );
 
     await getGithubEventData();
 

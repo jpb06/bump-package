@@ -49,15 +49,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getGithubEventData = void 0;
+const fs_1 = __nccwpck_require__(5747);
 const core_1 = __nccwpck_require__(4693);
 const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     let event;
     try {
-        event = yield JSON.parse(process.env.GITHUB_EVENT_PATH);
+        event = JSON.parse(fs_1.readFileSync(process.env.GITHUB_EVENT_PATH, {
+            encoding: "utf8",
+        }));
     }
     catch (err) {
-        core_1.debug(err);
+        console.log("err", err);
         return { hasErrors: true };
     }
     const messages = Array.isArray(event.commits)
@@ -213,7 +216,7 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
             return core_1.setFailed(`> Error: Event data could not be retrieved.`);
         }
         const { messages, hasErrors, isMasterBranch } = yield getGithubEventData_1.getGithubEventData();
-        if (hasErrors) {
+        if (hasErrors === true) {
             return core_1.setFailed("> Error: Github event fetching failure");
         }
         if (!isMasterBranch) {
