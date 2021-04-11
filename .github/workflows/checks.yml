@@ -43,5 +43,3 @@ jobs:
 
       - name: Bump package
         uses: ./
-        with:
-          create-tag: false

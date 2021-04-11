@@ -8,7 +8,7 @@
 
 ## :zap: Description
 
-This github action bumps package.json version after a commit is pushed or a pull request is merged to the repo master branch. The updated package.json file is then pushed to master. Optionally, it can create a tag as well.
+This github action bumps package.json version after a commit is pushed or a pull request is merged to the repo master branch. The updated package.json file is then pushed to master and a tag is created.
 
 **Warning**: This action requires [the checkout action](https://github.com/actions/checkout) to work.
 
@@ -32,17 +32,11 @@ Commits messages starting with these keywords will trigger a patch bump. Commas 
 
 > Default value: **[Patch]**
 
-### :diamonds: `create-tag`
-
-If set to `true`, a tag will be created on the bump commit.
-
-> Default value: **false**
-
 ## :zap: Usage
 
 ### :diamonds: Using defaults
 
-If the action runs on a commit whose message starts with either `[Major]`, `[Minor]` or `[Patch]`, the version will be bumped.
+If the action runs on a commit whose message starts with either `[Major]:`, `[Minor]:` or `[Patch]:`, the version will be bumped and a tag will be created.
 
 ```yaml
 name: package bump
@@ -50,12 +44,11 @@ on: [push]
 jobs:
   bump:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
     [...]
-    - uses: actions/bump-package@v2.0
+    - uses: actions/bump-package@v2.1
 ```
 
 ### :diamonds: Using custom inputs
@@ -73,13 +66,13 @@ name: package bump
 on: [push]
 jobs:
   bump:
+    runs-on: ubuntu-latest
   - name: Check out repository code
     uses: actions/checkout@v2
   [...]
-  - uses: actions/bump-package@v2.0
+  - uses: actions/bump-package@v2.1
     with:
       major-keywords: BREAKING CHANGE
       minor-keywords: feat,minor
       patch-keywords: fix,chore
-      create-tag: true
 ```
