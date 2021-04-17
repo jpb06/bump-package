@@ -42,7 +42,7 @@ jobs:
         run: yarn build
 
       - name: Generating coverage badges
-        uses: jpb06/jest-badges-action@v1.1.0
+        uses: jpb06/jest-badges-action@v1.2.0
 
       - name: Bump package
         uses: ./
