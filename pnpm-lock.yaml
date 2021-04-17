@@ -18,11 +18,9 @@ specifiers:
   '@vercel/ncc': ^0.27.0
   eslint: ^7.24.0
   eslint-plugin-jest: ^24.3.5
-  husky: ^5.2.0
   jest: ^26.6.3
   jest-watch-typeahead: ^0.6.2
   mime-types: ^2.1.30
-  node-jest-badges: ^1.0.13
   rimraf: ^3.0.2
   ts-jest: ^26.5.4
   typescript: ^4.2.4
@@ -47,11 +45,9 @@ devDependencies:
   '@vercel/ncc': 0.27.0
   eslint: 7.24.0
   eslint-plugin-jest: 24.3.5_53c23ebd1e4a7a813a71449c0eb059df
-  husky: 5.2.0
   jest: 26.6.3
   jest-watch-typeahead: 0.6.2_jest@26.6.3
   mime-types: 2.1.30
-  node-jest-badges: 1.0.13
   rimraf: 3.0.2
   ts-jest: 26.5.4_jest@26.6.3+typescript@4.2.4
   typescript: 4.2.4
@@ -1092,11 +1088,6 @@ packages:
     resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
     dev: true
 
-  /at-least-node/1.0.0:
-    resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
-    engines: {node: '>= 4.0.0'}
-    dev: true
-
   /atob/2.1.2:
     resolution: {integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==}
     engines: {node: '>= 4.5.0'}
@@ -2005,16 +1996,6 @@ packages:
       map-cache: 0.2.2
     dev: true
 
-  /fs-extra/9.1.0:
-    resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
-    engines: {node: '>=10'}
-    dependencies:
-      at-least-node: 1.0.0
-      graceful-fs: 4.2.6
-      jsonfile: 6.1.0
-      universalify: 2.0.0
-    dev: true
-
   /fs.realpath/1.0.0:
     resolution: {integrity: sha1-FQStJSMVjKpA20onh8sBQRmU6k8=}
     dev: true
@@ -2234,12 +2215,6 @@ packages:
   /human-signals/1.1.1:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
     engines: {node: '>=8.12.0'}
-    dev: true
-
-  /husky/5.2.0:
-    resolution: {integrity: sha512-AM8T/auHXRBxlrfPVLKP6jt49GCM2Zz47m8G3FOMsLmTv8Dj/fKVWE0Rh2d4Qrvmy131xEsdQnb3OXRib67PGg==}
-    engines: {node: '>= 10'}
-    hasBin: true
     dev: true
 
   /iconv-lite/0.4.24:
@@ -3078,14 +3053,6 @@ packages:
       minimist: 1.2.5
     dev: true
 
-  /jsonfile/6.1.0:
-    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-    dependencies:
-      universalify: 2.0.0
-    optionalDependencies:
-      graceful-fs: 4.2.6
-    dev: true
-
   /jsprim/1.4.1:
     resolution: {integrity: sha1-MT5mvB5cwG5Di8G3SZwuXFastqI=}
     engines: {'0': node >=0.6.0}
@@ -3322,17 +3289,10 @@ packages:
   /node-fetch/2.6.1:
     resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
     engines: {node: 4.x || >=6.0.0}
+    dev: false
 
   /node-int64/0.4.0:
     resolution: {integrity: sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=}
-    dev: true
-
-  /node-jest-badges/1.0.13:
-    resolution: {integrity: sha512-xj+Msx39Rzf73g87aAsE8L0YgIZi0Dl7DLAgtrNXK73UEfe6m3vhrUnRWWoHRPYenV3zy/Od+fLa5ezURJD2Kg==}
-    hasBin: true
-    dependencies:
-      fs-extra: 9.1.0
-      node-fetch: 2.6.1
     dev: true
 
   /node-modules-regexp/1.0.0:
@@ -4352,11 +4312,6 @@ packages:
   /universalify/0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
     engines: {node: '>= 4.0.0'}
-    dev: true
-
-  /universalify/2.0.0:
-    resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
-    engines: {node: '>= 10.0.0'}
     dev: true
 
   /unset-value/1.0.0:
