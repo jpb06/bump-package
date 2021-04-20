@@ -32,6 +32,12 @@ Commits messages starting with these keywords will trigger a patch bump. Commas 
 
 > Default value: **[Patch]:**
 
+### :diamonds: `create-tag`
+
+Defines whether a tag should be created.
+
+> Default value: **false**
+
 ## :zap: Usage
 
 ### :diamonds: Using defaults
@@ -48,7 +54,7 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v2
     [...]
-    - uses: actions/bump-package@v2.1.2
+    - uses: actions/bump-package@v2.1.3
 ```
 
 ### :diamonds: Using custom inputs
@@ -70,7 +76,7 @@ jobs:
   - name: Check out repository code
     uses: actions/checkout@v2
   [...]
-  - uses: actions/bump-package@v2.1.2
+  - uses: actions/bump-package@v2.1.3
     with:
       major-keywords: BREAKING CHANGE
       minor-keywords: feat,minor

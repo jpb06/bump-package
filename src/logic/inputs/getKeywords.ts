@@ -14,7 +14,7 @@ export const getKeywords = (): Keywords => {
   const keywords = ["major", "minor", "patch"].map((type) => {
     const array = getInput(`${type}-keywords`).split(",");
     if (isEmpty(array)) {
-      error(`> Error: Expecting at least one ${type} keyword but got 0.`);
+      error(`> Expecting at least one ${type} keyword but got 0.`);
     }
     return array;
   });

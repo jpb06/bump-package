@@ -50,7 +50,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getGithubEventData = void 0;
 const fs_1 = __nccwpck_require__(5747);
-const core_1 = __nccwpck_require__(4693);
+const core_1 = __nccwpck_require__(5537);
 const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     let event;
@@ -98,13 +98,13 @@ exports.getGithubEventData = getGithubEventData;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getKeywords = void 0;
-const core_1 = __nccwpck_require__(4693);
+const core_1 = __nccwpck_require__(5537);
 const isEmpty = (array) => array.length === 1 && array[0].length === 0;
 const getKeywords = () => {
     const keywords = ["major", "minor", "patch"].map((type) => {
         const array = core_1.getInput(`${type}-keywords`).split(",");
         if (isEmpty(array)) {
-            core_1.error(`> Error: Expecting at least one ${type} keyword but got 0.`);
+            core_1.error(`> Expecting at least one ${type} keyword but got 0.`);
         }
         return array;
     });
@@ -202,7 +202,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.actionWorkflow = void 0;
-const core_1 = __nccwpck_require__(4693);
+const core_1 = __nccwpck_require__(5537);
 const setGitConfig_1 = __nccwpck_require__(2967);
 const getGithubEventData_1 = __nccwpck_require__(3963);
 const getKeywords_1 = __nccwpck_require__(6291);
@@ -212,7 +212,7 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const keywords = getKeywords_1.getKeywords();
         if (keywords.hasErrors) {
-            return core_1.setFailed(`> Error: Event data could not be retrieved.`);
+            return core_1.setFailed(`> Error: Invalid keyword inputs provided.`);
         }
         const { messages, hasErrors, isMasterBranch } = yield getGithubEventData_1.getGithubEventData();
         if (hasErrors === true) {
@@ -238,7 +238,7 @@ exports.actionWorkflow = actionWorkflow;
 
 /***/ }),
 
-/***/ 4012:
+/***/ 9378:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -252,7 +252,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const os = __importStar(__nccwpck_require__(2087));
-const utils_1 = __nccwpck_require__(5723);
+const utils_1 = __nccwpck_require__(9969);
 /**
  * Commands
  *
@@ -324,7 +324,7 @@ function escapeProperty(s) {
 
 /***/ }),
 
-/***/ 4693:
+/***/ 5537:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -346,9 +346,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const command_1 = __nccwpck_require__(4012);
-const file_command_1 = __nccwpck_require__(979);
-const utils_1 = __nccwpck_require__(5723);
+const command_1 = __nccwpck_require__(9378);
+const file_command_1 = __nccwpck_require__(5826);
+const utils_1 = __nccwpck_require__(9969);
 const os = __importStar(__nccwpck_require__(2087));
 const path = __importStar(__nccwpck_require__(5622));
 /**
@@ -434,6 +434,7 @@ exports.getInput = getInput;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
+    process.stdout.write(os.EOL);
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;
@@ -569,7 +570,7 @@ exports.getState = getState;
 
 /***/ }),
 
-/***/ 979:
+/***/ 5826:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -587,7 +588,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const fs = __importStar(__nccwpck_require__(5747));
 const os = __importStar(__nccwpck_require__(2087));
-const utils_1 = __nccwpck_require__(5723);
+const utils_1 = __nccwpck_require__(9969);
 function issueCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
     if (!filePath) {
@@ -605,7 +606,7 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
-/***/ 5723:
+/***/ 9969:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
