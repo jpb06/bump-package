@@ -1,7 +1,7 @@
 {
    "name": "bump-package",
    "description": "Bump package version based on keywords in head commit",
-   "version": "2.1.2",
+   "version": "2.1.3",
    "main": "lib/main.js",
    "repository": "https://github.com/jpb06/bump-package.git",
    "author": "jpb06 <jpb.06@outlook.com>",
