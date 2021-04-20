@@ -10,7 +10,7 @@ export const actionWorkflow = async (): Promise<void> => {
   try {
     const keywords = getKeywords();
     if (keywords.hasErrors) {
-      return setFailed(`> Error: Event data could not be retrieved.`);
+      return setFailed(`> Error: Invalid keyword inputs provided.`);
     }
 
     const { messages, hasErrors, isMasterBranch } = await getGithubEventData();
