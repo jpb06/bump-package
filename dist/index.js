@@ -127,16 +127,17 @@ exports.getKeywords = getKeywords;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getBumpType = void 0;
+const isBumpRequestedFor = (keywords, messages) => messages.some((mes) => keywords.some((key) => mes.startsWith(key)));
 const getBumpType = (messages, keywords) => {
-    const isMajorBump = messages.some((mes) => keywords.major.some((key) => mes.startsWith(key)));
+    const isMajorBump = isBumpRequestedFor(keywords.major, messages);
     if (isMajorBump) {
         return "major";
     }
-    const isMinorBump = messages.some((mes) => keywords.minor.some((key) => mes.startsWith(key)));
+    const isMinorBump = isBumpRequestedFor(keywords.minor, messages);
     if (isMinorBump) {
         return "minor";
     }
-    const isPatchBump = messages.some((mes) => keywords.patch.some((key) => mes.startsWith(key)));
+    const isPatchBump = isBumpRequestedFor(keywords.patch, messages);
     if (isPatchBump) {
         return "patch";
     }
@@ -215,7 +216,7 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
             return core_1.setFailed(`> Error: Invalid keyword inputs provided.`);
         }
         const { messages, hasErrors, isMasterBranch } = yield getGithubEventData_1.getGithubEventData();
-        if (hasErrors === true) {
+        if (hasErrors) {
             return core_1.setFailed("> Error: Github event fetching failure");
         }
         if (!isMasterBranch) {

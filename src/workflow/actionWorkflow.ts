@@ -14,7 +14,7 @@ export const actionWorkflow = async (): Promise<void> => {
     }
 
     const { messages, hasErrors, isMasterBranch } = await getGithubEventData();
-    if (hasErrors === true) {
+    if (hasErrors) {
       return setFailed("> Error: Github event fetching failure");
     }
 

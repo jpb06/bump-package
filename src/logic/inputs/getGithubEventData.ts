@@ -7,7 +7,7 @@ import { GithubEvent } from "../../types/github";
 export interface GithubEventData {
   messages: Array<string>;
   isMasterBranch: boolean;
-  hasErrors?: boolean;
+  hasErrors: boolean;
 }
 
 export const getGithubEventData = async (): Promise<GithubEventData> => {
