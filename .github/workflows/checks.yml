@@ -24,7 +24,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: "14.x"
+          node-version: '14.x'
 
       - name: Setting yarn version
         run: yarn policies set-version 1.22.10
@@ -42,7 +42,7 @@ jobs:
         run: yarn build
 
       - name: Generating coverage badges
-        uses: jpb06/jest-badges-action@v1.2.0
+        uses: jpb06/jest-badges-action@v1.5.0
 
       - name: Bump package
         uses: ./
