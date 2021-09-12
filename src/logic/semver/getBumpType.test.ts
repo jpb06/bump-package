@@ -7,7 +7,7 @@ describe("getBumpType function", () => {
       major: ["oh,bah"],
       minor: ["baz"],
       patch: ["topcool", "nonono"],
-      hasErrors: false,
+      shouldDefaultToPatch: false,
     };
     const result = getBumpType(messages, keywords);
 
@@ -20,7 +20,7 @@ describe("getBumpType function", () => {
       major: ["oh", "bah"],
       minor: ["baz"],
       patch: ["topcool", "nonono"],
-      hasErrors: false,
+      shouldDefaultToPatch: false,
     };
     const result = getBumpType(messages, keywords);
 
@@ -33,7 +33,7 @@ describe("getBumpType function", () => {
       major: ["oh,bah"],
       minor: ["baz", "bro"],
       patch: ["topcool", "nonono"],
-      hasErrors: false,
+      shouldDefaultToPatch: false,
     };
     const result = getBumpType(messages, keywords);
 
@@ -46,10 +46,36 @@ describe("getBumpType function", () => {
       major: ["oh,bah"],
       minor: ["baz"],
       patch: ["cool", "nonono"],
-      hasErrors: false,
+      shouldDefaultToPatch: false,
     };
     const result = getBumpType(messages, keywords);
 
     expect(result).toBe("patch");
+  });
+
+  it("should default to 'patch'", () => {
+    const messages = ["yolo", "bro", "cool"];
+    const keywords = {
+      major: ["oh,bah"],
+      minor: ["baz"],
+      patch: [],
+      shouldDefaultToPatch: true,
+    };
+    const result = getBumpType(messages, keywords);
+
+    expect(result).toBe("patch");
+  });
+
+  it("should not default to 'patch' if a higher keyword is present", () => {
+    const messages = ["yolo", "bro", "cool", "baz"];
+    const keywords = {
+      major: ["oh,bah"],
+      minor: ["baz"],
+      patch: [],
+      shouldDefaultToPatch: true,
+    };
+    const result = getBumpType(messages, keywords);
+
+    expect(result).toBe("minor");
   });
 });

@@ -7,7 +7,7 @@ const isBumpRequestedFor = (keywords: Array<string>, messages: Array<string>) =>
 
 export const getBumpType = (
   messages: Array<string>,
-  keywords: Keywords
+  keywords: Omit<Keywords, "areKeywordsInvalid">
 ): BumpType => {
   const isMajorBump = isBumpRequestedFor(keywords.major, messages);
   if (isMajorBump) {
@@ -17,6 +17,10 @@ export const getBumpType = (
   const isMinorBump = isBumpRequestedFor(keywords.minor, messages);
   if (isMinorBump) {
     return "minor";
+  }
+
+  if (keywords.shouldDefaultToPatch) {
+    return "patch";
   }
 
   const isPatchBump = isBumpRequestedFor(keywords.patch, messages);

@@ -33,6 +33,12 @@ Commits messages starting with these keywords will trigger a patch bump. Commas 
 
 > Default value: **[Patch]:**
 
+### :diamonds: `should-default-to-patch`
+
+If no keywords are present in branch commits, bump anyway by doing a patch.
+
+> Default value: **false**
+
 ## :zap: Usage
 
 ### :diamonds: Using defaults

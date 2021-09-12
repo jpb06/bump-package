@@ -9,7 +9,7 @@ describe("getKeywords function", () => {
   beforeEach(() => jest.resetAllMocks());
 
   it("should send an error message three times", () => {
-    mockGetInputKeywords("", "", "");
+    mockGetInputKeywords("false", "", "", "");
 
     const result = getKeywords();
 
@@ -30,11 +30,12 @@ describe("getKeywords function", () => {
     expect(result.major).toStrictEqual([""]);
     expect(result.minor).toStrictEqual([""]);
     expect(result.patch).toStrictEqual([""]);
-    expect(result.hasErrors).toBe(true);
+    expect(result.shouldDefaultToPatch).toBe(false);
+    expect(result.areKeywordsInvalid).toBe(true);
   });
 
   it("should return inputs", () => {
-    mockGetInputKeywords("yolo,bro", "cool,man,fun", "super");
+    mockGetInputKeywords("false", "yolo,bro", "cool,man,fun", "super");
 
     const result = getKeywords();
 
@@ -42,6 +43,20 @@ describe("getKeywords function", () => {
     expect(result.major).toStrictEqual(["yolo", "bro"]);
     expect(result.minor).toStrictEqual(["cool", "man", "fun"]);
     expect(result.patch).toStrictEqual(["super"]);
-    expect(result.hasErrors).toBe(false);
+    expect(result.shouldDefaultToPatch).toBe(false);
+    expect(result.areKeywordsInvalid).toBe(false);
+  });
+
+  it("should ignore patch keywords validation is defaulting to patch", () => {
+    mockGetInputKeywords("true", "yolo,bro", "cool,man,fun", "");
+
+    const result = getKeywords();
+
+    expect(error).toHaveBeenCalledTimes(0);
+    expect(result.major).toStrictEqual(["yolo", "bro"]);
+    expect(result.minor).toStrictEqual(["cool", "man", "fun"]);
+    expect(result.patch).toStrictEqual([""]);
+    expect(result.shouldDefaultToPatch).toBe(true);
+    expect(result.areKeywordsInvalid).toBe(false);
   });
 });

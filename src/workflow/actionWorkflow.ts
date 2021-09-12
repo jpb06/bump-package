@@ -8,29 +8,34 @@ import { updatePackage } from "../logic/updatePackage";
 
 export const actionWorkflow = async (): Promise<void> => {
   try {
-    const keywords = getKeywords();
-    if (keywords.hasErrors) {
-      return setFailed(`> Error: Invalid keyword inputs provided.`);
-    }
-
-    const { messages, hasErrors, isMasterBranch } = await getGithubEventData();
+    const { messages, hasErrors, isDefaultBranch } = await getGithubEventData();
     if (hasErrors) {
       return setFailed("> Error: Github event fetching failure");
     }
 
-    if (!isMasterBranch) {
+    if (!isDefaultBranch) {
       return;
+    }
+
+    const { areKeywordsInvalid, ...keywords } = getKeywords();
+    if (areKeywordsInvalid) {
+      return setFailed(`> Error: Invalid keyword inputs provided.`);
     }
 
     const bumpType = getBumpType(messages, keywords);
     if (bumpType === "none") {
-      info("> Task cancelled: no version bump requested.");
-      return;
+      return info("> Task cancelled: no version bump requested.");
     }
 
     await setGitConfig();
     await updatePackage(bumpType);
   } catch (error) {
-    return setFailed(`Oh no! An error occured: ${error.message}`);
+    if (error instanceof Error) {
+      return setFailed(
+        `Oh no! An error occured: ${(error as { message: string }).message}`
+      );
+    }
+
+    return setFailed(`Oh no! An unknown error occured`);
   }
 };
