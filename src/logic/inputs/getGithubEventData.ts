@@ -6,7 +6,7 @@ import { GithubEvent } from "../../types/github";
 
 export interface GithubEventData {
   messages: Array<string>;
-  isMasterBranch: boolean;
+  isDefaultBranch: boolean;
   hasErrors: boolean;
 }
 
@@ -25,7 +25,7 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
   const messages = Array.isArray(event.commits)
     ? event.commits.map((el) => el.message)
     : [];
-  const masterBranch = event.repository?.master_branch;
+  const defaultBranch = event.repository?.default_branch;
   const currentBranch = event.ref?.split("/").slice(2).join("/");
 
   let hasErrors = false;
@@ -33,8 +33,8 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     error(`No commits found in the github event.`);
     hasErrors = true;
   }
-  if (!masterBranch || masterBranch.length === 0) {
-    error(`Unable to get master branch from github event.`);
+  if (!defaultBranch || defaultBranch.length === 0) {
+    error(`Unable to get default branch from github event.`);
     hasErrors = true;
   }
   if (!currentBranch || currentBranch.length === 0) {
@@ -42,10 +42,10 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     hasErrors = true;
   }
 
-  const isMasterBranch = currentBranch === masterBranch;
-  if (!isMasterBranch) {
-    info(`> Task cancelled: not running on ${masterBranch} branch.`);
+  const isDefaultBranch = currentBranch === defaultBranch;
+  if (!isDefaultBranch) {
+    info(`> Task cancelled: not running on ${defaultBranch} branch.`);
   }
 
-  return { messages, isMasterBranch, hasErrors };
+  return { messages, isDefaultBranch, hasErrors };
 };

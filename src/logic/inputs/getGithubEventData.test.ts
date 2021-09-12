@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
-import { mocked } from "ts-jest/utils";
 
 import { error, info } from "@actions/core";
+import { mocked } from "ts-jest/utils";
 
 import { getGithubEventData } from "./getGithubEventData";
 
@@ -24,7 +24,7 @@ describe("getGithubEventData function", () => {
       JSON.stringify({
         ref: "refs/heads/pr",
         repository: {
-          master_branch: "master",
+          default_branch: "master",
         },
       })
     );
@@ -35,7 +35,7 @@ describe("getGithubEventData function", () => {
     expect(error).toHaveBeenCalledWith(`No commits found in the github event.`);
   });
 
-  it("should send an error message if the master branch is missing in repository infos", async () => {
+  it("should send an error message if the default branch is missing in repository infos", async () => {
     mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: "refs/heads/pr",
@@ -52,7 +52,7 @@ describe("getGithubEventData function", () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `Unable to get master branch from github event.`
+      `Unable to get default branch from github event.`
     );
   });
 
@@ -72,7 +72,7 @@ describe("getGithubEventData function", () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `Unable to get master branch from github event.`
+      `Unable to get default branch from github event.`
     );
   });
 
@@ -85,7 +85,7 @@ describe("getGithubEventData function", () => {
           },
         ],
         repository: {
-          master_branch: "master",
+          default_branch: "master",
         },
       })
     );
@@ -111,17 +111,17 @@ describe("getGithubEventData function", () => {
           },
         ],
         repository: {
-          master_branch: "master",
+          default_branch: "master",
         },
       })
     );
 
-    const { isMasterBranch, messages, hasErrors } = await getGithubEventData();
+    const { isDefaultBranch, messages, hasErrors } = await getGithubEventData();
 
     expect(error).toHaveBeenCalledTimes(0);
 
     expect(hasErrors).toBeFalsy();
-    expect(isMasterBranch).toBe(true);
+    expect(isDefaultBranch).toBe(true);
     expect(messages).toStrictEqual(["yolo", "bro"]);
     expect(info).toHaveBeenCalledTimes(0);
   });
@@ -139,7 +139,7 @@ describe("getGithubEventData function", () => {
           },
         ],
         repository: {
-          master_branch: "master",
+          default_branch: "master",
         },
       })
     );
