@@ -11,8 +11,8 @@ inputs:
   patch-keywords:
     description: "Keywords triggering a patch bump, separated by commas if more than one."
     default: "[Patch]:"
-  create-tag:
-    description: "Whether a tag should be created for the new version."
+  should-default-to-patch:
+    description: "If no keywords are present in the commits, bump anyway by doing a patch"
     default: "false"
 
 runs:
