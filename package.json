@@ -9,7 +9,7 @@
    "scripts": {
       "cleanDist": "rimraf ./dist && rimraf ./lib",
       "build": "yarn cleanDist && tsc --project tsconfig.prod.json && ncc build",
-      "lint": "eslint src/**/*.ts",
+      "lint": "eslint ./src/**/*.ts",
       "test": "jest",
       "test:dev": "jest --watchAll --coverage",
       "test:ci": "jest --ci --runInBand --coverage"
