@@ -1,8 +1,8 @@
-import { readFileSync } from "fs";
+import { readFileSync } from 'fs';
 
-import { error, info } from "@actions/core";
+import { error, info } from '@actions/core';
 
-import { GithubEvent } from "../../types/github";
+import { GithubEvent } from '../../types/github';
 
 export interface GithubEventData {
   messages: Array<string>;
@@ -15,8 +15,8 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
   try {
     event = JSON.parse(
       readFileSync(process.env.GITHUB_EVENT_PATH as string, {
-        encoding: "utf8",
-      })
+        encoding: 'utf8',
+      }),
     );
   } catch (err) {
     return { hasErrors: true } as GithubEventData;
@@ -26,7 +26,7 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     ? event.commits.map((el) => el.message)
     : [];
   const defaultBranch = event.repository?.default_branch;
-  const currentBranch = event.ref?.split("/").slice(2).join("/");
+  const currentBranch = event.ref?.split('/').slice(2).join('/');
 
   let hasErrors = false;
   if (messages.length === 0) {

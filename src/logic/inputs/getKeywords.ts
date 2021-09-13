@@ -1,4 +1,4 @@
-import { error, getInput } from "@actions/core";
+import { error, getInput } from '@actions/core';
 
 export interface Keywords {
   major: Array<string>;
@@ -12,9 +12,9 @@ const isEmpty = (array: Array<string>) =>
   array.length === 1 && array[0].length === 0;
 
 export const getKeywords = (): Keywords => {
-  const shouldDefaultToPatch = getInput(`should-default-to-patch`) === "true";
-  const keywords = ["major", "minor", "patch"].map((type, index) => {
-    const array = getInput(`${type}-keywords`).split(",");
+  const shouldDefaultToPatch = getInput(`should-default-to-patch`) === 'true';
+  const keywords = ['major', 'minor', 'patch'].map((type, index) => {
+    const array = getInput(`${type}-keywords`).split(',');
     if (
       (index === 2 && !shouldDefaultToPatch && isEmpty(array)) ||
       (index !== 2 && isEmpty(array))
