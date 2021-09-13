@@ -9,36 +9,32 @@
    "scripts": {
       "cleanDist": "rimraf ./dist && rimraf ./lib",
       "build": "yarn cleanDist && tsc --project tsconfig.prod.json && ncc build",
-      "lint": "eslint src/**/*.ts",
+      "lint": "eslint ./src/**/*.ts",
       "test": "jest",
       "test:dev": "jest --watchAll --coverage",
-      "test:ci": "jest --ci --runInBand --coverage"
+      "test:ci": "jest --ci --coverage"
    },
    "dependencies": {
       "@actions/core": "^1.4.0",
       "@actions/exec": "^1.1.0",
-      "@actions/github": "^4.0.0"
+      "@actions/github": "^5.0.0"
    },
    "devDependencies": {
-      "@jest/types": "^26.6.2",
-      "@octokit/types": "^6.18.1",
-      "@types/babel__core": "^7.1.15",
-      "@types/graceful-fs": "^4.1.5",
-      "@types/jest": "^26.0.24",
-      "@types/node": "^14.17.5",
-      "@types/normalize-package-data": "^2.4.1",
-      "@types/prettier": "^2.3.2",
-      "@types/stack-utils": "^2.0.1",
-      "@typescript-eslint/eslint-plugin": "^4.28.2",
-      "@typescript-eslint/parser": "^4.28.2",
-      "@vercel/ncc": "^0.27.0",
-      "eslint": "^7.30.0",
+      "@types/jest": "^27.0.1",
+      "@types/node": "^16.9.1",
+      "@typescript-eslint/eslint-plugin": "^4.29.3",
+      "@typescript-eslint/parser": "^4.29.3",
+      "@vercel/ncc": "^0.31.0",
+      "eslint": "^7.32.0",
+      "eslint-config-prettier": "^8.3.0",
+      "eslint-plugin-import": "^2.24.1",
       "eslint-plugin-jest": "^24.3.6",
-      "jest": "^26.6.3",
+      "eslint-plugin-prettier": "^4.0.0",
+      "jest": "^27.2.0",
       "jest-watch-typeahead": "^0.6.4",
-      "mime-types": "^2.1.31",
+      "prettier": "^2.4.0",
       "rimraf": "^3.0.2",
-      "ts-jest": "^26.5.6",
+      "ts-jest": "^27.0.5",
       "typescript": "^4.3.5"
    }
 }

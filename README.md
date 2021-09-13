@@ -2,6 +2,12 @@
 
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/jpb06/bump-package)
 ![Code quality](https://img.shields.io/codefactor/grade/github/jpb06/bump-package?logo=codefactor)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=security_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=code_smells)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=coverage)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 ![Total coverage](./badges/coverage-global%20coverage.svg)
 ![Github workflow](https://img.shields.io/github/workflow/status/jpb06/bump-package/checks?label=last%20workflow&logo=github-actions)
 ![Last commit](https://img.shields.io/github/last-commit/jpb06/bump-package?logo=git)
@@ -32,6 +38,12 @@ Commits messages starting with these keywords will trigger a minor bump. Commas 
 Commits messages starting with these keywords will trigger a patch bump. Commas may be used to specify more than one keyword
 
 > Default value: **[Patch]:**
+
+### :diamonds: `should-default-to-patch`
+
+If no keywords are present in branch commits, bump anyway by doing a patch.
+
+> Default value: **false**
 
 ## :zap: Usage
 
@@ -77,3 +89,34 @@ jobs:
       minor-keywords: feat,minor
       patch-keywords: fix,chore
 ```
+
+### :diamonds: Defaulting to patch bump
+
+You may want to bump the package version even if no keywords were present in the commits list (if merging a PR) or in the last commit (if pushing to master branch).
+
+By setting `should-default-to-patch` to `true` you can trigger this behavior. Here is an example:
+
+```yaml
+name: package bump
+on: [push]
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+  - name: Check out repository code
+    uses: actions/checkout@v2
+  [...]
+  - uses: actions/bump-package@latest
+    with:
+      major-keywords: BREAKING CHANGE
+      minor-keywords: feat,minor
+      patch-keywords: fix,chore
+      should-default-to-patch: true
+```
+
+Now let's imagine I'm running this action when merging a PR with the following commits:
+
+- cool
+- obnoxios commit message
+- hey
+
+Since no keywords were detected, the action will bump the package version with a patch (1.0.0 -> 1.0.1).
