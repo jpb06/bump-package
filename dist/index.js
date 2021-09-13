@@ -20,10 +20,10 @@ exports.setGitConfig = void 0;
 const exec_1 = __nccwpck_require__(1514);
 const github_1 = __nccwpck_require__(5438);
 const setGitConfig = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, exec_1.exec)("git config", ["--global", "user.name", github_1.context.actor]);
-    yield (0, exec_1.exec)("git config", [
-        "--global",
-        "user.email",
+    yield (0, exec_1.exec)('git config', ['--global', 'user.name', github_1.context.actor]);
+    yield (0, exec_1.exec)('git config', [
+        '--global',
+        'user.email',
         `${github_1.context.actor}@users.noreply.github.com`,
     ]);
 });
@@ -55,7 +55,7 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
     let event;
     try {
         event = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, {
-            encoding: "utf8",
+            encoding: 'utf8',
         }));
     }
     catch (err) {
@@ -65,7 +65,7 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
         ? event.commits.map((el) => el.message)
         : [];
     const defaultBranch = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.default_branch;
-    const currentBranch = (_b = event.ref) === null || _b === void 0 ? void 0 : _b.split("/").slice(2).join("/");
+    const currentBranch = (_b = event.ref) === null || _b === void 0 ? void 0 : _b.split('/').slice(2).join('/');
     let hasErrors = false;
     if (messages.length === 0) {
         (0, core_1.error)(`No commits found in the github event.`);
@@ -100,9 +100,9 @@ exports.getKeywords = void 0;
 const core_1 = __nccwpck_require__(2186);
 const isEmpty = (array) => array.length === 1 && array[0].length === 0;
 const getKeywords = () => {
-    const shouldDefaultToPatch = (0, core_1.getInput)(`should-default-to-patch`) === "true";
-    const keywords = ["major", "minor", "patch"].map((type, index) => {
-        const array = (0, core_1.getInput)(`${type}-keywords`).split(",");
+    const shouldDefaultToPatch = (0, core_1.getInput)(`should-default-to-patch`) === 'true';
+    const keywords = ['major', 'minor', 'patch'].map((type, index) => {
+        const array = (0, core_1.getInput)(`${type}-keywords`).split(',');
         if ((index === 2 && !shouldDefaultToPatch && isEmpty(array)) ||
             (index !== 2 && isEmpty(array))) {
             (0, core_1.error)(`> Expecting at least one ${type} keyword but got 0.`);
@@ -136,20 +136,20 @@ const isBumpRequestedFor = (keywords, messages) => messages.some((mes) => keywor
 const getBumpType = (messages, keywords) => {
     const isMajorBump = isBumpRequestedFor(keywords.major, messages);
     if (isMajorBump) {
-        return "major";
+        return 'major';
     }
     const isMinorBump = isBumpRequestedFor(keywords.minor, messages);
     if (isMinorBump) {
-        return "minor";
+        return 'minor';
     }
     if (keywords.shouldDefaultToPatch) {
-        return "patch";
+        return 'patch';
     }
     const isPatchBump = isBumpRequestedFor(keywords.patch, messages);
     if (isPatchBump) {
-        return "patch";
+        return 'patch';
     }
-    return "none";
+    return 'none';
 };
 exports.getBumpType = getBumpType;
 
@@ -174,9 +174,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updatePackage = void 0;
 const exec_1 = __nccwpck_require__(1514);
 const updatePackage = (bumpType) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, exec_1.exec)("npm version", [bumpType, "--force"]);
-    yield (0, exec_1.exec)("git push");
-    yield (0, exec_1.exec)("git push", ["--tags"]);
+    yield (0, exec_1.exec)('npm version', [bumpType, '--force']);
+    yield (0, exec_1.exec)('git push');
+    yield (0, exec_1.exec)('git push', ['--tags']);
 });
 exports.updatePackage = updatePackage;
 
@@ -220,7 +220,7 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { messages, hasErrors, isDefaultBranch } = yield (0, getGithubEventData_1.getGithubEventData)();
         if (hasErrors) {
-            return (0, core_1.setFailed)("> Error: Github event fetching failure");
+            return (0, core_1.setFailed)('> Error: Github event fetching failure');
         }
         if (!isDefaultBranch) {
             return;
@@ -230,8 +230,8 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
             return (0, core_1.setFailed)(`> Error: Invalid keyword inputs provided.`);
         }
         const bumpType = (0, getBumpType_1.getBumpType)(messages, keywords);
-        if (bumpType === "none") {
-            return (0, core_1.info)("> Task cancelled: no version bump requested.");
+        if (bumpType === 'none') {
+            return (0, core_1.info)('> Task cancelled: no version bump requested.');
         }
         yield (0, setGitConfig_1.setGitConfig)();
         yield (0, updatePackage_1.updatePackage)(bumpType);
