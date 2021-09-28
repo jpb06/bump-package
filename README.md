@@ -61,7 +61,7 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v2
     [...]
-    - uses: actions/bump-package@latest
+    - uses: jpb06/bump-package@latest
 ```
 
 ### :diamonds: Using custom inputs
@@ -83,7 +83,7 @@ jobs:
   - name: Check out repository code
     uses: actions/checkout@v2
   [...]
-  - uses: actions/bump-package@latest
+  - uses: jpb06/bump-package@latest
     with:
       major-keywords: BREAKING CHANGE
       minor-keywords: feat,minor
@@ -105,7 +105,7 @@ jobs:
   - name: Check out repository code
     uses: actions/checkout@v2
   [...]
-  - uses: actions/bump-package@latest
+  - uses: jpb06/bump-package@latest
     with:
       major-keywords: BREAKING CHANGE
       minor-keywords: feat,minor
