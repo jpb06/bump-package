@@ -1,11 +1,12 @@
 name: Coverage badges generation & publish
+
 on:
   push:
     branches:
       - master
+
 jobs:
   bump-version:
-    name: Install dependencies
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
