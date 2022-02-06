@@ -9,7 +9,7 @@
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=coverage)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 ![Total coverage](./badges/coverage-global%20coverage.svg)
-![Github workflow](https://img.shields.io/github/workflow/status/jpb06/bump-package/Main%20workflow?label=last%20workflow&logo=github-actions)
+![Github workflow](https://img.shields.io/github/workflow/status/jpb06/bump-package/Tests?label=last%20workflow&logo=github-actions)
 ![Last commit](https://img.shields.io/github/last-commit/jpb06/bump-package?logo=git)
 ![Commits activity](https://img.shields.io/github/commit-activity/m/jpb06/bump-package?logo=github)
 
