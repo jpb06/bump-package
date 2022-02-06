@@ -1,5 +1,5 @@
 import { getInput } from '@actions/core';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 export const mockGetInputKeywords = (
   shouldDefaultToPatch: 'true' | 'false',

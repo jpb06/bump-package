@@ -30,21 +30,21 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
 
   let hasErrors = false;
   if (messages.length === 0) {
-    error(`No commits found in the github event.`);
+    error(`🔶 No commits found in the github event.`);
     hasErrors = true;
   }
   if (!defaultBranch || defaultBranch.length === 0) {
-    error(`Unable to get default branch from github event.`);
+    error(`🔶 Unable to get default branch from github event.`);
     hasErrors = true;
   }
   if (!currentBranch || currentBranch.length === 0) {
-    error(`Unable to get current branch from github event.`);
+    error(`🔶 Unable to get current branch from github event.`);
     hasErrors = true;
   }
 
   const isDefaultBranch = currentBranch === defaultBranch;
   if (!isDefaultBranch) {
-    info(`> Task cancelled: not running on ${defaultBranch} branch.`);
+    info(`🔶 Task cancelled: not running on ${defaultBranch} branch.`);
   }
 
   return { messages, isDefaultBranch, hasErrors };

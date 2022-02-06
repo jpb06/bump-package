@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 
 import { error, info } from '@actions/core';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import { getGithubEventData } from './getGithubEventData';
 
@@ -32,7 +32,9 @@ describe('getGithubEventData function', () => {
     await getGithubEventData();
 
     expect(error).toHaveBeenCalledTimes(1);
-    expect(error).toHaveBeenCalledWith(`No commits found in the github event.`);
+    expect(error).toHaveBeenCalledWith(
+      `🔶 No commits found in the github event.`,
+    );
   });
 
   it('should send an error message if the default branch is missing in repository infos', async () => {
@@ -52,7 +54,7 @@ describe('getGithubEventData function', () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `Unable to get default branch from github event.`,
+      `🔶 Unable to get default branch from github event.`,
     );
   });
 
@@ -72,7 +74,7 @@ describe('getGithubEventData function', () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `Unable to get default branch from github event.`,
+      `🔶 Unable to get default branch from github event.`,
     );
   });
 
@@ -94,7 +96,7 @@ describe('getGithubEventData function', () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `Unable to get current branch from github event.`,
+      `🔶 Unable to get current branch from github event.`,
     );
   });
 
@@ -148,7 +150,7 @@ describe('getGithubEventData function', () => {
 
     expect(info).toHaveBeenCalledTimes(1);
     expect(info).toHaveBeenCalledWith(
-      `> Task cancelled: not running on master branch.`,
+      `🔶 Task cancelled: not running on master branch.`,
     );
   });
 });
