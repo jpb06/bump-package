@@ -8,6 +8,7 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=coverage)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 ![Total coverage](./badges/coverage-jest%20coverage.svg)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=code_smells)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=bugs)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
