@@ -1,5 +1,5 @@
 import { info, setFailed } from '@actions/core';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import { setGitConfig } from '../logic/git/setGitConfig';
 import {
@@ -82,7 +82,7 @@ describe('actionWorkflow function', () => {
     expect(setFailed).toHaveBeenCalledTimes(0);
     expect(info).toHaveBeenCalledTimes(1);
     expect(info).toHaveBeenCalledWith(
-      '> Task cancelled: no version bump requested.',
+      '🔶 Task cancelled: no version bump requested.',
     );
   });
 
@@ -117,7 +117,7 @@ describe('actionWorkflow function', () => {
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
-      `Oh no! An error occured: ${errorMessage}`,
+      `🔶 Oh no! An error occured: ${errorMessage}`,
     );
 
     expect(setGitConfig).toHaveBeenCalledTimes(0);
@@ -133,7 +133,9 @@ describe('actionWorkflow function', () => {
     await actionWorkflow();
 
     expect(setFailed).toHaveBeenCalledTimes(1);
-    expect(setFailed).toHaveBeenCalledWith(`Oh no! An unknown error occured`);
+    expect(setFailed).toHaveBeenCalledWith(
+      `🔶 Oh no! An unknown error occured`,
+    );
 
     expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);

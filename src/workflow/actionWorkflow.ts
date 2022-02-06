@@ -10,7 +10,7 @@ export const actionWorkflow = async (): Promise<void> => {
   try {
     const { messages, hasErrors, isDefaultBranch } = await getGithubEventData();
     if (hasErrors) {
-      return setFailed('> Error: Github event fetching failure');
+      return setFailed('🔶 Error: Github event fetching failure');
     }
 
     if (!isDefaultBranch) {
@@ -19,12 +19,12 @@ export const actionWorkflow = async (): Promise<void> => {
 
     const { areKeywordsInvalid, ...keywords } = getKeywords();
     if (areKeywordsInvalid) {
-      return setFailed(`> Error: Invalid keyword inputs provided.`);
+      return setFailed(`🔶 Error: Invalid keyword inputs provided.`);
     }
 
     const bumpType = getBumpType(messages, keywords);
     if (bumpType === 'none') {
-      return info('> Task cancelled: no version bump requested.');
+      return info('🔶 Task cancelled: no version bump requested.');
     }
 
     await setGitConfig();
@@ -32,10 +32,10 @@ export const actionWorkflow = async (): Promise<void> => {
   } catch (error) {
     if (error instanceof Error) {
       return setFailed(
-        `Oh no! An error occured: ${(error as { message: string }).message}`,
+        `🔶 Oh no! An error occured: ${(error as { message: string }).message}`,
       );
     }
 
-    return setFailed(`Oh no! An unknown error occured`);
+    return setFailed(`🔶 Oh no! An unknown error occured`);
   }
 };
