@@ -1,17 +1,20 @@
 # bump-package
 
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/jpb06/bump-package)
-![Code quality](https://img.shields.io/codefactor/grade/github/jpb06/bump-package?logo=codefactor)
+![Github workflow](https://img.shields.io/github/workflow/status/jpb06/bump-package/Tests?label=last%20workflow&logo=github-actions)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=security_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=code_smells)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=coverage)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
-![Total coverage](./badges/coverage-global%20coverage.svg)
-![Github workflow](https://img.shields.io/github/workflow/status/jpb06/bump-package/Tests?label=last%20workflow&logo=github-actions)
+![Total coverage](./badges/coverage-jest%20coverage.svg)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=code_smells)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=bugs)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 ![Last commit](https://img.shields.io/github/last-commit/jpb06/bump-package?logo=git)
-![Commits activity](https://img.shields.io/github/commit-activity/m/jpb06/bump-package?logo=github)
 
 ## :zap: Description
 
