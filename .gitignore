@@ -4,3 +4,7 @@ lib/
 node_modules/
 
 .pnpm-debug.log
+
+yarn-error.log
+.yarnrc
+.yarn/releases/*

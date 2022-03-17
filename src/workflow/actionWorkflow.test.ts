@@ -1,4 +1,4 @@
-import { info, setFailed } from '@actions/core';
+import { info, setFailed, setOutput } from '@actions/core';
 import { mocked } from 'jest-mock';
 
 import { setGitConfig } from '../logic/git/setGitConfig';
@@ -31,6 +31,7 @@ describe('actionWorkflow function', () => {
     expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
     expect(setFailed).toHaveBeenCalledTimes(1);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
 
   it('should drop the task if the action is not run on default branch', async () => {
@@ -45,6 +46,7 @@ describe('actionWorkflow function', () => {
     expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
     expect(setFailed).toHaveBeenCalledTimes(0);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
 
   it('should fail the task if some keywords are missing', async () => {
@@ -62,6 +64,7 @@ describe('actionWorkflow function', () => {
     expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
     expect(setFailed).toHaveBeenCalledTimes(1);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
 
   it('should drop the task if no bump has been requested', async () => {
@@ -84,6 +87,7 @@ describe('actionWorkflow function', () => {
     expect(info).toHaveBeenCalledWith(
       '🔶 Task cancelled: no version bump requested.',
     );
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
 
   it('should bump the package', async () => {
@@ -105,6 +109,7 @@ describe('actionWorkflow function', () => {
     expect(updatePackage).toHaveBeenCalledWith(bumpType);
     expect(setFailed).toHaveBeenCalledTimes(0);
     expect(info).toHaveBeenCalledTimes(0);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', true);
   });
 
   it('should report on errors', async () => {
@@ -122,6 +127,7 @@ describe('actionWorkflow function', () => {
 
     expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
 
   it('should display a generic error when no message is available', async () => {
@@ -139,5 +145,6 @@ describe('actionWorkflow function', () => {
 
     expect(setGitConfig).toHaveBeenCalledTimes(0);
     expect(updatePackage).toHaveBeenCalledTimes(0);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
 });
