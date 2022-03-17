@@ -220,23 +220,29 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { messages, hasErrors, isDefaultBranch } = yield (0, getGithubEventData_1.getGithubEventData)();
         if (hasErrors) {
+            (0, core_1.setOutput)('bump-performed', false);
             return (0, core_1.setFailed)('🔶 Error: Github event fetching failure');
         }
         if (!isDefaultBranch) {
+            (0, core_1.setOutput)('bump-performed', false);
             return;
         }
         const _a = (0, getKeywords_1.getKeywords)(), { areKeywordsInvalid } = _a, keywords = __rest(_a, ["areKeywordsInvalid"]);
         if (areKeywordsInvalid) {
+            (0, core_1.setOutput)('bump-performed', false);
             return (0, core_1.setFailed)(`🔶 Error: Invalid keyword inputs provided.`);
         }
         const bumpType = (0, getBumpType_1.getBumpType)(messages, keywords);
         if (bumpType === 'none') {
+            (0, core_1.setOutput)('bump-performed', false);
             return (0, core_1.info)('🔶 Task cancelled: no version bump requested.');
         }
         yield (0, setGitConfig_1.setGitConfig)();
         yield (0, updatePackage_1.updatePackage)(bumpType);
+        (0, core_1.setOutput)('bump-performed', true);
     }
     catch (error) {
+        (0, core_1.setOutput)('bump-performed', false);
         if (error instanceof Error) {
             return (0, core_1.setFailed)(`🔶 Oh no! An error occured: ${error.message}`);
         }

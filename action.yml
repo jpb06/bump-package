@@ -1,23 +1,27 @@
-name: "Bump package version"
-description: "Bumping package version depending on keywords present in the commit message"
+name: 'Bump package version'
+description: 'Bumping package version depending on keywords present in the commit message'
 
 inputs:
   major-keywords:
-    description: "Keywords triggering a major bump, separated by commas if more than one."
-    default: "[Major]:"
+    description: 'Keywords triggering a major bump, separated by commas if more than one.'
+    default: '[Major]:'
   minor-keywords:
-    description: "Keywords triggering a minor bump, separated by commas if more than one."
-    default: "[Minor]:"
+    description: 'Keywords triggering a minor bump, separated by commas if more than one.'
+    default: '[Minor]:'
   patch-keywords:
-    description: "Keywords triggering a patch bump, separated by commas if more than one."
-    default: "[Patch]:"
+    description: 'Keywords triggering a patch bump, separated by commas if more than one.'
+    default: '[Patch]:'
   should-default-to-patch:
-    description: "If no keywords are present in the commits, bump anyway by doing a patch"
-    default: "false"
+    description: 'If no keywords are present in the commits, bump anyway by doing a patch'
+    default: 'false'
+
+outputs:
+  bump-performed:
+    description: 'true if package.json has been bumped'
 
 runs:
-  using: "node12"
-  main: "dist/index.js"
+  using: 'node12'
+  main: 'dist/index.js'
 
 branding:
   icon: package
