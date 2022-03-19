@@ -52,7 +52,7 @@ If no keywords are present in branch commits, bump anyway by doing a patch.
 
 ### 🔶 `bump-performed`
 
-True if package.json has been bumped.
+`true` if version has been bumped in package.json.
 
 ## ⚡ Usage
 
@@ -142,7 +142,7 @@ Now let's imagine I'm running this action when merging a PR with the following c
 - obnoxios commit message
 - hey
 
-Since no keywords were detected, the action will bump the package version with a patch (1.0.0 -> 1.0.1).
+Since no keywords were detected, the action will bump the package version with a patch: `1.0.0` -> `1.0.1`.
 
 ### 🔶 Using output
 
@@ -166,7 +166,7 @@ jobs:
     uses: jpb06/bump-package@latest
 
   - name: Publishing package
-    if: steps.bumping-version.outputs.bump-performed == 'True'
+    if: steps.bumping-version.outputs.bump-performed == 'true'
     run: |
       cd dist
       yarn publish --non-interactive
