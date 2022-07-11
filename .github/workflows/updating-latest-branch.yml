@@ -3,7 +3,7 @@ name: Updating latest branch
 on:
   release:
     types: [published]
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   update-latest:
