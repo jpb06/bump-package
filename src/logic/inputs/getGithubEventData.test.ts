@@ -6,7 +6,10 @@ import { mocked } from 'jest-mock';
 import { getGithubEventData } from './getGithubEventData';
 
 jest.mock('@actions/core');
-jest.mock('fs');
+jest.mock('fs', () => ({
+  promises: { access: jest.fn() },
+  readFileSync: jest.fn(),
+}));
 
 describe('getGithubEventData function', () => {
   beforeEach(() => jest.resetAllMocks());
