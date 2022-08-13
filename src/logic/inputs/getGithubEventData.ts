@@ -54,7 +54,8 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     const message = event.commits[0].message;
     const squashedMessages = message
       .substring(message.indexOf('*'))
-      .split('\r\n\r\n');
+      .split('\r\n\r\n')
+      .map((el) => el.substring(el.indexOf('* ') + 2));
 
     return {
       hasErrors: false,

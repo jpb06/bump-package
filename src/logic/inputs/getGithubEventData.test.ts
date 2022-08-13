@@ -158,9 +158,9 @@ describe('getGithubEventData function', () => {
     expect(hasErrors).toBeFalsy();
     expect(isDefaultBranch).toBe(true);
     expect(messages).toStrictEqual([
-      '* useless',
-      '* chore: displaying event',
-      '* yolo',
+      'useless',
+      'chore: displaying event',
+      'yolo',
     ]);
     expect(info).toHaveBeenCalledTimes(0);
   });
