@@ -61,29 +61,44 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
     catch (err) {
         return { hasErrors: true };
     }
-    const messages = Array.isArray(event.commits)
-        ? event.commits.map((el) => el.message)
-        : [];
-    const defaultBranch = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.default_branch;
-    const currentBranch = (_b = event.ref) === null || _b === void 0 ? void 0 : _b.split('/').slice(2).join('/');
-    let hasErrors = false;
-    if (messages.length === 0) {
+    if (!Array.isArray(event.commits) || event.commits.length === 0) {
         (0, core_1.error)(`🔶 No commits found in the github event.`);
-        hasErrors = true;
+        return { hasErrors: true };
     }
+    const defaultBranch = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.default_branch;
     if (!defaultBranch || defaultBranch.length === 0) {
         (0, core_1.error)(`🔶 Unable to get default branch from github event.`);
-        hasErrors = true;
+        return { hasErrors: true };
     }
+    const currentBranch = (_b = event.ref) === null || _b === void 0 ? void 0 : _b.split('/').slice(2).join('/');
     if (!currentBranch || currentBranch.length === 0) {
         (0, core_1.error)(`🔶 Unable to get current branch from github event.`);
-        hasErrors = true;
+        return { hasErrors: true };
     }
     const isDefaultBranch = currentBranch === defaultBranch;
     if (!isDefaultBranch) {
         (0, core_1.info)(`🔶 Task cancelled: not running on ${defaultBranch} branch.`);
+        return { hasErrors: true };
     }
-    return { messages, isDefaultBranch, hasErrors };
+    const isSquashCommit = event.commits.length === 1 &&
+        event.commits[0].committer.name === 'GitHub' &&
+        event.commits[0].distinct === true;
+    if (isSquashCommit) {
+        const message = event.commits[0].message;
+        const squashedMessages = message
+            .substring(message.indexOf('*'))
+            .split('\r\n\r\n');
+        return {
+            hasErrors: false,
+            messages: squashedMessages,
+            isDefaultBranch,
+        };
+    }
+    return {
+        messages: event.commits.map((el) => el.message),
+        isDefaultBranch,
+        hasErrors: false,
+    };
 });
 exports.getGithubEventData = getGithubEventData;
 

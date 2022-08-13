@@ -1,14 +1,21 @@
-interface GithubCommit {
-  message: string;
-}
+type GithubCommitter = {
+  email: string;
+  name: string;
+};
 
-interface GithubRepository {
+type GithubCommit = {
+  distinct: boolean;
+  message: string;
+  committer: GithubCommitter;
+};
+
+type GithubRepository = {
   master_branch?: string;
   default_branch?: string;
-}
+};
 
-export interface GithubEvent {
+export type GithubEvent = {
   commits?: Array<GithubCommit>;
   ref?: string;
   repository?: GithubRepository;
-}
+};
