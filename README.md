@@ -28,7 +28,45 @@ A github action bumping the version of a package and pushing the version bump to
 
 This github action bumps package.json version after a commit is pushed or a pull request is merged to the repo master branch. The updated package.json file is then pushed to master and a tag is created.
 
-**Warning**: This action requires [the checkout action](https://github.com/actions/checkout) to work.
+#### ⚠️ This action requires [the checkout action](https://github.com/actions/checkout) to work.
+
+### 🔶 Pushing directly to default branch
+
+If you push directly to default branch, then only the pushed commit message will be scanned to define if a bump should be performed.
+
+### 🔶 Pull requests
+
+In the case of a pull request, the action will adapt to the merging strategy chosen.
+
+#### 🧿 Merge commits
+
+If the PR is merged using the merge commit strategy, then all the messages of all the commits in the branch will be scanned.
+
+#### 🧿 Squash merging
+
+If the PR is merged using the squash merging strategy, all the commits will be squashed into one. Github typically joins the messages of all the squashed commits into the single commit that will be written to the target branch. This message typically looks like this from the squash of 3 commits:
+
+```
+Doing cool stuff (#3)
+
+* feat: my cool feature
+
+* chore: fixing stuff
+
+* yolo
+```
+
+In that case, this message will be scanned to define whether a bump should be performed. In this example, it would result in a minor bump with the following config:
+
+```yaml
+# [...]
+- name: Bumping version
+  uses: jpb06/bump-package@latest
+  with:
+    major-keywords: BREAKING CHANGE
+    minor-keywords: feat,minor
+    patch-keywords: fix,chore
+```
 
 ## ⚡ Inputs
 

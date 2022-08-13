@@ -131,6 +131,40 @@ describe('getGithubEventData function', () => {
     expect(info).toHaveBeenCalledTimes(0);
   });
 
+  it('should return squashed commits messages', async () => {
+    mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        ref: 'refs/heads/master',
+        commits: [
+          {
+            message:
+              '3 (#3)\n\n* useless\r\n\r\n* chore: displaying event\r\n\r\n* yolo',
+            committer: {
+              name: 'GitHub',
+            },
+            distinct: true,
+          },
+        ],
+        repository: {
+          default_branch: 'master',
+        },
+      }),
+    );
+
+    const { isDefaultBranch, messages, hasErrors } = await getGithubEventData();
+
+    expect(error).toHaveBeenCalledTimes(0);
+
+    expect(hasErrors).toBeFalsy();
+    expect(isDefaultBranch).toBe(true);
+    expect(messages).toStrictEqual([
+      '* useless',
+      '* chore: displaying event',
+      '* yolo',
+    ]);
+    expect(info).toHaveBeenCalledTimes(0);
+  });
+
   it('should send an info when branch is not master', async () => {
     mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
