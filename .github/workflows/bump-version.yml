@@ -21,12 +21,12 @@ jobs:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: pnpm/action-setup@v2.2.4
         with:
           version: latest
 
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version-file: '.node-version'
           registry-url: 'https://registry.npmjs.org'
@@ -43,7 +43,7 @@ jobs:
 
       - name: Bump package version
         id: bumping-version
-        uses: jpb06/bump-package@v2.5.3
+        uses: jpb06/bump-package@v2.5.6
         with:
           major-keywords: BREAKING CHANGE
           minor-keywords: feat,minor
