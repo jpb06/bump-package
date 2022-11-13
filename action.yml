@@ -20,7 +20,7 @@ outputs:
     description: 'true if package.json has been bumped'
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
 
 branding:
