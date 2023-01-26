@@ -1,6 +1,7 @@
 import { info, setFailed, setOutput } from '@actions/core';
 import { mocked } from 'jest-mock';
 
+import { actionWorkflow } from './actionWorkflow';
 import { setGitConfig } from '../logic/git/setGitConfig';
 import {
   getGithubEventData,
@@ -9,7 +10,6 @@ import {
 import { getKeywords, Keywords } from '../logic/inputs/getKeywords';
 import { getBumpType } from '../logic/semver/getBumpType';
 import { updatePackage } from '../logic/updatePackage';
-import { actionWorkflow } from './actionWorkflow';
 
 jest.mock('@actions/core');
 jest.mock('../logic/git/setGitConfig');
