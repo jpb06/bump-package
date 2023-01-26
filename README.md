@@ -1,7 +1,7 @@
 # bump-package
 
 [![Open in Visual Studio Code](https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Open%20in%20Visual%20Studio%20Code&labelColor=2c2c32&color=007acc&logoColor=007acc)](https://github.dev/jpb06/bump-package)
-![Github workflow](https://img.shields.io/github/workflow/status/jpb06/bump-package/Tests?label=last%20workflow&logo=github-actions)
+![Github workflow](https://img.shields.io/github/actions/workflow/status/jpb06/bump-package/tests-scan.yml?branch=master&logo=github-actions&label=last%20workflow)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpb06_bump-package)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=jpb06_bump-package&metric=security_rating)](https://sonarcloud.io/dashboard?id=jpb06_bump-package)
@@ -28,7 +28,7 @@ A github action bumping the version of a package and pushing the version bump to
 
 This github action bumps package.json version after a commit is pushed or a pull request is merged to the repo master branch. The updated package.json file is then pushed to master and a tag is created.
 
-#### ⚠️ This action requires [the checkout action](https://github.com/actions/checkout) to work.
+#### ⚠️ This action requires [the checkout action](https://github.com/actions/checkout) to work
 
 ### 🔶 Pushing directly to default branch
 
