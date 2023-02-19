@@ -1,5 +1,4 @@
 import { getInput } from '@actions/core';
-import { mocked } from 'jest-mock';
 
 export const mockGetInputKeywords = (
   shouldDefaultToPatch: 'true' | 'false',
@@ -7,7 +6,7 @@ export const mockGetInputKeywords = (
   minor: string,
   patch: string,
 ): void => {
-  mocked(getInput)
+  jest.mocked(getInput)
     .mockReturnValueOnce(shouldDefaultToPatch)
     .mockReturnValueOnce(major)
     .mockReturnValueOnce(minor)

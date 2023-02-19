@@ -1,5 +1,4 @@
 import { info, setFailed, setOutput } from '@actions/core';
-import { mocked } from 'jest-mock';
 
 import { actionWorkflow } from './actionWorkflow';
 import { setGitConfig } from '../logic/git/setGitConfig';
@@ -22,7 +21,7 @@ describe('actionWorkflow function', () => {
   afterEach(() => jest.resetAllMocks());
 
   it('should fail the task if github event data is missing', async () => {
-    mocked(getGithubEventData).mockResolvedValueOnce({
+    jest.mocked(getGithubEventData).mockResolvedValueOnce({
       hasErrors: true,
     } as GithubEventData);
 
@@ -35,7 +34,7 @@ describe('actionWorkflow function', () => {
   });
 
   it('should drop the task if the action is not run on default branch', async () => {
-    mocked(getGithubEventData).mockResolvedValueOnce({
+    jest.mocked(getGithubEventData).mockResolvedValueOnce({
       hasErrors: false,
       isDefaultBranch: false,
       messages: [],
@@ -50,12 +49,12 @@ describe('actionWorkflow function', () => {
   });
 
   it('should fail the task if some keywords are missing', async () => {
-    mocked(getGithubEventData).mockResolvedValueOnce({
+    jest.mocked(getGithubEventData).mockResolvedValueOnce({
       hasErrors: false,
       isDefaultBranch: true,
       messages: [],
     });
-    mocked(getKeywords).mockReturnValueOnce({
+    jest.mocked(getKeywords).mockReturnValueOnce({
       areKeywordsInvalid: true,
     } as Keywords);
 
@@ -68,15 +67,15 @@ describe('actionWorkflow function', () => {
   });
 
   it('should drop the task if no bump has been requested', async () => {
-    mocked(getGithubEventData).mockResolvedValueOnce({
+    jest.mocked(getGithubEventData).mockResolvedValueOnce({
       hasErrors: false,
       isDefaultBranch: true,
       messages: [],
     });
-    mocked(getKeywords).mockReturnValueOnce({
+    jest.mocked(getKeywords).mockReturnValueOnce({
       areKeywordsInvalid: false,
     } as Keywords);
-    mocked(getBumpType).mockReturnValueOnce('none');
+    jest.mocked(getBumpType).mockReturnValueOnce('none');
 
     await actionWorkflow();
 
@@ -92,15 +91,15 @@ describe('actionWorkflow function', () => {
 
   it('should bump the package', async () => {
     const bumpType = 'major';
-    mocked(getGithubEventData).mockResolvedValueOnce({
+    jest.mocked(getGithubEventData).mockResolvedValueOnce({
       hasErrors: false,
       isDefaultBranch: true,
       messages: [],
     });
-    mocked(getKeywords).mockReturnValueOnce({
+    jest.mocked(getKeywords).mockReturnValueOnce({
       areKeywordsInvalid: false,
     } as Keywords);
-    mocked(getBumpType).mockReturnValueOnce(bumpType);
+    jest.mocked(getBumpType).mockReturnValueOnce(bumpType);
 
     await actionWorkflow();
 
@@ -114,7 +113,7 @@ describe('actionWorkflow function', () => {
 
   it('should report on errors', async () => {
     const errorMessage = 'Big bad error';
-    mocked(getGithubEventData).mockImplementationOnce(() => {
+    jest.mocked(getGithubEventData).mockImplementationOnce(() => {
       throw new Error(errorMessage);
     });
 
@@ -132,7 +131,7 @@ describe('actionWorkflow function', () => {
 
   it('should display a generic error when no message is available', async () => {
     const errorMessage = 'Big bad error';
-    mocked(getGithubEventData).mockImplementationOnce(() => {
+    jest.mocked(getGithubEventData).mockImplementationOnce(() => {
       throw errorMessage;
     });
 
