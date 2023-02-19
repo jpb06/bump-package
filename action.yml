@@ -14,6 +14,12 @@ inputs:
   should-default-to-patch:
     description: 'If no keywords are present in the commits, bump anyway by doing a patch'
     default: 'false'
+  commit-user:
+    description: 'User for the bump commit.'
+    default: ''
+  commit-user-email:
+    description: 'User email for the bump commit.'
+    default: ''
 
 outputs:
   bump-performed:

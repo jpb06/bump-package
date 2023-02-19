@@ -94,6 +94,18 @@ If no keywords are present in branch commits, bump anyway by doing a patch.
 
 > Default value: **false**
 
+### 🔶 `commit-user`
+
+Customizing the name of the user committing generated badges (optional).
+
+> Default value: **<context.actor>**
+
+### 🔶 `commit-user-email`
+
+Customizing the email of the user committing generated badges (optional).
+
+> Default value: **<context.actor>@users.noreply.github.com**
+
 ## ⚡ Outputs
 
 ### 🔶 `bump-performed`

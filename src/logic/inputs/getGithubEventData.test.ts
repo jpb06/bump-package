@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
 
 import { error, info } from '@actions/core';
-import { mocked } from 'jest-mock';
 
 import { getGithubEventData } from './getGithubEventData';
 
@@ -15,7 +14,7 @@ describe('getGithubEventData function', () => {
   beforeEach(() => jest.resetAllMocks());
 
   it('should send an error message when there is no github event', async () => {
-    mocked(readFileSync).mockReturnValueOnce('');
+    jest.mocked(readFileSync).mockReturnValueOnce('');
 
     const result = await getGithubEventData();
 
@@ -23,7 +22,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an error message when commit messages are missing', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: 'refs/heads/pr',
         repository: {
@@ -41,7 +40,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an error message if the default branch is missing in repository infos', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: 'refs/heads/pr',
         commits: [
@@ -62,7 +61,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an error message if repository infos are missing', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: 'refs/heads/pr',
         commits: [
@@ -82,7 +81,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an error message if the current branch cannot be defined', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         commits: [
           {
@@ -104,7 +103,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should return relevant data', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: 'refs/heads/master',
         commits: [
@@ -132,7 +131,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should return squashed commits messages', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: 'refs/heads/master',
         commits: [
@@ -166,7 +165,7 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an info when branch is not master', async () => {
-    mocked(readFileSync).mockReturnValueOnce(
+    jest.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
         ref: 'refs/heads/pr',
         commits: [
