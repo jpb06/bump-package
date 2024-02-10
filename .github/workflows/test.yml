@@ -17,4 +17,4 @@ jobs:
           fetch-depth: 0
 
       - name: testing stuff
-        run: echo "$env:GITHUB_EVENT_PATH"
+        run: echo "${GITHUB_EVENT_PATH}"
