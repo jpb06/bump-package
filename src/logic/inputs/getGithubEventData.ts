@@ -18,10 +18,11 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
         encoding: 'utf8',
       }),
     );
-    console.log(event);
   } catch (err) {
     return { hasErrors: true } as GithubEventData;
   }
+
+  console.info('event', event);
 
   if (!Array.isArray(event.commits) || event.commits.length === 0) {
     error(`🔶 No commits found in the github event.`);
