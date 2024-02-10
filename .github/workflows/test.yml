@@ -1,6 +1,10 @@
 name: test
 
-on: push
+on:
+  workflow_run:
+    workflows: ['⚡ Coverage badges generation']
+    types:
+      - completed
 
 jobs:
   version-bump:
