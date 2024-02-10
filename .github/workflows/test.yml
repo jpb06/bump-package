@@ -21,4 +21,4 @@ jobs:
 
       - name: testing stuff
         run: |
-          echo "(jq . --raw-output "$GITHUB_EVENT_PATH")"
+          jq . --raw-output "$GITHUB_EVENT_PATH"
