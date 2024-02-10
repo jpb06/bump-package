@@ -16,7 +16,7 @@ jobs:
 
       - name: ⏫ Bump package version
         id: bumping-version
-        uses: .
+        uses: ./
           major-keywords: BREAKING CHANGE
           minor-keywords: feat,minor
           patch-keywords: fix,chore
