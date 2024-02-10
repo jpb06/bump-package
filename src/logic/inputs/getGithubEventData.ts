@@ -18,6 +18,7 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
         encoding: 'utf8',
       }),
     );
+    console.log(event);
   } catch (err) {
     return { hasErrors: true } as GithubEventData;
   }
