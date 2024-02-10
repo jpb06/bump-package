@@ -66,6 +66,7 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
         event = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, {
             encoding: 'utf8',
         }));
+        console.log(event);
     }
     catch (err) {
         return { hasErrors: true };

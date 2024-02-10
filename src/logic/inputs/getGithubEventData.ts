@@ -4,11 +4,11 @@ import { error, info } from '@actions/core';
 
 import { GithubEvent } from '../../types/github';
 
-export type GithubEventData = {
-  messages: Array<string>;
+export interface GithubEventData {
+  messages: string[];
   isDefaultBranch: boolean;
   hasErrors: boolean;
-};
+}
 
 export const getGithubEventData = async (): Promise<GithubEventData> => {
   let event: GithubEvent;
@@ -21,6 +21,8 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
   } catch (err) {
     return { hasErrors: true } as GithubEventData;
   }
+
+  console.info('event', event);
 
   if (!Array.isArray(event.commits) || event.commits.length === 0) {
     error(`🔶 No commits found in the github event.`);

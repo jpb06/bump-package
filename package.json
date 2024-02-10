@@ -16,7 +16,7 @@
       "cleanDist": "rimraf ./dist && rimraf ./lib",
       "build": "pnpm cleanDist && tsc --project tsconfig.prod.json && ncc build",
       "type-check": "tsc --noEmit",
-      "lint": "eslint ./src/**/*.ts",
+      "lint": "eslint ./src",
       "test": "vitest",
       "test-ci": "vitest --coverage --run",
       "test-dev": "vitest --coverage",
