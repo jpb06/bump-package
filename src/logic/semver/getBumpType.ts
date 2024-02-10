@@ -2,11 +2,11 @@ import { Keywords } from '../inputs/getKeywords';
 
 export type BumpType = 'major' | 'minor' | 'patch' | 'none';
 
-const isBumpRequestedFor = (keywords: Array<string>, messages: Array<string>) =>
+const isBumpRequestedFor = (keywords: string[], messages: string[]) =>
   messages.some((mes) => keywords.some((key) => mes.startsWith(key)));
 
 export const getBumpType = (
-  messages: Array<string>,
+  messages: string[],
   keywords: Omit<Keywords, 'areKeywordsInvalid'>,
 ): BumpType => {
   const isMajorBump = isBumpRequestedFor(keywords.major, messages);

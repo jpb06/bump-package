@@ -4,11 +4,11 @@ import { error, info } from '@actions/core';
 
 import { GithubEvent } from '../../types/github';
 
-export type GithubEventData = {
-  messages: Array<string>;
+export interface GithubEventData {
+  messages: string[];
   isDefaultBranch: boolean;
   hasErrors: boolean;
-};
+}
 
 export const getGithubEventData = async (): Promise<GithubEventData> => {
   let event: GithubEvent;

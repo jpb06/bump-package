@@ -1,14 +1,14 @@
 import { error, getInput } from '@actions/core';
 
-export type Keywords = {
-  major: Array<string>;
-  minor: Array<string>;
-  patch: Array<string>;
+export interface Keywords {
+  major: string[];
+  minor: string[];
+  patch: string[];
   areKeywordsInvalid: boolean;
   shouldDefaultToPatch: boolean;
-};
+}
 
-const isEmpty = (array: Array<string>) =>
+const isEmpty = (array: string[]) =>
   array.length === 1 && array[0].length === 0;
 
 export const getKeywords = (): Keywords => {
