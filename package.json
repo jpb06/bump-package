@@ -3,7 +3,10 @@
    "description": "Bump package version based on keywords in head commit",
    "version": "2.5.12",
    "main": "lib/main.js",
-   "repository": "https://github.com/jpb06/bump-package.git",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/jpb06/bump-package.git"
+   },
    "author": "jpb06 <jpb.06@outlook.com>",
    "license": "MIT",
    "engines": {
