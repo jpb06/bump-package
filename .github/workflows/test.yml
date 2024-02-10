@@ -11,10 +11,14 @@ jobs:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
 
+      - name: Install jq
+        uses: dcarbone/install-jq-action@v2.1.0
+
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: testing stuff
-        run: echo "${GITHUB_EVENT_PATH}"
+        run: |
+          echo "(jq . --raw-output "$GITHUB_EVENT_PATH")"
