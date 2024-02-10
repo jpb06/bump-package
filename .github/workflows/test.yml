@@ -1,7 +1,6 @@
 name: ⚡ Version bump
 
-on:
-  push
+on: push
 
 jobs:
   version-bump:
@@ -20,6 +19,7 @@ jobs:
       - name: ⏫ Bump package version
         id: bumping-version
         uses: ./
+        with:
           major-keywords: BREAKING CHANGE
           minor-keywords: feat,minor
           patch-keywords: fix,chore
