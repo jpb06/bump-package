@@ -1,7 +1,7 @@
 name: ⚡ Version bump
 
 on:
-  push:
+  push
 
 jobs:
   version-bump:
