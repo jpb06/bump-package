@@ -1,0 +1,26 @@
+name: ⚡ Version bump
+
+on:
+  push:
+
+jobs:
+  version-bump:
+    name: 🆕 Version bump
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ⏫ Bump package version
+        id: bumping-version
+        uses: jpb06/bump-package@latest
+        with:
+          major-keywords: BREAKING CHANGE
+          minor-keywords: feat,minor
+          patch-keywords: fix,chore
+          should-default-to-patch: true
+          commit-user: jpb06
+          commit-user-email: jpb.06@outlook.com
