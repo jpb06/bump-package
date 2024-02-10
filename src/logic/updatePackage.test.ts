@@ -1,8 +1,9 @@
 import { exec } from '@actions/exec';
+import { describe, it, expect, vi } from 'vitest';
 
 import { updatePackage } from './updatePackage';
 
-jest.mock('@actions/exec');
+vi.mock('@actions/exec');
 
 describe('updatePackage function', () => {
   it('should update package.json', async () => {

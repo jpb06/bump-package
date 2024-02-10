@@ -12,13 +12,13 @@ inputs:
     description: 'Keywords triggering a patch bump, separated by commas if more than one.'
     default: '[Patch]:'
   should-default-to-patch:
-    description: 'If no keywords are present in the commits, bump anyway by doing a patch'
+    description: 'If no keywords are present in the commits, bump anyway by doing a patch.'
     default: 'false'
   commit-user:
-    description: 'User for the bump commit.'
+    description: 'User for the version bump commit.'
     default: ''
   commit-user-email:
-    description: 'User email for the bump commit.'
+    description: 'User email for the version bump commit.'
     default: ''
 
 outputs:
@@ -26,7 +26,7 @@ outputs:
     description: 'true if package.json has been bumped'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 
 branding:

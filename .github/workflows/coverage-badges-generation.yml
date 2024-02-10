@@ -1,14 +1,13 @@
-name: ⚡ Version bump
+name: ⚡ Coverage badges generation
 
 on:
-  workflow_run:
-    workflows: ['⚡ Coverage badges generation']
-    types:
-      - completed
+  push:
+    branches:
+      - master
 
 jobs:
-  version-bump:
-    name: 🆕 Version bump
+  coverage-badges-generation:
+    name: 📣 Coverage badges generation
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -33,13 +32,8 @@ jobs:
       - name: 📥 Install deps
         run: pnpm install --frozen-lockfile
 
-      - name: ⏫ Bump package version
-        id: bumping-version
-        uses: jpb06/bump-package@latest
-        with:
-          major-keywords: BREAKING CHANGE
-          minor-keywords: feat,minor
-          patch-keywords: fix,chore
-          should-default-to-patch: true
-          commit-user: jpb06
-          commit-user-email: jpb.06@outlook.com
+      - name: 🔍 Tests
+        run: pnpm test-ci
+
+      - name: ⚙️ Generating coverage badges
+        uses: jpb06/jest-badges-action@latest

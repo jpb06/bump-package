@@ -1,28 +1,24 @@
-name: Updating latest branch
+name: ⚡ Updating latest branch
 
 on:
   release:
     types: [published]
 
 jobs:
-  update-latest:
+  update-latest-branch:
+    name: 🛜 Update latest branch
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: 🔄 Checkout repo
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Checkout latest
+      - name: ⬇️ Checkout latest
         run: git checkout latest
 
-      - name: Rebase latest on master
+      - name: 🔀 Rebase latest on master
         run: git merge origin/master
 
-      - name: Push latest
+      - name: ⬆️ Push latest
         run: git push origin latest
