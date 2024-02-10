@@ -1,12 +1,16 @@
 import { error } from '@actions/core';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 
 import { mockGetInputKeywords } from '../../tests-related/mocks/getInput.keywords.mock';
+
 import { getKeywords } from './getKeywords';
 
-jest.mock('@actions/core');
+vi.mock('@actions/core');
 
 describe('getKeywords function', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('should send an error message three times', () => {
     mockGetInputKeywords('false', '', '', '');

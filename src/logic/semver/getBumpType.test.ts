@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { getBumpType } from './getBumpType';
 
 describe('getBumpType function', () => {

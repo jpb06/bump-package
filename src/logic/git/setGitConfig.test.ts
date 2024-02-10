@@ -1,18 +1,21 @@
 import { getInput } from '@actions/core';
 import { exec } from '@actions/exec';
 import { context } from '@actions/github';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 
 import { setGitConfig } from './setGitConfig';
 
-jest.mock('@actions/core')
-jest.mock('@actions/exec');
-jest.mock('@actions/github');
+vi.mock('@actions/core');
+vi.mock('@actions/exec');
+vi.mock('@actions/github');
 
 describe('setGitConfig function', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('should set git config with default values', async () => {
-    jest.mocked(getInput).mockReturnValueOnce("").mockReturnValueOnce("")
+    vi.mocked(getInput).mockReturnValueOnce('').mockReturnValueOnce('');
 
     await setGitConfig();
 
@@ -30,9 +33,9 @@ describe('setGitConfig function', () => {
   });
 
   it('should set git config with a custom user', async () => {
-    const email = "yolo@cool.org"
-    const name = "Yolo Bro"
-    jest.mocked(getInput).mockReturnValueOnce(email).mockReturnValueOnce(name)
+    const email = 'yolo@cool.org';
+    const name = 'Yolo Bro';
+    vi.mocked(getInput).mockReturnValueOnce(email).mockReturnValueOnce(name);
 
     await setGitConfig();
 
@@ -40,12 +43,12 @@ describe('setGitConfig function', () => {
     expect(exec).toHaveBeenNthCalledWith(1, 'git config', [
       '--global',
       'user.name',
-      name
+      name,
     ]);
     expect(exec).toHaveBeenNthCalledWith(2, 'git config', [
       '--global',
       'user.email',
-      email
+      email,
     ]);
   });
 });

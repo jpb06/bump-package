@@ -1,4 +1,5 @@
 import { getInput } from '@actions/core';
+import { vi } from 'vitest';
 
 export const mockGetInputKeywords = (
   shouldDefaultToPatch: 'true' | 'false',
@@ -6,7 +7,7 @@ export const mockGetInputKeywords = (
   minor: string,
   patch: string,
 ): void => {
-  jest.mocked(getInput)
+  vi.mocked(getInput)
     .mockReturnValueOnce(shouldDefaultToPatch)
     .mockReturnValueOnce(major)
     .mockReturnValueOnce(minor)
