@@ -46,7 +46,7 @@ If the PR is merged using the merge commit strategy, then all the messages of al
 
 If the PR is merged using the squash merging strategy, all the commits will be squashed into one. Github typically joins the messages of all the squashed commits into the single commit that will be written to the target branch. This message typically looks like this from the squash of 3 commits:
 
-```
+```text
 Doing cool stuff (#3)
 
 * feat: my cool feature
@@ -60,12 +60,38 @@ In that case, this message will be scanned to define whether a bump should be pe
 
 ```yaml
 # [...]
-- name: Bumping version
+- name: ⏫ Bumping version
   uses: jpb06/bump-package@latest
   with:
     major-keywords: BREAKING CHANGE
     minor-keywords: feat,minor
     patch-keywords: fix,chore
+```
+
+#### 🧿 Completed workflow events
+
+You can also run the action by depending on another workflow. In that case the commits messages will be extracted from the `completed` webhook event:
+
+```yaml
+[...]
+
+on:
+  workflow_run:
+    workflows: ['my-other-workflow']
+    types:
+      - completed
+
+jobs:
+  version-bump:
+    name: 🆕 Version bump
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      [...]
+
+      - name: ⏫ Bump package version
+        id: bumping-version
+        uses: jpb06/bump-package@latest
 ```
 
 ## ⚡ Inputs
@@ -119,19 +145,21 @@ Customizing the email of the user committing generated badges (optional).
 If the action runs on a commit whose message starts with either `[Major]:`, `[Minor]:` or `[Patch]:`, the version will be bumped and a tag will be created.
 
 ```yaml
-name: package bump
+name: ⚡ Package version bump
 on: [push]
+
 jobs:
   bump:
+    name: 🆕 Version bump
     runs-on: ubuntu-latest
     steps:
 
-    - name: Check out repository code
-      uses: actions/checkout@v2
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v4
 
     [...]
 
-    - name: Bumping version
+    - name: ⏫ Bumping version
       uses: jpb06/bump-package@latest
 ```
 
@@ -146,24 +174,26 @@ The action will bump the package depending on commits present in the pull reques
 A tag will also be created by the action.
 
 ```yaml
-name: package bump
+name: ⚡ Package version bump
 on: [push]
+
 jobs:
   bump:
+    name: 🆕 Version version bump
     runs-on: ubuntu-latest
     steps:
 
-  - name: Check out repository code
-    uses: actions/checkout@v2
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v4
 
-  [...]
+    [...]
 
-  - name: Bumping version
-    uses: jpb06/bump-package@latest
-    with:
-      major-keywords: BREAKING CHANGE
-      minor-keywords: feat,minor
-      patch-keywords: fix,chore
+    - name: ⏫ Bumping version
+      uses: jpb06/bump-package@latest
+      with:
+        major-keywords: BREAKING CHANGE
+        minor-keywords: feat,minor
+        patch-keywords: fix,chore
 ```
 
 ### 🔶 Defaulting to patch bump
@@ -173,25 +203,26 @@ You may want to bump the package version even if no keywords were present in the
 By setting `should-default-to-patch` to `true` you can trigger this behavior. Here is an example:
 
 ```yaml
-name: package bump
+name: ⚡ Package version bump
 on: [push]
 jobs:
   bump:
+    name: 🆕 Version bump
     runs-on: ubuntu-latest
     steps:
 
-  - name: Check out repository code
-    uses: actions/checkout@v2
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v4
 
-  [...]
+    [...]
 
-  - name: Bumping version
-    uses: jpb06/bump-package@latest
-    with:
-      major-keywords: BREAKING CHANGE
-      minor-keywords: feat,minor
-      patch-keywords: fix,chore
-      should-default-to-patch: true
+    - name: ⏫ Bumping version
+      uses: jpb06/bump-package@latest
+      with:
+        major-keywords: BREAKING CHANGE
+        minor-keywords: feat,minor
+        patch-keywords: fix,chore
+        should-default-to-patch: true
 ```
 
 Now let's imagine I'm running this action when merging a PR with the following commits:
@@ -207,27 +238,28 @@ Since no keywords were detected, the action will bump the package version with a
 We may want to perform an action if package.json has been bumped. We can use `bump-performed` output for this:
 
 ```yaml
-name: package bump
+name: ⚡ Package version bump
 on: [push]
 jobs:
   bump:
+    name: 🆕 Version bump
     runs-on: ubuntu-latest
     steps:
 
-  - name: Check out repository code
-    uses: actions/checkout@v2
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v4
 
-  [...]
+    [...]
 
-  - name: Bumping version
-    id: bumping-version
-    uses: jpb06/bump-package@latest
+    - name: ⏫ Bumping version
+      id: bumping-version
+      uses: jpb06/bump-package@latest
 
-  - name: Publishing package
-    if: steps.bumping-version.outputs.bump-performed == 'true'
-    run: |
-      cd dist
-      yarn publish --non-interactive
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - name: 🚀 Publishing package
+      if: steps.bumping-version.outputs.bump-performed == 'true'
+      run: |
+        cd dist
+        yarn publish --non-interactive
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
