@@ -66,11 +66,11 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
         event = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, {
             encoding: 'utf8',
         }));
-        console.log(event);
     }
     catch (err) {
         return { hasErrors: true };
     }
+    console.info('event', event);
     if (!Array.isArray(event.commits) || event.commits.length === 0) {
         (0, core_1.error)(`🔶 No commits found in the github event.`);
         return { hasErrors: true };
