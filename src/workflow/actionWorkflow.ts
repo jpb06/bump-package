@@ -38,6 +38,10 @@ export const actionWorkflow = async (): Promise<void> => {
   } catch (error) {
     setOutput('bump-performed', false);
     if (error instanceof Error) {
+      if (error.message.startsWith('🔶')) {
+        return setFailed(error.message);
+      }
+
       return setFailed(
         `🔶 Oh no! An error occured: ${(error as { message: string }).message}`,
       );
