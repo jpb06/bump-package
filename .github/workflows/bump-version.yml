@@ -36,6 +36,13 @@ jobs:
       - name: 📥 Install deps
         run: pnpm install --frozen-lockfile
 
+      - name: Install jq
+        uses: dcarbone/install-jq-action@v2.1.0
+
+      - name: testing stuff
+        run: |
+          jq . --raw-output "$GITHUB_EVENT_PATH"
+
       - name: ⏫ Bump package version
         id: bumping-version
         uses: jpb06/bump-package@latest
