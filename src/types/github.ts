@@ -18,4 +18,9 @@ export interface GithubEvent {
   commits?: GithubCommit[];
   ref?: string;
   repository?: GithubRepository;
+  workflow_run?: {
+    head_commit?: {
+      message?: string;
+    };
+  };
 }
