@@ -34,11 +34,8 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await getGithubEventData();
-
-    expect(error).toHaveBeenCalledTimes(1);
-    expect(error).toHaveBeenCalledWith(
-      `🔶 No commits found in the github event:`,
+    await expect(getGithubEventData()).rejects.toThrow(
+      '🔶 No commits found in the github event.',
     );
     expect(info).toHaveBeenCalledTimes(1);
   });
@@ -98,10 +95,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await getGithubEventData();
-
-    expect(error).toHaveBeenCalledTimes(1);
-    expect(error).toHaveBeenCalledWith(
+    await expect(getGithubEventData()).rejects.toThrow(
       `🔶 Unable to get current branch from github event.`,
     );
   });
@@ -148,6 +142,36 @@ describe('getGithubEventData function', () => {
             distinct: true,
           },
         ],
+        repository: {
+          default_branch: 'master',
+        },
+      }),
+    );
+
+    const { isDefaultBranch, messages, hasErrors } = await getGithubEventData();
+
+    expect(error).toHaveBeenCalledTimes(0);
+
+    expect(hasErrors).toBeFalsy();
+    expect(isDefaultBranch).toBe(true);
+    expect(messages).toStrictEqual([
+      'useless',
+      'chore: displaying event',
+      'yolo',
+    ]);
+    expect(info).toHaveBeenCalledTimes(0);
+  });
+
+  it('should return squashed commits messages from a completed workflow event', async () => {
+    vi.mocked(readFileSync).mockReturnValueOnce(
+      JSON.stringify({
+        workflow_run: {
+          head_branch: 'master',
+          head_commit: {
+            message:
+              '3 (#3)\n\n* useless\r\n\r\n* chore: displaying event\r\n\r\n* yolo',
+          },
+        },
         repository: {
           default_branch: 'master',
         },

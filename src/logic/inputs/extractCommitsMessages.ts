@@ -1,3 +1,5 @@
+import { info } from '@actions/core';
+
 import { GithubEvent } from '../../types/github';
 
 const extractSquashCommitMessage = (message: string) =>
@@ -24,5 +26,6 @@ export const extractCommitsMessages = (event: GithubEvent) => {
     return event.commits.map((el) => el.message);
   }
 
-  throw new Error('No commits found in the github event');
+  info(JSON.stringify(event, null, 2));
+  throw new Error('🔶 No commits found in the github event.');
 };

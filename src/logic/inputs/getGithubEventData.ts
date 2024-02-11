@@ -5,6 +5,7 @@ import { error, info } from '@actions/core';
 import { GithubEvent } from '../../types/github';
 
 import { extractCommitsMessages } from './extractCommitsMessages';
+import { getCurrentBranch } from './getCurrentBranch';
 
 export interface GithubEventData {
   messages: string[];
@@ -30,11 +31,7 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     return { hasErrors: true } as GithubEventData;
   }
 
-  const currentBranch = event.ref?.split('/').slice(2).join('/');
-  if (!currentBranch || currentBranch.length === 0) {
-    error(`🔶 Unable to get current branch from github event.`);
-    return { hasErrors: true } as GithubEventData;
-  }
+  const currentBranch = getCurrentBranch(event);
 
   const isDefaultBranch = currentBranch === defaultBranch;
   if (!isDefaultBranch) {
@@ -42,18 +39,11 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     return { hasErrors: true } as GithubEventData;
   }
 
-  try {
-    const messages = extractCommitsMessages(event);
+  const messages = extractCommitsMessages(event);
 
-    return {
-      messages,
-      isDefaultBranch,
-      hasErrors: false,
-    };
-  } catch (err) {
-    error(`🔶 No commits found in the github event:`);
-    info(JSON.stringify(event, null, 2));
-
-    return { hasErrors: true } as GithubEventData;
-  }
+  return {
+    messages,
+    isDefaultBranch,
+    hasErrors: false,
+  };
 };
