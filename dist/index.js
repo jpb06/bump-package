@@ -41,6 +41,38 @@ exports.setGitConfig = setGitConfig;
 
 /***/ }),
 
+/***/ 453:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.extractCommitsMessages = void 0;
+const extractSquashCommitMessage = (message) => message
+    .substring(message.indexOf('*'))
+    .split('\r\n\r\n')
+    .map((el) => el.substring(el.indexOf('* ') + 2));
+const extractCommitsMessages = (event) => {
+    var _a, _b;
+    if (Array.isArray(event.commits) &&
+        event.commits.length === 1 &&
+        event.commits[0].committer.name === 'GitHub' &&
+        event.commits[0].distinct === true) {
+        return extractSquashCommitMessage(event.commits[0].message);
+    }
+    if (((_b = (_a = event.workflow_run) === null || _a === void 0 ? void 0 : _a.head_commit) === null || _b === void 0 ? void 0 : _b.message) !== undefined) {
+        return extractSquashCommitMessage(event.workflow_run.head_commit.message);
+    }
+    if (Array.isArray(event.commits)) {
+        return event.commits.map((el) => el.message);
+    }
+    throw new Error('No commits found in the github event');
+};
+exports.extractCommitsMessages = extractCommitsMessages;
+
+
+/***/ }),
+
 /***/ 6259:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -59,6 +91,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getGithubEventData = void 0;
 const fs_1 = __nccwpck_require__(7147);
 const core_1 = __nccwpck_require__(9093);
+const extractCommitsMessages_1 = __nccwpck_require__(453);
 const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     let event;
@@ -68,11 +101,6 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
         }));
     }
     catch (err) {
-        return { hasErrors: true };
-    }
-    console.info('event', event);
-    if (!Array.isArray(event.commits) || event.commits.length === 0) {
-        (0, core_1.error)(`🔶 No commits found in the github event.`);
         return { hasErrors: true };
     }
     const defaultBranch = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.default_branch;
@@ -90,26 +118,19 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
         (0, core_1.info)(`🔶 Task cancelled: not running on ${defaultBranch} branch.`);
         return { hasErrors: true };
     }
-    const isSquashCommit = event.commits.length === 1 &&
-        event.commits[0].committer.name === 'GitHub' &&
-        event.commits[0].distinct === true;
-    if (isSquashCommit) {
-        const message = event.commits[0].message;
-        const squashedMessages = message
-            .substring(message.indexOf('*'))
-            .split('\r\n\r\n')
-            .map((el) => el.substring(el.indexOf('* ') + 2));
+    try {
+        const messages = (0, extractCommitsMessages_1.extractCommitsMessages)(event);
         return {
-            hasErrors: false,
-            messages: squashedMessages,
+            messages,
             isDefaultBranch,
+            hasErrors: false,
         };
     }
-    return {
-        messages: event.commits.map((el) => el.message),
-        isDefaultBranch,
-        hasErrors: false,
-    };
+    catch (err) {
+        (0, core_1.error)(`🔶 No commits found in the github event:`);
+        (0, core_1.info)(JSON.stringify(event, null, 2));
+        return { hasErrors: true };
+    }
 });
 exports.getGithubEventData = getGithubEventData;
 

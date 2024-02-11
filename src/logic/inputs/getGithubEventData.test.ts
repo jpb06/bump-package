@@ -27,7 +27,7 @@ describe('getGithubEventData function', () => {
   it('should send an error message when commit messages are missing', async () => {
     vi.mocked(readFileSync).mockReturnValueOnce(
       JSON.stringify({
-        ref: 'refs/heads/pr',
+        ref: 'refs/heads/master',
         repository: {
           default_branch: 'master',
         },
@@ -38,8 +38,9 @@ describe('getGithubEventData function', () => {
 
     expect(error).toHaveBeenCalledTimes(1);
     expect(error).toHaveBeenCalledWith(
-      `🔶 No commits found in the github event.`,
+      `🔶 No commits found in the github event:`,
     );
+    expect(info).toHaveBeenCalledTimes(1);
   });
 
   it('should send an error message if the default branch is missing in repository infos', async () => {

@@ -4,6 +4,8 @@ import { error, info } from '@actions/core';
 
 import { GithubEvent } from '../../types/github';
 
+import { extractCommitsMessages } from './extractCommitsMessages';
+
 export interface GithubEventData {
   messages: string[];
   isDefaultBranch: boolean;
@@ -19,13 +21,6 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
       }),
     );
   } catch (err) {
-    return { hasErrors: true } as GithubEventData;
-  }
-
-  console.info('event', event);
-
-  if (!Array.isArray(event.commits) || event.commits.length === 0) {
-    error(`🔶 No commits found in the github event.`);
     return { hasErrors: true } as GithubEventData;
   }
 
@@ -47,28 +42,18 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     return { hasErrors: true } as GithubEventData;
   }
 
-  const isSquashCommit =
-    event.commits.length === 1 &&
-    event.commits[0].committer.name === 'GitHub' &&
-    event.commits[0].distinct === true;
-
-  if (isSquashCommit) {
-    const message = event.commits[0].message;
-    const squashedMessages = message
-      .substring(message.indexOf('*'))
-      .split('\r\n\r\n')
-      .map((el) => el.substring(el.indexOf('* ') + 2));
+  try {
+    const messages = extractCommitsMessages(event);
 
     return {
-      hasErrors: false,
-      messages: squashedMessages,
+      messages,
       isDefaultBranch,
+      hasErrors: false,
     };
-  }
+  } catch (err) {
+    error(`🔶 No commits found in the github event:`);
+    info(JSON.stringify(event, null, 2));
 
-  return {
-    messages: event.commits.map((el) => el.message),
-    isDefaultBranch,
-    hasErrors: false,
-  };
+    return { hasErrors: true } as GithubEventData;
+  }
 };
