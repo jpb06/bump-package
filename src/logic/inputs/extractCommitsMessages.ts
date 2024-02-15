@@ -26,6 +26,5 @@ export const extractCommitsMessages = (event: GithubEvent) => {
     return event.commits.map((el) => el.message);
   }
 
-  info(JSON.stringify(event, null, 2));
-  throw new Error('🔶 No commits found in the github event.');
+  throw new Error('❌ No commits found in the github event.');
 };

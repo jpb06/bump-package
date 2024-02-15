@@ -20,6 +20,9 @@ inputs:
   commit-user-email:
     description: 'User email for the version bump commit.'
     default: ''
+  debug:
+    description: 'Debug mode. Will display event github event data.'
+    default: 'false'
 
 outputs:
   bump-performed:

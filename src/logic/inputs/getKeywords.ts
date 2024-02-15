@@ -19,7 +19,7 @@ export const getKeywords = (): Keywords => {
       (index === 2 && !shouldDefaultToPatch && isEmpty(array)) ||
       (index !== 2 && isEmpty(array))
     ) {
-      error(`🔶 Expecting at least one ${type} keyword but got 0.`);
+      error(`❌ Expecting at least one ${type} keyword but got 0.`);
     }
     return array;
   });

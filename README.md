@@ -28,7 +28,11 @@ A github action bumping the version of a package and pushing the version bump to
 
 This github action bumps package.json version after a commit is pushed or a pull request is merged to the repo master branch. The updated package.json file is then pushed to master and a tag is created.
 
-#### ⚠️ This action requires [the checkout action](https://github.com/actions/checkout) to work
+### ⚠️ This action requires [the checkout action](https://github.com/actions/checkout) to work
+
+### ⚠️ You need to allow read and write operations granted to the GITHUB_TOKEN for workflows
+
+> You can find the configuration option in `Settings -> Actions -> Workflow permissions`.
 
 ### 🔶 Pushing directly to default branch
 
@@ -131,6 +135,12 @@ Customizing the name of the user committing generated badges (optional).
 Customizing the email of the user committing generated badges (optional).
 
 > Default value: **<context.actor>@users.noreply.github.com**
+
+### 🔶 `debug`
+
+Debug mode. Will display event github event data.
+
+> Default value: **false**
 
 ## ⚡ Outputs
 

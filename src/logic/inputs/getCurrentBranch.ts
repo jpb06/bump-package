@@ -11,6 +11,5 @@ export const getCurrentBranch = (event: GithubEvent) => {
     return event.workflow_run.head_branch;
   }
 
-  info(JSON.stringify(event, null, 2));
-  throw new Error('🔶 Unable to get current branch from github event.');
+  throw new Error('❌ Unable to get current branch from github event.');
 };

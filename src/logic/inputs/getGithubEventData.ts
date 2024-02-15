@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-import { error, info } from '@actions/core';
+import { error, getInput, info } from '@actions/core';
 
 import { GithubEvent } from '../../types/github';
 
@@ -25,9 +25,15 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
     return { hasErrors: true } as GithubEventData;
   }
 
+  const debugEvent = getInput('debug') === 'true';
+  if (debugEvent) {
+    info(`🕵️ Github event:`);
+    info(JSON.stringify(event, null, 2));
+  }
+
   const defaultBranch = event.repository?.default_branch;
   if (!defaultBranch || defaultBranch.length === 0) {
-    error(`🔶 Unable to get default branch from github event.`);
+    error(`❌ Unable to get default branch from github event.`);
     return { hasErrors: true } as GithubEventData;
   }
 
@@ -35,7 +41,7 @@ export const getGithubEventData = async (): Promise<GithubEventData> => {
 
   const isDefaultBranch = currentBranch === defaultBranch;
   if (!isDefaultBranch) {
-    info(`🔶 Task cancelled: not running on ${defaultBranch} branch.`);
+    info(`ℹ️ Task cancelled: not running on ${defaultBranch} branch.`);
     return { hasErrors: true } as GithubEventData;
   }
 
