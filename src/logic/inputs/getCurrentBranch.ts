@@ -1,5 +1,3 @@
-import { info } from '@actions/core';
-
 import { GithubEvent } from '../../types/github';
 
 export const getCurrentBranch = (event: GithubEvent) => {

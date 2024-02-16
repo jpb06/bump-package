@@ -20,15 +20,15 @@ describe('getKeywords function', () => {
     expect(error).toHaveBeenCalledTimes(3);
     expect(error).toHaveBeenNthCalledWith(
       1,
-      `🔶 Expecting at least one major keyword but got 0.`,
+      `❌ Expecting at least one major keyword but got 0.`,
     );
     expect(error).toHaveBeenNthCalledWith(
       2,
-      `🔶 Expecting at least one minor keyword but got 0.`,
+      `❌ Expecting at least one minor keyword but got 0.`,
     );
     expect(error).toHaveBeenNthCalledWith(
       3,
-      `🔶 Expecting at least one patch keyword but got 0.`,
+      `❌ Expecting at least one patch keyword but got 0.`,
     );
 
     expect(result.major).toStrictEqual(['']);

@@ -66,9 +66,31 @@ const extractCommitsMessages = (event) => {
     if (Array.isArray(event.commits)) {
         return event.commits.map((el) => el.message);
     }
-    throw new Error('No commits found in the github event');
+    throw new Error('❌ No commits found in the github event.');
 };
 exports.extractCommitsMessages = extractCommitsMessages;
+
+
+/***/ }),
+
+/***/ 3030:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getCurrentBranch = void 0;
+const getCurrentBranch = (event) => {
+    var _a, _b;
+    if ((event === null || event === void 0 ? void 0 : event.ref) !== undefined) {
+        return (_a = event.ref) === null || _a === void 0 ? void 0 : _a.split('/').slice(2).join('/');
+    }
+    if (((_b = event === null || event === void 0 ? void 0 : event.workflow_run) === null || _b === void 0 ? void 0 : _b.head_branch) !== undefined) {
+        return event.workflow_run.head_branch;
+    }
+    throw new Error('❌ Unable to get current branch from github event.');
+};
+exports.getCurrentBranch = getCurrentBranch;
 
 
 /***/ }),
@@ -92,8 +114,9 @@ exports.getGithubEventData = void 0;
 const fs_1 = __nccwpck_require__(7147);
 const core_1 = __nccwpck_require__(9093);
 const extractCommitsMessages_1 = __nccwpck_require__(453);
+const getCurrentBranch_1 = __nccwpck_require__(3030);
 const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     let event;
     try {
         event = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, {
@@ -103,34 +126,28 @@ const getGithubEventData = () => __awaiter(void 0, void 0, void 0, function* () 
     catch (err) {
         return { hasErrors: true };
     }
+    const debugEvent = (0, core_1.getInput)('debug') === 'true';
+    if (debugEvent) {
+        (0, core_1.info)(`🕵️ Github event:`);
+        (0, core_1.info)(JSON.stringify(event, null, 2));
+    }
     const defaultBranch = (_a = event.repository) === null || _a === void 0 ? void 0 : _a.default_branch;
     if (!defaultBranch || defaultBranch.length === 0) {
-        (0, core_1.error)(`🔶 Unable to get default branch from github event.`);
+        (0, core_1.error)(`❌ Unable to get default branch from github event.`);
         return { hasErrors: true };
     }
-    const currentBranch = (_b = event.ref) === null || _b === void 0 ? void 0 : _b.split('/').slice(2).join('/');
-    if (!currentBranch || currentBranch.length === 0) {
-        (0, core_1.error)(`🔶 Unable to get current branch from github event.`);
-        return { hasErrors: true };
-    }
+    const currentBranch = (0, getCurrentBranch_1.getCurrentBranch)(event);
     const isDefaultBranch = currentBranch === defaultBranch;
     if (!isDefaultBranch) {
-        (0, core_1.info)(`🔶 Task cancelled: not running on ${defaultBranch} branch.`);
+        (0, core_1.info)(`ℹ️ Task cancelled: not running on ${defaultBranch} branch.`);
         return { hasErrors: true };
     }
-    try {
-        const messages = (0, extractCommitsMessages_1.extractCommitsMessages)(event);
-        return {
-            messages,
-            isDefaultBranch,
-            hasErrors: false,
-        };
-    }
-    catch (err) {
-        (0, core_1.error)(`🔶 No commits found in the github event:`);
-        (0, core_1.info)(JSON.stringify(event, null, 2));
-        return { hasErrors: true };
-    }
+    const messages = (0, extractCommitsMessages_1.extractCommitsMessages)(event);
+    return {
+        messages,
+        isDefaultBranch,
+        hasErrors: false,
+    };
 });
 exports.getGithubEventData = getGithubEventData;
 
@@ -152,7 +169,7 @@ const getKeywords = () => {
         const array = (0, core_1.getInput)(`${type}-keywords`).split(',');
         if ((index === 2 && !shouldDefaultToPatch && isEmpty(array)) ||
             (index !== 2 && isEmpty(array))) {
-            (0, core_1.error)(`🔶 Expecting at least one ${type} keyword but got 0.`);
+            (0, core_1.error)(`❌ Expecting at least one ${type} keyword but got 0.`);
         }
         return array;
     });
@@ -268,7 +285,7 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
         const { messages, hasErrors, isDefaultBranch } = yield (0, getGithubEventData_1.getGithubEventData)();
         if (hasErrors) {
             (0, core_1.setOutput)('bump-performed', false);
-            return (0, core_1.setFailed)('🔶 Error: Github event fetching failure');
+            return (0, core_1.setFailed)('❌ Error: Github event fetching failure');
         }
         if (!isDefaultBranch) {
             (0, core_1.setOutput)('bump-performed', false);
@@ -277,12 +294,12 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
         const _a = (0, getKeywords_1.getKeywords)(), { areKeywordsInvalid } = _a, keywords = __rest(_a, ["areKeywordsInvalid"]);
         if (areKeywordsInvalid) {
             (0, core_1.setOutput)('bump-performed', false);
-            return (0, core_1.setFailed)(`🔶 Error: Invalid keyword inputs provided.`);
+            return (0, core_1.setFailed)(`❌ Error: Invalid keyword inputs provided.`);
         }
         const bumpType = (0, getBumpType_1.getBumpType)(messages, keywords);
         if (bumpType === 'none') {
             (0, core_1.setOutput)('bump-performed', false);
-            return (0, core_1.info)('🔶 Task cancelled: no version bump requested.');
+            return (0, core_1.info)('ℹ️ Task cancelled: no version bump requested.');
         }
         yield (0, setGitConfig_1.setGitConfig)();
         yield (0, updatePackage_1.updatePackage)(bumpType);
@@ -291,9 +308,12 @@ const actionWorkflow = () => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         (0, core_1.setOutput)('bump-performed', false);
         if (error instanceof Error) {
-            return (0, core_1.setFailed)(`🔶 Oh no! An error occured: ${error.message}`);
+            if (error.message.startsWith('❌')) {
+                return (0, core_1.setFailed)(error.message);
+            }
+            return (0, core_1.setFailed)(`❌ Oh no! An error occured: ${error.message}`);
         }
-        return (0, core_1.setFailed)(`🔶 Oh no! An unknown error occured`);
+        return (0, core_1.setFailed)(`❌ Oh no! An unknown error occured`);
     }
 });
 exports.actionWorkflow = actionWorkflow;

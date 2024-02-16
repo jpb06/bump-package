@@ -88,7 +88,7 @@ describe('actionWorkflow function', () => {
     expect(setFailed).toHaveBeenCalledTimes(0);
     expect(info).toHaveBeenCalledTimes(1);
     expect(info).toHaveBeenCalledWith(
-      '🔶 Task cancelled: no version bump requested.',
+      'ℹ️ Task cancelled: no version bump requested.',
     );
     expect(setOutput).toHaveBeenCalledWith('bump-performed', false);
   });
@@ -125,7 +125,7 @@ describe('actionWorkflow function', () => {
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
-      `🔶 Oh no! An error occured: ${errorMessage}`,
+      `❌ Oh no! An error occured: ${errorMessage}`,
     );
 
     expect(setGitConfig).toHaveBeenCalledTimes(0);
@@ -143,7 +143,7 @@ describe('actionWorkflow function', () => {
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
-      `🔶 Oh no! An unknown error occured`,
+      `❌ Oh no! An unknown error occured`,
     );
 
     expect(setGitConfig).toHaveBeenCalledTimes(0);
