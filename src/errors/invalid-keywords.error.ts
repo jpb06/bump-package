@@ -1,13 +1,5 @@
-export class InvalidKeywordsError {
-  readonly _tag = 'InvalidKeywords';
-  readonly message: string | undefined;
+import { BaseError } from './base.error';
 
-  constructor(error?: unknown) {
-    if (error instanceof Error) {
-      const { message } = error as Error;
-      this.message = message;
-    } else {
-      this.message = error as string;
-    }
-  }
+export class InvalidKeywordsError extends BaseError {
+  readonly _tag = 'InvalidKeywords';
 }

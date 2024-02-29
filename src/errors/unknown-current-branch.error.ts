@@ -1,13 +1,5 @@
-export class UnknownCurrentBranchError {
-  readonly _tag = 'UnknownCurrentBranch';
-  readonly message: string | undefined;
+import { BaseError } from './base.error';
 
-  constructor(error?: unknown) {
-    if (error instanceof Error) {
-      const { message } = error as Error;
-      this.message = message;
-    } else {
-      this.message = error as string;
-    }
-  }
+export class UnknownCurrentBranchError extends BaseError {
+  readonly _tag = 'UnknownCurrentBranch';
 }

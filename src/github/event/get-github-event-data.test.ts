@@ -23,7 +23,7 @@ describe('getGithubEventData function', () => {
     await expect(() =>
       Effect.runPromise(getGithubEventData),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"NoGithubEvent","message":"\\"[object Object]\\" is not valid JSON"}]`,
+      `[Error: {"message":"\\"[object Object]\\" is not valid JSON","_tag":"NoGithubEvent"}]`,
     );
   });
 

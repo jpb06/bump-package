@@ -41,7 +41,7 @@ describe('actionWorkflow function', () => {
     await expect(() =>
       Effect.runPromise(actionWorkflow),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"NoGithubEvent","message":"${errorMessage}"}]`,
+      `[Error: {"message":"${errorMessage}","_tag":"NoGithubEvent"}]`,
     );
 
     expect(setFailed).toHaveBeenCalledTimes(1);

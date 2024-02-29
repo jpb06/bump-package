@@ -15,16 +15,15 @@ exports.runPromise = runPromise;
 
 /***/ }),
 
-/***/ 68520:
+/***/ 25141:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CommitMessagesExtractionError = void 0;
-class CommitMessagesExtractionError {
+exports.BaseError = void 0;
+class BaseError {
     constructor(error) {
-        this._tag = 'CommitMessagesExtraction';
         if (error instanceof Error) {
             const { message } = error;
             this.message = message;
@@ -32,6 +31,25 @@ class CommitMessagesExtractionError {
         else {
             this.message = error;
         }
+    }
+}
+exports.BaseError = BaseError;
+
+
+/***/ }),
+
+/***/ 68520:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommitMessagesExtractionError = void 0;
+const base_error_1 = __nccwpck_require__(25141);
+class CommitMessagesExtractionError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
+        this._tag = 'CommitMessagesExtraction';
     }
 }
 exports.CommitMessagesExtractionError = CommitMessagesExtractionError;
@@ -40,22 +58,17 @@ exports.CommitMessagesExtractionError = CommitMessagesExtractionError;
 /***/ }),
 
 /***/ 80131:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GithubActionsExecError = void 0;
-class GithubActionsExecError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class GithubActionsExecError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'GithubActionsExec';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.GithubActionsExecError = GithubActionsExecError;
@@ -64,22 +77,17 @@ exports.GithubActionsExecError = GithubActionsExecError;
 /***/ }),
 
 /***/ 157:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InvalidKeywordsError = void 0;
-class InvalidKeywordsError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class InvalidKeywordsError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'InvalidKeywords';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.InvalidKeywordsError = InvalidKeywordsError;
@@ -88,22 +96,17 @@ exports.InvalidKeywordsError = InvalidKeywordsError;
 /***/ }),
 
 /***/ 48368:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.NoGithubEventError = void 0;
-class NoGithubEventError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class NoGithubEventError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'NoGithubEvent';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.NoGithubEventError = NoGithubEventError;
@@ -112,22 +115,17 @@ exports.NoGithubEventError = NoGithubEventError;
 /***/ }),
 
 /***/ 86712:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.NoVersionBumpRequestedError = void 0;
-class NoVersionBumpRequestedError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class NoVersionBumpRequestedError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'NoVersionBumpRequested';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.NoVersionBumpRequestedError = NoVersionBumpRequestedError;
@@ -136,22 +134,17 @@ exports.NoVersionBumpRequestedError = NoVersionBumpRequestedError;
 /***/ }),
 
 /***/ 12033:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.NotRunningOnDefaultBranchError = void 0;
-class NotRunningOnDefaultBranchError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class NotRunningOnDefaultBranchError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'NotRunningOnDefaultBranch';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.NotRunningOnDefaultBranchError = NotRunningOnDefaultBranchError;
@@ -160,22 +153,17 @@ exports.NotRunningOnDefaultBranchError = NotRunningOnDefaultBranchError;
 /***/ }),
 
 /***/ 65674:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UnknownCurrentBranchError = void 0;
-class UnknownCurrentBranchError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class UnknownCurrentBranchError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'UnknownCurrentBranch';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.UnknownCurrentBranchError = UnknownCurrentBranchError;
@@ -184,22 +172,17 @@ exports.UnknownCurrentBranchError = UnknownCurrentBranchError;
 /***/ }),
 
 /***/ 6568:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UnknownDefaultBranchError = void 0;
-class UnknownDefaultBranchError {
-    constructor(error) {
+const base_error_1 = __nccwpck_require__(25141);
+class UnknownDefaultBranchError extends base_error_1.BaseError {
+    constructor() {
+        super(...arguments);
         this._tag = 'UnknownDefaultBranch';
-        if (error instanceof Error) {
-            const { message } = error;
-            this.message = message;
-        }
-        else {
-            this.message = error;
-        }
     }
 }
 exports.UnknownDefaultBranchError = UnknownDefaultBranchError;
