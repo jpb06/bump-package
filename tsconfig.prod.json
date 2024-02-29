@@ -4,5 +4,5 @@
     "declaration": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.test.ts", "src/tests-related", "vite.config.mts"]
+  "exclude": ["node_modules", "src/**/*.test.ts", "src/tests", "vite.config.mts"]
 }

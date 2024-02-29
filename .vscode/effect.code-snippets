@@ -1,0 +1,12 @@
+{
+  "Import effect and pipe": {
+    "prefix": "eff",
+    "body": ["import { pipe, Effect } from 'effect'"],
+    "description": "Import effect and pipe",
+  },
+  "Scope effect with span": {
+    "prefix": "wsp",
+    "body": ["Effect.withSpan(__filename)("],
+    "description": "Create a span",
+  },
+}
