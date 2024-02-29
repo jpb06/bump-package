@@ -1,3 +1,4 @@
-import { actionWorkflow } from './workflow/actionWorkflow';
+import { runPromise } from './effects/run-promise';
+import { actionWorkflow } from './workflow/action-workflow';
 
-actionWorkflow();
+runPromise(actionWorkflow);

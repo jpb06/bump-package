@@ -15,6 +15,7 @@ interface GithubRepository {
 }
 
 export interface GithubEvent {
+  action?: 'completed';
   commits?: GithubCommit[];
   ref?: string;
   repository?: GithubRepository;
