@@ -3,9 +3,7 @@ import { Effect, pipe } from 'effect';
 
 import { setGitConfig } from '../git/set-git-config';
 import { getGithubEventData } from '../github/event/get-github-event-data';
-import { push } from '../github-actions/exec/push';
-import { pushTags } from '../github-actions/exec/push-tags';
-import { setVersion } from '../github-actions/exec/set-version';
+import { push, pushTags, setVersion } from '../github-actions/exec';
 import { getErrorMessageFrom } from '../matchers/get-error-message-from-cause';
 import { getInfoMessageFrom } from '../matchers/get-info-message-from-cause';
 import { getBumpType } from '../semver/get-bump-type';

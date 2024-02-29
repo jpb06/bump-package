@@ -198,15 +198,42 @@ exports.UnknownDefaultBranchError = UnknownDefaultBranchError;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setGitConfig = void 0;
 const effect_1 = __nccwpck_require__(34442);
-const set_git_user_email_1 = __nccwpck_require__(85412);
-const set_git_user_name_1 = __nccwpck_require__(7012);
-const get_user_email_1 = __nccwpck_require__(49613);
-const get_user_name_1 = __nccwpck_require__(38165);
-exports.setGitConfig = effect_1.Effect.withSpan(__filename)((0, effect_1.pipe)(effect_1.Effect.all([get_user_email_1.getUserEmail, get_user_name_1.getUserName], {
+const exec_1 = __nccwpck_require__(56049);
+const inputs_1 = __nccwpck_require__(57357);
+exports.setGitConfig = effect_1.Effect.withSpan(__filename)((0, effect_1.pipe)(effect_1.Effect.all([inputs_1.getUserEmail, inputs_1.getUserName], {
     concurrency: 'unbounded',
-}), effect_1.Effect.flatMap(([userEmail, userName]) => effect_1.Effect.all([(0, set_git_user_email_1.setGitUserEmail)(userEmail), (0, set_git_user_name_1.setGitUserName)(userName)], {
+}), effect_1.Effect.flatMap(([userEmail, userName]) => effect_1.Effect.all([(0, exec_1.setGitUserEmail)(userEmail), (0, exec_1.setGitUserName)(userName)], {
     concurrency: 'unbounded',
 }))));
+
+
+/***/ }),
+
+/***/ 56049:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(5187), exports);
+__exportStar(__nccwpck_require__(9587), exports);
+__exportStar(__nccwpck_require__(85412), exports);
+__exportStar(__nccwpck_require__(7012), exports);
+__exportStar(__nccwpck_require__(73295), exports);
 
 
 /***/ }),
@@ -338,6 +365,32 @@ exports.getUserName = effect_1.Effect.withSpan(__filename)(effect_1.Effect.sync(
     const userNameInput = (0, core_1.getInput)('commit-user');
     return userNameInput.length === 0 ? github_1.context.actor : userNameInput;
 }));
+
+
+/***/ }),
+
+/***/ 57357:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(49613), exports);
+__exportStar(__nccwpck_require__(38165), exports);
 
 
 /***/ }),
@@ -620,14 +673,12 @@ const core_1 = __nccwpck_require__(19093);
 const effect_1 = __nccwpck_require__(34442);
 const set_git_config_1 = __nccwpck_require__(53840);
 const get_github_event_data_1 = __nccwpck_require__(62990);
-const push_1 = __nccwpck_require__(5187);
-const push_tags_1 = __nccwpck_require__(9587);
-const set_version_1 = __nccwpck_require__(73295);
+const exec_1 = __nccwpck_require__(56049);
 const get_error_message_from_cause_1 = __nccwpck_require__(99176);
 const get_info_message_from_cause_1 = __nccwpck_require__(24788);
 const get_bump_type_1 = __nccwpck_require__(95590);
 const get_keywords_1 = __nccwpck_require__(98963);
-exports.actionWorkflow = effect_1.Effect.withSpan(__filename)((0, effect_1.pipe)(effect_1.Effect.all([get_github_event_data_1.getGithubEventData, get_keywords_1.getKeywords]), effect_1.Effect.flatMap(get_bump_type_1.getBumpType), effect_1.Effect.flatMap((bumpType) => effect_1.Effect.all([set_git_config_1.setGitConfig, (0, set_version_1.setVersion)(bumpType), push_1.push, push_tags_1.pushTags])), effect_1.Effect.tap(() => (0, core_1.setOutput)('bump-performed', true)), effect_1.Effect.catchAll((cause) => {
+exports.actionWorkflow = effect_1.Effect.withSpan(__filename)((0, effect_1.pipe)(effect_1.Effect.all([get_github_event_data_1.getGithubEventData, get_keywords_1.getKeywords]), effect_1.Effect.flatMap(get_bump_type_1.getBumpType), effect_1.Effect.flatMap((bumpType) => effect_1.Effect.all([set_git_config_1.setGitConfig, (0, exec_1.setVersion)(bumpType), exec_1.push, exec_1.pushTags])), effect_1.Effect.tap(() => (0, core_1.setOutput)('bump-performed', true)), effect_1.Effect.catchAll((cause) => {
     (0, core_1.setOutput)('bump-performed', false);
     if (cause._tag === 'NotRunningOnDefaultBranch' ||
         cause._tag === 'NoVersionBumpRequested') {

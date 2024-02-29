@@ -2,7 +2,7 @@ import { Effect } from 'effect';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
 import { runPromise } from '../effects/run-promise';
-import { mockActionsCore } from '../tests/mocks/actions-core.mock';
+import { mockActionsCore } from '../tests/mocks';
 
 vi.mock('@actions/core');
 

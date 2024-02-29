@@ -4,8 +4,7 @@ import { Effect } from 'effect';
 import { beforeEach, describe, it, expect, vi, beforeAll } from 'vitest';
 
 import { runPromise } from '../effects/run-promise';
-import { mockActionsCore } from '../tests/mocks/actions-core.mock';
-import { mockActionsExec } from '../tests/mocks/actions-exec.mock';
+import { mockActionsCore, mockActionsExec } from '../tests/mocks';
 
 vi.mock('fs', () => ({
   readFileSync: vi.fn(),

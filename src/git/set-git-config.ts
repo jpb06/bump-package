@@ -1,9 +1,7 @@
 import { Effect, pipe } from 'effect';
 
-import { setGitUserEmail } from '../github-actions/exec/set-git-user-email';
-import { setGitUserName } from '../github-actions/exec/set-git-user-name';
-import { getUserEmail } from '../github-actions/inputs/get-user-email';
-import { getUserName } from '../github-actions/inputs/get-user-name';
+import { setGitUserEmail, setGitUserName } from '../github-actions/exec';
+import { getUserEmail, getUserName } from '../github-actions/inputs';
 
 export const setGitConfig = Effect.withSpan(__filename)(
   pipe(
