@@ -23,7 +23,7 @@ describe('getGithubEventData function', () => {
     await expect(() =>
       Effect.runPromise(getGithubEventData),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[NoGithubEvent: Unexpected token o in JSON at position 1]`,
+      `[NoGithubEvent: "[object Object]" is not valid JSON]`,
     );
   });
 
