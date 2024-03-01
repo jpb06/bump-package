@@ -26,7 +26,7 @@ export const extractCommitsMessages = (event: GithubEvent) =>
         event.workflow_run?.head_commit?.message !== undefined;
       if (isCompletedWorkflowEvent) {
         return extractSquashCommitMessage(
-          event!.workflow_run!.head_commit!.message!,
+          event.workflow_run!.head_commit!.message!,
         );
       }
 
