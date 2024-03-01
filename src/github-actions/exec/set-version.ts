@@ -8,6 +8,7 @@ export const setVersion = (bumpType: BumpType) =>
   Effect.withSpan(__filename)(
     Effect.tryPromise({
       try: () => exec('npm version', [bumpType, '--force']),
-      catch: (e) => new GithubActionsExecError(e),
+      catch: (e) =>
+        new GithubActionsExecError({ message: (e as Error).message }),
     }),
   );

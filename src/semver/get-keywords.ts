@@ -30,8 +30,9 @@ export const getKeywords = Effect.withSpan(__filename)(
     const areKeywordsInvalid = shouldDefaultToPatch
       ? keywords.slice(0, -1).some((el) => isEmpty(el))
       : keywords.some((el) => isEmpty(el));
+
     if (areKeywordsInvalid) {
-      return yield* _(Effect.fail(new InvalidKeywordsError()));
+      return yield* _(new InvalidKeywordsError());
     }
 
     return {

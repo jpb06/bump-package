@@ -1,5 +1,5 @@
-import { BaseError } from './base.error';
+import { Data } from 'effect';
 
-export class CommitMessagesExtractionError extends BaseError {
-  readonly _tag = 'CommitMessagesExtraction';
-}
+export class CommitMessagesExtractionError extends Data.TaggedError(
+  'CommitMessagesExtraction',
+) {}

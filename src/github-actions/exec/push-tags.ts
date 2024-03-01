@@ -6,6 +6,6 @@ import { GithubActionsExecError } from '../../errors/github-actions-exec.error';
 export const pushTags = Effect.withSpan(__filename)(
   Effect.tryPromise({
     try: () => exec('git push', ['--tags']),
-    catch: (e) => new GithubActionsExecError(e),
+    catch: (e) => new GithubActionsExecError({ message: (e as Error).message }),
   }),
 );

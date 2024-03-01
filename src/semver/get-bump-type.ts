@@ -4,7 +4,7 @@ import { NoVersionBumpRequestedError } from '../errors/no-version-bump-requested
 
 import { Keywords } from './get-keywords';
 
-export type BumpType = 'major' | 'minor' | 'patch' | 'none';
+export type BumpType = 'major' | 'minor' | 'patch';
 
 const isBumpRequestedFor = (keywords: string[], messages: string[]) =>
   messages.some((mes) => keywords.some((key) => mes.startsWith(key)));
@@ -12,7 +12,7 @@ const isBumpRequestedFor = (keywords: string[], messages: string[]) =>
 export const getBumpType = ([messages, keywords]: [
   messages: string[],
   keywords: Keywords,
-]): Effect.Effect<BumpType, NoVersionBumpRequestedError> =>
+]) =>
   Effect.withSpan(__filename)(
     Effect.gen(function* (_) {
       const isMajorBump = isBumpRequestedFor(keywords.major, messages);
@@ -34,6 +34,6 @@ export const getBumpType = ([messages, keywords]: [
         return 'patch';
       }
 
-      return yield* _(Effect.fail(new NoVersionBumpRequestedError()));
+      return yield* _(new NoVersionBumpRequestedError());
     }),
   );

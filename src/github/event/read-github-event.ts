@@ -15,6 +15,6 @@ export const readGithubEvent = Effect.withSpan(__filename)(
           }),
         ) as GithubEvent,
     ),
-    Effect.catchAll((e) => Effect.fail(new NoGithubEventError(e))),
+    Effect.catchAll((e) => new NoGithubEventError({ message: e.message })),
   ),
 );

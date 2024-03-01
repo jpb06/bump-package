@@ -1,5 +1,5 @@
-import { BaseError } from './base.error';
+import { Data } from 'effect';
 
-export class GithubActionsExecError extends BaseError {
-  readonly _tag = 'GithubActionsExec';
-}
+export class GithubActionsExecError extends Data.TaggedError(
+  'GithubActionsExec',
+)<{ message: string }> {}

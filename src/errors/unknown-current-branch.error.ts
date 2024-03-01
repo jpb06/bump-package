@@ -1,5 +1,5 @@
-import { BaseError } from './base.error';
+import { Data } from 'effect';
 
-export class UnknownCurrentBranchError extends BaseError {
-  readonly _tag = 'UnknownCurrentBranch';
-}
+export class UnknownCurrentBranchError extends Data.TaggedError(
+  'UnknownCurrentBranch',
+) {}

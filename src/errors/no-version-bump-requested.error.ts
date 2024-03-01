@@ -1,5 +1,5 @@
-import { BaseError } from './base.error';
+import { Data } from 'effect';
 
-export class NoVersionBumpRequestedError extends BaseError {
-  readonly _tag = 'NoVersionBumpRequested';
-}
+export class NoVersionBumpRequestedError extends Data.TaggedError(
+  'NoVersionBumpRequested',
+) {}

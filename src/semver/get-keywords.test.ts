@@ -23,9 +23,7 @@ describe('getKeywords function', () => {
 
     await expect(() =>
       Effect.runPromise(getKeywords),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"InvalidKeywords"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[InvalidKeywords]`);
 
     expect(error).toHaveBeenCalledTimes(3);
     expect(error).toHaveBeenNthCalledWith(

@@ -17,6 +17,6 @@ export const getCurrentBranch = (event: GithubEvent) =>
         return event.workflow_run.head_branch;
       }
 
-      return yield* _(Effect.fail(new UnknownCurrentBranchError()));
+      return yield* _(new UnknownCurrentBranchError());
     }),
   );
