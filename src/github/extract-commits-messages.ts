@@ -34,6 +34,6 @@ export const extractCommitsMessages = (event: GithubEvent) =>
         return event.commits.map((el) => el.message);
       }
 
-      return yield* _(Effect.fail(new CommitMessagesExtractionError()));
+      return yield* _(new CommitMessagesExtractionError());
     }),
   );

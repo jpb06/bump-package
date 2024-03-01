@@ -7,6 +7,7 @@ export const setGitUserEmail = (email: string) =>
   Effect.withSpan(__filename)(
     Effect.tryPromise({
       try: () => exec('git config', ['--global', 'user.email', email]),
-      catch: (e) => new GithubActionsExecError(e),
+      catch: (e) =>
+        new GithubActionsExecError({ message: (e as Error).message }),
     }),
   );

@@ -23,7 +23,7 @@ describe('getGithubEventData function', () => {
     await expect(() =>
       Effect.runPromise(getGithubEventData),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"message":"\\"[object Object]\\" is not valid JSON","_tag":"NoGithubEvent"}]`,
+      `[NoGithubEvent: "[object Object]" is not valid JSON]`,
     );
   });
 
@@ -42,9 +42,7 @@ describe('getGithubEventData function', () => {
 
     await expect(() =>
       Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"UnknownDefaultBranch"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[UnknownDefaultBranch]`);
   });
 
   it('should send an error message if repository infos are missing', async () => {
@@ -61,9 +59,7 @@ describe('getGithubEventData function', () => {
 
     await expect(() =>
       Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"UnknownDefaultBranch"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[UnknownDefaultBranch]`);
   });
 
   it('should send an error message if the current branch cannot be defined', async () => {
@@ -82,9 +78,7 @@ describe('getGithubEventData function', () => {
 
     await expect(() =>
       Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"UnknownCurrentBranch"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[UnknownCurrentBranch]`);
   });
 
   it('should send an error message when commit messages are missing', async () => {
@@ -99,9 +93,7 @@ describe('getGithubEventData function', () => {
 
     await expect(() =>
       Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"CommitMessagesExtraction"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[CommitMessagesExtraction]`);
   });
 
   it('should return relevant data', async () => {
@@ -238,8 +230,6 @@ describe('getGithubEventData function', () => {
 
     await expect(() =>
       Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"NotRunningOnDefaultBranch"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[NotRunningOnDefaultBranch]`);
   });
 });

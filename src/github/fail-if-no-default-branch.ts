@@ -8,7 +8,7 @@ export const failIfNoDefaultBranch = (event?: GithubEvent) =>
     Effect.gen(function* (_) {
       const defaultBranch = event?.repository?.default_branch;
       if (!defaultBranch || defaultBranch.length === 0) {
-        yield* _(Effect.fail(new UnknownDefaultBranchError()));
+        yield* _(new UnknownDefaultBranchError());
       }
     }),
   );

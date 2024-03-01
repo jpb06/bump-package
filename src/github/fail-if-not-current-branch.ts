@@ -13,7 +13,7 @@ export const failIfNotRunningOnCurrentBranch = (event: GithubEvent) =>
 
       const isDefaultBranch = currentBranch === defaultBranch;
       if (!isDefaultBranch) {
-        yield* _(Effect.fail(new NotRunningOnDefaultBranchError()));
+        yield* _(new NotRunningOnDefaultBranchError());
       }
     }),
   );

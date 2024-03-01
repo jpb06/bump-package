@@ -6,7 +6,7 @@ import { runPromise } from '../effects/run-promise';
 import { getBumpType } from './get-bump-type';
 
 describe('getBumpType function', () => {
-  it("should return 'none'", async () => {
+  it('should throw if no bump type match', async () => {
     const messages = ['yolo', 'bro', 'cool'];
     const keywords = {
       major: ['oh,bah'],
@@ -17,9 +17,7 @@ describe('getBumpType function', () => {
 
     await expect(() =>
       Effect.runPromise(getBumpType([messages, keywords])),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"NoVersionBumpRequested"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[NoVersionBumpRequested]`);
   });
 
   it("should return 'major'", async () => {

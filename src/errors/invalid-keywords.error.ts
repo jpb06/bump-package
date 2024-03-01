@@ -1,5 +1,3 @@
-import { BaseError } from './base.error';
+import { Data } from 'effect';
 
-export class InvalidKeywordsError extends BaseError {
-  readonly _tag = 'InvalidKeywords';
-}
+export class InvalidKeywordsError extends Data.TaggedError('InvalidKeywords') {}

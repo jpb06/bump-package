@@ -39,9 +39,7 @@ describe('actionWorkflow function', () => {
 
     await expect(() =>
       Effect.runPromise(actionWorkflow),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"message":"${errorMessage}","_tag":"NoGithubEvent"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[NoGithubEvent: Oh no]`);
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
@@ -92,9 +90,7 @@ describe('actionWorkflow function', () => {
 
     await expect(() =>
       Effect.runPromise(actionWorkflow),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: {"_tag":"InvalidKeywords"}]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[InvalidKeywords]`);
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith('❌ Invalid keywords provided.');

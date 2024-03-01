@@ -1,5 +1,5 @@
-import { BaseError } from './base.error';
+import { Data } from 'effect';
 
-export class NotRunningOnDefaultBranchError extends BaseError {
-  readonly _tag = 'NotRunningOnDefaultBranch';
-}
+export class NotRunningOnDefaultBranchError extends Data.TaggedError(
+  'NotRunningOnDefaultBranch',
+) {}
