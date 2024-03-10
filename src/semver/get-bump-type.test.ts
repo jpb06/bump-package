@@ -1,7 +1,8 @@
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 import { describe, it, expect } from 'vitest';
 
 import { runPromise } from '../effects/run-promise';
+import { NoVersionBumpRequestedError } from '../errors/no-version-bump-requested.error';
 
 import { getBumpType } from './get-bump-type';
 
@@ -15,9 +16,11 @@ describe('getBumpType function', () => {
       shouldDefaultToPatch: false,
     };
 
-    await expect(() =>
-      Effect.runPromise(getBumpType([messages, keywords])),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[NoVersionBumpRequested]`);
+    const result = await Effect.runPromise(
+      pipe(getBumpType([messages, keywords]), Effect.flip),
+    );
+
+    expect(result).toBeInstanceOf(NoVersionBumpRequestedError);
   });
 
   it("should return 'major'", async () => {

@@ -1,7 +1,8 @@
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
 import { runPromise } from '../effects/run-promise';
+import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
 import { mockActionsCore } from '../tests/mocks';
 
 vi.mock('@actions/core');
@@ -21,9 +22,9 @@ describe('getKeywords function', () => {
 
     const { getKeywords } = await import('./get-keywords');
 
-    await expect(() =>
-      Effect.runPromise(getKeywords),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[InvalidKeywords]`);
+    const result = await Effect.runPromise(pipe(getKeywords, Effect.flip));
+
+    expect(result).toBeInstanceOf(InvalidKeywordsError);
 
     expect(error).toHaveBeenCalledTimes(3);
     expect(error).toHaveBeenNthCalledWith(
