@@ -1,8 +1,14 @@
 import { readFileSync } from 'fs';
 
 import { error, getInput, info } from '@actions/core';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 import { describe, it, beforeEach, expect, vi } from 'vitest';
+
+import { CommitMessagesExtractionError } from '../../errors/commit-messages-extraction.error';
+import { NoGithubEventError } from '../../errors/no-github-event.error';
+import { NotRunningOnDefaultBranchError } from '../../errors/not-running-on-default-branch.error';
+import { UnknownCurrentBranchError } from '../../errors/unknown-current-branch.error';
+import { UnknownDefaultBranchError } from '../../errors/unknown-default-branch.error';
 
 import { getGithubEventData } from './get-github-event-data';
 
@@ -20,11 +26,10 @@ describe('getGithubEventData function', () => {
   it('should send an error message when there is no github event', async () => {
     vi.mocked(readFileSync).mockReturnValueOnce({} as never);
 
-    await expect(() =>
-      Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[NoGithubEvent: "[object Object]" is not valid JSON]`,
+    const result = await Effect.runPromise(
+      pipe(getGithubEventData, Effect.flip),
     );
+    expect(result).toBeInstanceOf(NoGithubEventError);
   });
 
   it('should send an error message if the default branch is missing in repository infos', async () => {
@@ -40,9 +45,11 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await expect(() =>
-      Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[UnknownDefaultBranch]`);
+    const result = await Effect.runPromise(
+      pipe(getGithubEventData, Effect.flip),
+    );
+
+    expect(result).toBeInstanceOf(UnknownDefaultBranchError);
   });
 
   it('should send an error message if repository infos are missing', async () => {
@@ -57,9 +64,11 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await expect(() =>
-      Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[UnknownDefaultBranch]`);
+    const result = await Effect.runPromise(
+      pipe(getGithubEventData, Effect.flip),
+    );
+
+    expect(result).toBeInstanceOf(UnknownDefaultBranchError);
   });
 
   it('should send an error message if the current branch cannot be defined', async () => {
@@ -76,9 +85,11 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await expect(() =>
-      Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[UnknownCurrentBranch]`);
+    const result = await Effect.runPromise(
+      pipe(getGithubEventData, Effect.flip),
+    );
+
+    expect(result).toBeInstanceOf(UnknownCurrentBranchError);
   });
 
   it('should send an error message when commit messages are missing', async () => {
@@ -91,9 +102,11 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await expect(() =>
-      Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[CommitMessagesExtraction]`);
+    const result = await Effect.runPromise(
+      pipe(getGithubEventData, Effect.flip),
+    );
+
+    expect(result).toBeInstanceOf(CommitMessagesExtractionError);
   });
 
   it('should return relevant data', async () => {
@@ -228,8 +241,10 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    await expect(() =>
-      Effect.runPromise(getGithubEventData),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[NotRunningOnDefaultBranch]`);
+    const result = await Effect.runPromise(
+      pipe(getGithubEventData, Effect.flip),
+    );
+
+    expect(result).toBeInstanceOf(NotRunningOnDefaultBranchError);
   });
 });

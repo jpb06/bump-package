@@ -1,9 +1,11 @@
 import { readFileSync } from 'fs';
 
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 import { beforeEach, describe, it, expect, vi, beforeAll } from 'vitest';
 
 import { runPromise } from '../effects/run-promise';
+import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
+import { NoGithubEventError } from '../errors/no-github-event.error';
 import { mockActionsCore, mockActionsExec } from '../tests/mocks';
 
 vi.mock('fs', () => ({
@@ -37,9 +39,9 @@ describe('actionWorkflow function', () => {
 
     const { actionWorkflow } = await import('./action-workflow');
 
-    await expect(() =>
-      Effect.runPromise(actionWorkflow),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[NoGithubEvent: Oh no]`);
+    const result = await Effect.runPromise(pipe(actionWorkflow, Effect.flip));
+
+    expect(result).toBeInstanceOf(NoGithubEventError);
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith(
@@ -88,9 +90,9 @@ describe('actionWorkflow function', () => {
 
     const { actionWorkflow } = await import('./action-workflow');
 
-    await expect(() =>
-      Effect.runPromise(actionWorkflow),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[InvalidKeywords]`);
+    const result = await Effect.runPromise(pipe(actionWorkflow, Effect.flip));
+
+    expect(result).toBeInstanceOf(InvalidKeywordsError);
 
     expect(setFailed).toHaveBeenCalledTimes(1);
     expect(setFailed).toHaveBeenCalledWith('❌ Invalid keywords provided.');
