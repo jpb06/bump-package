@@ -2,7 +2,7 @@ import { Effect, pipe } from 'effect';
 
 import { extractCommitsMessages } from '../extract-commits-messages.js';
 import { failIfNoDefaultBranch } from '../fail-if-no-default-branch.js';
-import { failIfNotRunningOnCurrentBranch } from '../fail-if-not-current-branch.js';
+import { failIfNotRunningOnDefaultBranch } from '../fail-if-not-running-on-default-branch.js';
 
 import { maybeDebugEvent } from './maybe-debug-event.js';
 import { readGithubEvent } from './read-github-event.js';
@@ -13,7 +13,7 @@ export const getGithubEventData = pipe(
     Effect.all([
       maybeDebugEvent(event),
       failIfNoDefaultBranch(event),
-      failIfNotRunningOnCurrentBranch(event),
+      failIfNotRunningOnDefaultBranch(event),
       extractCommitsMessages(event),
     ]),
   ),

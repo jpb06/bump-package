@@ -5,7 +5,7 @@ import type { GithubEvent } from '../types/github.types.js';
 
 import { getCurrentBranch } from './get-current-branch.js';
 
-export const failIfNotRunningOnCurrentBranch = (event: GithubEvent) =>
+export const failIfNotRunningOnDefaultBranch = (event: GithubEvent) =>
   pipe(
     Effect.gen(function* () {
       const currentBranch = yield* getCurrentBranch(event);
@@ -15,7 +15,7 @@ export const failIfNotRunningOnCurrentBranch = (event: GithubEvent) =>
       if (!isDefaultBranch) {
         yield* Effect.fail(
           new NotRunningOnDefaultBranchError({
-            cause: 'Not running on current branch',
+            cause: 'Not running on default branch',
           }),
         );
       }
