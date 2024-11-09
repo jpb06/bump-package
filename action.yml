@@ -27,6 +27,8 @@ inputs:
 outputs:
   bump-performed:
     description: 'true if package.json has been bumped'
+  new-version:
+    description: 'Resolved new version'
 
 runs:
   using: 'node20'

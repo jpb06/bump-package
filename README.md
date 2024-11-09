@@ -148,6 +148,10 @@ Debug mode. Will display event github event data.
 
 `true` if version has been bumped in package.json.
 
+### 🔶 `new-version`
+
+The resolved new version. For example, if initial version is `1.1.1` and bump type is `patch`, then `new-version` will be `1.1.2`.
+
 ## ⚡ Usage
 
 ### 🔶 Using defaults

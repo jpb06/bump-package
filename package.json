@@ -33,6 +33,7 @@
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
+    "comment-json": "^4.2.5",
     "effect": "^3.10.13",
     "effect-errors": "^1.7.29"
   },
