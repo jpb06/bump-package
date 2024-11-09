@@ -6,6 +6,7 @@ import type {
   GithubActionsExecError,
   InvalidKeywordsError,
   NoGithubEventError,
+  PackageJsonVersionFetchingError,
   UnknownCurrentBranchError,
   UnknownDefaultBranchError,
 } from '../errors/index.js';
@@ -18,7 +19,8 @@ export const getErrorMessageFrom = (
     | UnknownCurrentBranchError
     | GithubActionsExecError
     | CommitMessagesExtractionError
-    | InvalidKeywordsError,
+    | InvalidKeywordsError
+    | PackageJsonVersionFetchingError,
 ) =>
   Match.value(cause).pipe(
     Match.when(
@@ -40,6 +42,10 @@ export const getErrorMessageFrom = (
     Match.when(
       { _tag: 'invalid-keywords' },
       () => '❌ Invalid keywords provided.',
+    ),
+    Match.when(
+      { _tag: 'package-json-version-fetching-failure' },
+      () => '❌ Failed to read package json file.',
     ),
     Match.orElse(() => '❌ Oh no! An unknown error occured.'),
   );

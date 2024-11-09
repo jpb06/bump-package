@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 
 import { Effect, pipe } from 'effect';
 import { runPromise } from 'effect-errors';
@@ -9,6 +10,9 @@ import { mockActionsCore, mockActionsExec } from '../tests/mocks/index.js';
 
 vi.mock('fs', () => ({
   readFileSync: vi.fn(),
+}));
+vi.mock('node:fs/promises', () => ({
+  readFile: vi.fn(),
 }));
 
 describe('actionWorkflow function', () => {
@@ -123,6 +127,8 @@ describe('actionWorkflow function', () => {
   });
 
   it('should bump the package', async () => {
+    const version = '2.0.0';
+    vi.mocked(readFile).mockResolvedValueOnce(`{ "version": "${version}" }`);
     vi.mocked(readFileSync).mockReturnValueOnce(
       Buffer.from(
         JSON.stringify({
@@ -141,5 +147,6 @@ describe('actionWorkflow function', () => {
     expect(setFailed).toHaveBeenCalledTimes(0);
     expect(info).toHaveBeenCalledTimes(0);
     expect(setOutput).toHaveBeenCalledWith('bump-performed', true);
+    expect(setOutput).toHaveBeenCalledWith('new-version', version);
   });
 });

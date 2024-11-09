@@ -6,3 +6,4 @@ export * from './no-version-bump-requested.error.js';
 export * from './not-running-on-default-branch.error.js';
 export * from './unknown-current-branch.error.js';
 export * from './unknown-default-branch.error.js';
+export * from './package-json-version-fetching.error.js';
