@@ -1,7 +1,7 @@
 {
   "name": "bump-package",
   "description": "Bump package version based on keywords in head commit",
-  "version": "2.5.20",
+  "version": "2.5.21",
   "type": "module",
   "main": "lib/main.js",
   "repository": {
