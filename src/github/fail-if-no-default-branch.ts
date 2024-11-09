@@ -1,14 +1,19 @@
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
-import { UnknownDefaultBranchError } from '../errors/unknown-default-branch.error';
-import { GithubEvent } from '../types/github';
+import { UnknownDefaultBranchError } from '../errors/index.js';
+import type { GithubEvent } from '../types/github.types.js';
 
 export const failIfNoDefaultBranch = (event?: GithubEvent) =>
-  Effect.withSpan(__filename)(
-    Effect.gen(function* (_) {
+  pipe(
+    Effect.gen(function* () {
       const defaultBranch = event?.repository?.default_branch;
       if (!defaultBranch || defaultBranch.length === 0) {
-        yield* _(new UnknownDefaultBranchError());
+        yield* Effect.fail(
+          new UnknownDefaultBranchError({
+            cause: 'Failed to locate default branch',
+          }),
+        );
       }
     }),
+    Effect.withSpan('fail-if-no-default-branch', { attributes: { event } }),
   );

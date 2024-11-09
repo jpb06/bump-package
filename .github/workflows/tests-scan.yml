@@ -19,85 +19,67 @@ jobs:
     name: ⬣ ESLint
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
+      - name: 📦 Setup bun
+        uses: oven-sh/setup-bun@v2
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
-          cache: 'pnpm'
           cache-dependency-path: ./package.json
 
       - name: 📥 Install deps
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: 🔬 Lint
-        run: pnpm lint
+        run: bun lint
 
   typecheck:
     name: ʦ TypeScript
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
+      - name: 📦 Setup bun
+        uses: oven-sh/setup-bun@v2
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
-          cache: 'pnpm'
           cache-dependency-path: ./package.json
 
       - name: 📥 Install deps
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: 🔎 Type check
-        run: pnpm type-check
+        run: bun type-check
 
   test:
     name: 🎯 Tests
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
+      - name: 📦 Setup bun
+        uses: oven-sh/setup-bun@v2
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
-          cache: 'pnpm'
           cache-dependency-path: ./package.json
 
       - name: 📥 Install deps
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: 🧪 Tests
-        run: pnpm test-ci
+        run: bun test-ci
 
       - name: 💾 Uploading coverage artifact
         uses: actions/upload-artifact@v4
@@ -110,9 +92,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, typecheck, test]
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 

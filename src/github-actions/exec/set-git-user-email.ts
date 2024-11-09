@@ -1,13 +1,14 @@
 import { exec } from '@actions/exec';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
-import { GithubActionsExecError } from '../../errors/github-actions-exec.error';
+import { GithubActionsExecError } from '../../errors/index.js';
 
 export const setGitUserEmail = (email: string) =>
-  Effect.withSpan(__filename)(
+  pipe(
     Effect.tryPromise({
       try: () => exec('git config', ['--global', 'user.email', email]),
       catch: (e) =>
         new GithubActionsExecError({ message: (e as Error).message }),
     }),
+    Effect.withSpan('set-git-user-email', { attributes: { email } }),
   );

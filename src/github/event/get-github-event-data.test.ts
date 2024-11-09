@@ -1,16 +1,19 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 
 import { error, getInput, info } from '@actions/core';
 import { Effect, pipe } from 'effect';
-import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { runPromise } from 'effect-errors';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CommitMessagesExtractionError } from '../../errors/commit-messages-extraction.error';
-import { NoGithubEventError } from '../../errors/no-github-event.error';
-import { NotRunningOnDefaultBranchError } from '../../errors/not-running-on-default-branch.error';
-import { UnknownCurrentBranchError } from '../../errors/unknown-current-branch.error';
-import { UnknownDefaultBranchError } from '../../errors/unknown-default-branch.error';
+import {
+  CommitMessagesExtractionError,
+  NoGithubEventError,
+  NotRunningOnDefaultBranchError,
+  UnknownCurrentBranchError,
+  UnknownDefaultBranchError,
+} from '../../errors/index.js';
 
-import { getGithubEventData } from './get-github-event-data';
+import { getGithubEventData } from './get-github-event-data.js';
 
 vi.mock('@actions/core');
 vi.mock('fs', () => ({
@@ -26,9 +29,7 @@ describe('getGithubEventData function', () => {
   it('should send an error message when there is no github event', async () => {
     vi.mocked(readFileSync).mockReturnValueOnce({} as never);
 
-    const result = await Effect.runPromise(
-      pipe(getGithubEventData, Effect.flip),
-    );
+    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
     expect(result).toBeInstanceOf(NoGithubEventError);
   });
 
@@ -45,9 +46,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const result = await Effect.runPromise(
-      pipe(getGithubEventData, Effect.flip),
-    );
+    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
 
     expect(result).toBeInstanceOf(UnknownDefaultBranchError);
   });
@@ -64,9 +63,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const result = await Effect.runPromise(
-      pipe(getGithubEventData, Effect.flip),
-    );
+    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
 
     expect(result).toBeInstanceOf(UnknownDefaultBranchError);
   });
@@ -85,9 +82,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const result = await Effect.runPromise(
-      pipe(getGithubEventData, Effect.flip),
-    );
+    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
 
     expect(result).toBeInstanceOf(UnknownCurrentBranchError);
   });
@@ -102,9 +97,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const result = await Effect.runPromise(
-      pipe(getGithubEventData, Effect.flip),
-    );
+    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
 
     expect(result).toBeInstanceOf(CommitMessagesExtractionError);
   });
@@ -127,7 +120,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const messages = await Effect.runPromise(getGithubEventData);
+    const messages = await runPromise(getGithubEventData);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -153,7 +146,7 @@ describe('getGithubEventData function', () => {
     vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify(event));
     vi.mocked(getInput).mockReturnValueOnce('true');
 
-    await Effect.runPromise(getGithubEventData);
+    await runPromise(getGithubEventData);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -182,7 +175,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const messages = await Effect.runPromise(getGithubEventData);
+    const messages = await runPromise(getGithubEventData);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -211,7 +204,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const messages = await Effect.runPromise(getGithubEventData);
+    const messages = await runPromise(getGithubEventData);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -241,9 +234,7 @@ describe('getGithubEventData function', () => {
       }),
     );
 
-    const result = await Effect.runPromise(
-      pipe(getGithubEventData, Effect.flip),
-    );
+    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
 
     expect(result).toBeInstanceOf(NotRunningOnDefaultBranchError);
   });

@@ -1,8 +1,8 @@
 import { context } from '@actions/github';
-import { describe, it, beforeEach, expect, vi, beforeAll } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runPromise } from '../effects/run-promise';
-import { mockActionsCore, mockActionsExec } from '../tests/mocks';
+import { runPromise } from 'effect-errors';
+import { mockActionsCore, mockActionsExec } from '../tests/mocks/index.js';
 
 vi.mock('@actions/github', () => ({
   context: {
@@ -26,7 +26,7 @@ describe('setGitConfig function', () => {
     getInput.calledWith('commit-user-email').mockReturnValueOnce('');
     getInput.calledWith('commit-user').mockReturnValueOnce('');
 
-    const { setGitConfig } = await import('./set-git-config');
+    const { setGitConfig } = await import('./set-git-config.js');
 
     await runPromise(setGitConfig);
 
@@ -49,7 +49,7 @@ describe('setGitConfig function', () => {
     getInput.calledWith('commit-user-email').mockReturnValueOnce(email);
     getInput.calledWith('commit-user').mockReturnValueOnce(name);
 
-    const { setGitConfig } = await import('./set-git-config');
+    const { setGitConfig } = await import('./set-git-config.js');
 
     await runPromise(setGitConfig);
 
