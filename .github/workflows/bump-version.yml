@@ -45,3 +45,9 @@ jobs:
           should-default-to-patch: true
           commit-user: jpb06
           commit-user-email: jpb.06@outlook.com
+
+      - name: Display action output
+        run: |
+          echo "Bump performed: ${{ steps.bumping-version.outputs.bump-performed }}"
+          echo "New version: ${{ steps.bumping-version.outputs.new-version }}"
+
