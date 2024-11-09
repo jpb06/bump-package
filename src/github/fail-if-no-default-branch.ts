@@ -1,7 +1,7 @@
 import { Effect, pipe } from 'effect';
 
-import { UnknownDefaultBranchError } from '../errors/unknown-default-branch.error';
-import type { GithubEvent } from '../types/github.types';
+import { UnknownDefaultBranchError } from '../errors/index.js';
+import type { GithubEvent } from '../types/github.types.js';
 
 export const failIfNoDefaultBranch = (event?: GithubEvent) =>
   pipe(

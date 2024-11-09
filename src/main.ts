@@ -1,5 +1,5 @@
 import { runPromise } from 'effect-errors';
 
-import { actionWorkflow } from './workflow/action-workflow';
+import { actionWorkflow } from './workflow/action-workflow.js';
 
 runPromise(actionWorkflow);

@@ -1,7 +1,7 @@
 import { error, getInput } from '@actions/core';
 import { Effect, pipe } from 'effect';
 
-import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
+import { InvalidKeywordsError } from '../errors/index.js';
 
 export interface Keywords {
   major: string[];

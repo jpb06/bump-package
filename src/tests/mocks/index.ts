@@ -1,2 +1,2 @@
-export * from './actions-core.mock';
-export * from './actions-exec.mock';
+export * from './actions-core.mock.js';
+export * from './actions-exec.mock.js';

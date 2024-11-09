@@ -1,7 +1,9 @@
 import { Match } from 'effect';
 
-import type { NoVersionBumpRequestedError } from '../errors/no-version-bump-requested.error';
-import type { NotRunningOnDefaultBranchError } from '../errors/not-running-on-default-branch.error';
+import type {
+  NoVersionBumpRequestedError,
+  NotRunningOnDefaultBranchError,
+} from '../errors/index.js';
 
 export const getInfoMessageFrom = (
   cause: NotRunningOnDefaultBranchError | NoVersionBumpRequestedError,

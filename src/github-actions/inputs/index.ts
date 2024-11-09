@@ -1,2 +1,2 @@
-export * from './get-user-email';
-export * from './get-user-name';
+export * from './get-user-email.js';
+export * from './get-user-name.js';

@@ -1,8 +1,8 @@
 import { Effect, pipe } from 'effect';
 
-import { NoVersionBumpRequestedError } from '../errors/no-version-bump-requested.error';
+import { NoVersionBumpRequestedError } from '../errors/index.js';
 
-import type { Keywords } from './get-keywords';
+import type { Keywords } from './get-keywords.js';
 
 export type BumpType = 'major' | 'minor' | 'patch';
 

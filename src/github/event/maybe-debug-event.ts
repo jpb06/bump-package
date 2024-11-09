@@ -1,7 +1,7 @@
 import { getInput, info } from '@actions/core';
 import { Effect, pipe } from 'effect';
 
-import type { GithubEvent } from '../../types/github.types';
+import type { GithubEvent } from '../../types/github.types.js';
 
 export const maybeDebugEvent = (event?: GithubEvent) =>
   pipe(

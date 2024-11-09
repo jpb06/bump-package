@@ -1,11 +1,11 @@
 import { Effect, pipe } from 'effect';
 
-import { extractCommitsMessages } from '../extract-commits-messages';
-import { failIfNoDefaultBranch } from '../fail-if-no-default-branch';
-import { failIfNotRunningOnCurrentBranch } from '../fail-if-not-current-branch';
+import { extractCommitsMessages } from '../extract-commits-messages.js';
+import { failIfNoDefaultBranch } from '../fail-if-no-default-branch.js';
+import { failIfNotRunningOnCurrentBranch } from '../fail-if-not-current-branch.js';
 
-import { maybeDebugEvent } from './maybe-debug-event';
-import { readGithubEvent } from './read-github-event';
+import { maybeDebugEvent } from './maybe-debug-event.js';
+import { readGithubEvent } from './read-github-event.js';
 
 export const getGithubEventData = pipe(
   readGithubEvent,

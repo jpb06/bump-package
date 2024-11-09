@@ -1,12 +1,14 @@
 import { Match } from 'effect';
 import type { UnknownException } from 'effect/Cause';
 
-import type { CommitMessagesExtractionError } from '../errors/commit-messages-extraction.error';
-import type { GithubActionsExecError } from '../errors/github-actions-exec.error';
-import type { InvalidKeywordsError } from '../errors/invalid-keywords.error';
-import type { NoGithubEventError } from '../errors/no-github-event.error';
-import type { UnknownCurrentBranchError } from '../errors/unknown-current-branch.error';
-import type { UnknownDefaultBranchError } from '../errors/unknown-default-branch.error';
+import type {
+  CommitMessagesExtractionError,
+  GithubActionsExecError,
+  InvalidKeywordsError,
+  NoGithubEventError,
+  UnknownCurrentBranchError,
+  UnknownDefaultBranchError,
+} from '../errors/index.js';
 
 export const getErrorMessageFrom = (
   cause:

@@ -1,8 +1,8 @@
 import { exec } from '@actions/exec';
 import { Effect, pipe } from 'effect';
 
-import { GithubActionsExecError } from '../../errors/github-actions-exec.error';
-import type { BumpType } from '../../semver/get-bump-type';
+import { GithubActionsExecError } from '../../errors/index.js';
+import type { BumpType } from '../../semver/get-bump-type.js';
 
 export const setVersion = (bumpType: BumpType) =>
   pipe(

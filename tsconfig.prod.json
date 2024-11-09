@@ -1,8 +1,15 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "declaration": false
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.test.ts", "src/tests", "vite.config.mts"]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"declaration": false
+	},
+	"outDir": "./lib",
+	"include": ["src/**/*"],
+	"exclude": [
+		"node_modules",
+		"src/**/*.test.ts",
+		"src/tests",
+		"vite.config.mts"
+	]
 }

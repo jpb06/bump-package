@@ -1,7 +1,7 @@
 import { Effect, pipe } from 'effect';
 
-import { UnknownCurrentBranchError } from '../errors/unknown-current-branch.error';
-import type { GithubEvent } from '../types/github.types';
+import { UnknownCurrentBranchError } from '../errors/index.js';
+import type { GithubEvent } from '../types/github.types.js';
 
 export const getCurrentBranch = (event: GithubEvent) =>
   pipe(

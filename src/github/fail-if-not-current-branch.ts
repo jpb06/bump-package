@@ -1,9 +1,9 @@
 import { Effect, pipe } from 'effect';
 
-import { NotRunningOnDefaultBranchError } from '../errors/not-running-on-default-branch.error';
-import type { GithubEvent } from '../types/github.types';
+import { NotRunningOnDefaultBranchError } from '../errors/index.js';
+import type { GithubEvent } from '../types/github.types.js';
 
-import { getCurrentBranch } from './get-current-branch';
+import { getCurrentBranch } from './get-current-branch.js';
 
 export const failIfNotRunningOnCurrentBranch = (event: GithubEvent) =>
   pipe(

@@ -1,13 +1,13 @@
 import { info, setFailed, setOutput } from '@actions/core';
 import { Effect, pipe } from 'effect';
 
-import { setGitConfig } from '../git/set-git-config';
-import { push, pushTags, setVersion } from '../github-actions/exec';
-import { getGithubEventData } from '../github/event/get-github-event-data';
-import { getErrorMessageFrom } from '../matchers/get-error-message-from-cause';
-import { getInfoMessageFrom } from '../matchers/get-info-message-from-cause';
-import { getBumpType } from '../semver/get-bump-type';
-import { getKeywords } from '../semver/get-keywords';
+import { setGitConfig } from '../git/set-git-config.js';
+import { push, pushTags, setVersion } from '../github-actions/exec/index.js';
+import { getGithubEventData } from '../github/event/get-github-event-data.js';
+import { getErrorMessageFrom } from '../matchers/get-error-message-from-cause.js';
+import { getInfoMessageFrom } from '../matchers/get-info-message-from-cause.js';
+import { getBumpType } from '../semver/get-bump-type.js';
+import { getKeywords } from '../semver/get-keywords.js';
 
 export const actionWorkflow = pipe(
   Effect.all([getGithubEventData, getKeywords]),

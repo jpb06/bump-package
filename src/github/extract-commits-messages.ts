@@ -1,7 +1,7 @@
 import { Effect, pipe } from 'effect';
 
-import { CommitMessagesExtractionError } from '../errors/commit-messages-extraction.error';
-import type { GithubEvent } from '../types/github.types';
+import { CommitMessagesExtractionError } from '../errors/index.js';
+import type { GithubEvent } from '../types/github.types.js';
 
 const extractSquashCommitMessage = (message: string) =>
   message

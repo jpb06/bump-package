@@ -1,9 +1,9 @@
 import { Effect, pipe } from 'effect';
+import { runPromise } from 'effect-errors';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runPromise } from 'effect-errors';
-import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
-import { mockActionsCore } from '../tests/mocks';
+import { InvalidKeywordsError } from '../errors/index.js';
+import { mockActionsCore } from '../tests/mocks/index.js';
 
 vi.mock('@actions/core');
 
@@ -20,7 +20,7 @@ describe('getKeywords function', () => {
     getInput.calledWith('minor-keywords').mockReturnValueOnce('');
     getInput.calledWith('patch-keywords').mockReturnValueOnce('');
 
-    const { getKeywords } = await import('./get-keywords');
+    const { getKeywords } = await import('./get-keywords.js');
 
     const result = await runPromise(pipe(getKeywords, Effect.flip));
 
@@ -47,7 +47,7 @@ describe('getKeywords function', () => {
     getInput.calledWith('minor-keywords').mockReturnValueOnce('cool,man,fun');
     getInput.calledWith('patch-keywords').mockReturnValueOnce('super');
 
-    const { getKeywords } = await import('./get-keywords');
+    const { getKeywords } = await import('./get-keywords.js');
 
     const result = await runPromise(getKeywords);
 
@@ -64,7 +64,7 @@ describe('getKeywords function', () => {
     getInput.calledWith('minor-keywords').mockReturnValueOnce('cool,man,fun');
     getInput.calledWith('patch-keywords').mockReturnValueOnce('');
 
-    const { getKeywords } = await import('./get-keywords');
+    const { getKeywords } = await import('./get-keywords.js');
 
     const result = await runPromise(getKeywords);
 

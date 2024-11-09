@@ -1,12 +1,11 @@
 import { readFileSync } from 'node:fs';
 
 import { Effect, pipe } from 'effect';
+import { runPromise } from 'effect-errors';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runPromise } from 'effect-errors';
-import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
-import { NoGithubEventError } from '../errors/no-github-event.error';
-import { mockActionsCore, mockActionsExec } from '../tests/mocks';
+import { InvalidKeywordsError, NoGithubEventError } from '../errors/index.js';
+import { mockActionsCore, mockActionsExec } from '../tests/mocks/index.js';
 
 vi.mock('fs', () => ({
   readFileSync: vi.fn(),
@@ -37,7 +36,7 @@ describe('actionWorkflow function', () => {
       throw new Error(errorMessage);
     });
 
-    const { actionWorkflow } = await import('./action-workflow');
+    const { actionWorkflow } = await import('./action-workflow.js');
 
     const result = await runPromise(pipe(actionWorkflow, Effect.flip));
 
@@ -61,7 +60,7 @@ describe('actionWorkflow function', () => {
       ),
     );
 
-    const { actionWorkflow } = await import('./action-workflow');
+    const { actionWorkflow } = await import('./action-workflow.js');
 
     await runPromise(actionWorkflow);
 
@@ -88,7 +87,7 @@ describe('actionWorkflow function', () => {
     getInput.calledWith('minor-keywords').mockReturnValueOnce('');
     getInput.calledWith('patch-keywords').mockReturnValueOnce('');
 
-    const { actionWorkflow } = await import('./action-workflow');
+    const { actionWorkflow } = await import('./action-workflow.js');
 
     const result = await runPromise(pipe(actionWorkflow, Effect.flip));
 
@@ -111,7 +110,7 @@ describe('actionWorkflow function', () => {
     );
     getInput.calledWith('should-default-to-patch').mockReturnValue('false');
 
-    const { actionWorkflow } = await import('./action-workflow');
+    const { actionWorkflow } = await import('./action-workflow.js');
 
     await runPromise(actionWorkflow);
 
@@ -134,7 +133,7 @@ describe('actionWorkflow function', () => {
       ),
     );
 
-    const { actionWorkflow } = await import('./action-workflow');
+    const { actionWorkflow } = await import('./action-workflow.js');
 
     await runPromise(actionWorkflow);
 

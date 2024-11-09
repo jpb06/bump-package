@@ -2,16 +2,18 @@ import { readFileSync } from 'node:fs';
 
 import { error, getInput, info } from '@actions/core';
 import { Effect, pipe } from 'effect';
+import { runPromise } from 'effect-errors';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CommitMessagesExtractionError } from '../../errors/commit-messages-extraction.error';
-import { NoGithubEventError } from '../../errors/no-github-event.error';
-import { NotRunningOnDefaultBranchError } from '../../errors/not-running-on-default-branch.error';
-import { UnknownCurrentBranchError } from '../../errors/unknown-current-branch.error';
-import { UnknownDefaultBranchError } from '../../errors/unknown-default-branch.error';
+import {
+  CommitMessagesExtractionError,
+  NoGithubEventError,
+  NotRunningOnDefaultBranchError,
+  UnknownCurrentBranchError,
+  UnknownDefaultBranchError,
+} from '../../errors/index.js';
 
-import { runPromise } from 'effect-errors';
-import { getGithubEventData } from './get-github-event-data';
+import { getGithubEventData } from './get-github-event-data.js';
 
 vi.mock('@actions/core');
 vi.mock('fs', () => ({
