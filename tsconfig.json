@@ -8,11 +8,10 @@
 		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleDetection": "force",
+		"moduleResolution": "NodeNext",
 		"allowJs": false,
 		"incremental": false,
 		"composite": false,
-
-		"moduleResolution": "NodeNext",
 		"noEmit": true,
 
 		// Best practices

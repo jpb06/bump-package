@@ -34,7 +34,7 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
     "effect": "^3.10.13",
-    "effect-errors": "^1.7.28"
+    "effect-errors": "^1.7.29"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
