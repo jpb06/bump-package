@@ -1,3 +1,6 @@
-import { Data } from 'effect';
+import { TaggedError } from 'effect/Data';
 
-export class InvalidKeywordsError extends Data.TaggedError('InvalidKeywords') {}
+export class InvalidKeywordsError extends TaggedError('invalid-keywords')<{
+  cause?: unknown;
+  message?: string;
+}> {}

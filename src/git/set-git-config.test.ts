@@ -1,7 +1,7 @@
 import { context } from '@actions/github';
-import { describe, it, beforeEach, expect, vi, beforeAll } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runPromise } from '../effects/run-promise';
+import { runPromise } from 'effect-errors';
 import { mockActionsCore, mockActionsExec } from '../tests/mocks';
 
 vi.mock('@actions/github', () => ({

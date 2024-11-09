@@ -1,9 +1,9 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 
 import { Effect, pipe } from 'effect';
-import { beforeEach, describe, it, expect, vi, beforeAll } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runPromise } from '../effects/run-promise';
+import { runPromise } from 'effect-errors';
 import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
 import { NoGithubEventError } from '../errors/no-github-event.error';
 import { mockActionsCore, mockActionsExec } from '../tests/mocks';
@@ -39,7 +39,7 @@ describe('actionWorkflow function', () => {
 
     const { actionWorkflow } = await import('./action-workflow');
 
-    const result = await Effect.runPromise(pipe(actionWorkflow, Effect.flip));
+    const result = await runPromise(pipe(actionWorkflow, Effect.flip));
 
     expect(result).toBeInstanceOf(NoGithubEventError);
 
@@ -90,7 +90,7 @@ describe('actionWorkflow function', () => {
 
     const { actionWorkflow } = await import('./action-workflow');
 
-    const result = await Effect.runPromise(pipe(actionWorkflow, Effect.flip));
+    const result = await runPromise(pipe(actionWorkflow, Effect.flip));
 
     expect(result).toBeInstanceOf(InvalidKeywordsError);
 

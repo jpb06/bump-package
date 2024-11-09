@@ -1,8 +1,8 @@
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
 import { NoVersionBumpRequestedError } from '../errors/no-version-bump-requested.error';
 
-import { Keywords } from './get-keywords';
+import type { Keywords } from './get-keywords';
 
 export type BumpType = 'major' | 'minor' | 'patch';
 
@@ -13,8 +13,8 @@ export const getBumpType = ([messages, keywords]: [
   messages: string[],
   keywords: Keywords,
 ]) =>
-  Effect.withSpan(__filename)(
-    Effect.gen(function* (_) {
+  pipe(
+    Effect.gen(function* () {
       const isMajorBump = isBumpRequestedFor(keywords.major, messages);
       if (isMajorBump) {
         return 'major';
@@ -34,6 +34,16 @@ export const getBumpType = ([messages, keywords]: [
         return 'patch';
       }
 
-      return yield* _(new NoVersionBumpRequestedError());
+      return yield* Effect.fail(
+        new NoVersionBumpRequestedError({
+          cause: 'No version bump requested',
+        }),
+      );
+    }),
+    Effect.withSpan('get-bump-type', {
+      attributes: {
+        messages,
+        keywords,
+      },
     }),
   );

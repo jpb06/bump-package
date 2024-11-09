@@ -1,4 +1,4 @@
-import * as ActionsExec from '@actions/exec';
+import type * as ActionsExec from '@actions/exec';
 import { vi } from 'vitest';
 import { mockDeep } from 'vitest-mock-extended';
 

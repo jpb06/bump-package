@@ -1,18 +1,17 @@
-name: ⚡ Version bump
+name: ⚡ Test bump
 
 on:
-  workflow_run:
-    workflows: ['⚡ Coverage badges generation']
-    types:
-      - completed
+  push:
+    branches:
+      - esbuild
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  version-bump:
-    name: 🆕 Version bump
+  test-bump:
+    name: test bump
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

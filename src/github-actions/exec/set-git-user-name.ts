@@ -1,13 +1,14 @@
 import { exec } from '@actions/exec';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
 import { GithubActionsExecError } from '../../errors/github-actions-exec.error';
 
 export const setGitUserName = (userName: string) =>
-  Effect.withSpan(__filename)(
+  pipe(
     Effect.tryPromise({
       try: () => exec('git config', ['--global', 'user.name', userName]),
       catch: (e) =>
         new GithubActionsExecError({ message: (e as Error).message }),
     }),
+    Effect.withSpan('set-git-user-name', { attributes: { userName } }),
   );

@@ -1,5 +1,6 @@
-import { Data } from 'effect';
+import { TaggedError } from 'effect/Data';
 
-export class GithubActionsExecError extends Data.TaggedError(
-  'GithubActionsExec',
-)<{ message: string }> {}
+export class GithubActionsExecError extends TaggedError('github-actions-exec')<{
+  cause?: unknown;
+  message?: string;
+}> {}

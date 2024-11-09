@@ -1,9 +1,9 @@
 import { Effect, pipe } from 'effect';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { runPromise } from '../effects/run-promise';
 import { NoVersionBumpRequestedError } from '../errors/no-version-bump-requested.error';
 
+import { runPromise } from 'effect-errors';
 import { getBumpType } from './get-bump-type';
 
 describe('getBumpType function', () => {
@@ -16,7 +16,7 @@ describe('getBumpType function', () => {
       shouldDefaultToPatch: false,
     };
 
-    const result = await Effect.runPromise(
+    const result = await runPromise(
       pipe(getBumpType([messages, keywords]), Effect.flip),
     );
 

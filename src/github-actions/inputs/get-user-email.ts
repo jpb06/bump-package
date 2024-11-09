@@ -1,8 +1,8 @@
 import { getInput } from '@actions/core';
 import { context } from '@actions/github';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
-export const getUserEmail = Effect.withSpan(__filename)(
+export const getUserEmail = pipe(
   Effect.sync(() => {
     const userEmailInput = getInput('commit-user-email');
 
@@ -10,4 +10,5 @@ export const getUserEmail = Effect.withSpan(__filename)(
       ? `${context.actor}@users.noreply.github.com`
       : userEmailInput;
   }),
+  Effect.withSpan('get-user-email'),
 );

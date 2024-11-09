@@ -1,7 +1,7 @@
 import { Effect, pipe } from 'effect';
-import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { runPromise } from '../effects/run-promise';
+import { runPromise } from 'effect-errors';
 import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
 import { mockActionsCore } from '../tests/mocks';
 
@@ -22,22 +22,22 @@ describe('getKeywords function', () => {
 
     const { getKeywords } = await import('./get-keywords');
 
-    const result = await Effect.runPromise(pipe(getKeywords, Effect.flip));
+    const result = await runPromise(pipe(getKeywords, Effect.flip));
 
     expect(result).toBeInstanceOf(InvalidKeywordsError);
 
     expect(error).toHaveBeenCalledTimes(3);
     expect(error).toHaveBeenNthCalledWith(
       1,
-      `⚠️ Expecting at least one major keyword but got 0.`,
+      '⚠️ Expecting at least one major keyword but got 0.',
     );
     expect(error).toHaveBeenNthCalledWith(
       2,
-      `⚠️ Expecting at least one minor keyword but got 0.`,
+      '⚠️ Expecting at least one minor keyword but got 0.',
     );
     expect(error).toHaveBeenNthCalledWith(
       3,
-      `⚠️ Expecting at least one patch keyword but got 0.`,
+      '⚠️ Expecting at least one patch keyword but got 0.',
     );
   });
 

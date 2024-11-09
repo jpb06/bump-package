@@ -1,5 +1,5 @@
 import { error, getInput } from '@actions/core';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
 import { InvalidKeywordsError } from '../errors/invalid-keywords.error';
 
@@ -13,9 +13,9 @@ export interface Keywords {
 const isEmpty = (array: string[]) =>
   array.length === 1 && array[0].length === 0;
 
-export const getKeywords = Effect.withSpan(__filename)(
-  Effect.gen(function* (_) {
-    const shouldDefaultToPatch = getInput(`should-default-to-patch`) === 'true';
+export const getKeywords = pipe(
+  Effect.gen(function* () {
+    const shouldDefaultToPatch = getInput('should-default-to-patch') === 'true';
     const keywords = ['major', 'minor', 'patch'].map((type, index) => {
       const array = getInput(`${type}-keywords`).split(',');
       if (
@@ -32,7 +32,11 @@ export const getKeywords = Effect.withSpan(__filename)(
       : keywords.some((el) => isEmpty(el));
 
     if (areKeywordsInvalid) {
-      return yield* _(new InvalidKeywordsError());
+      return yield* Effect.fail(
+        new InvalidKeywordsError({
+          cause: 'Invalid keywords',
+        }),
+      );
     }
 
     return {
@@ -42,4 +46,5 @@ export const getKeywords = Effect.withSpan(__filename)(
       patch: keywords[2],
     };
   }),
+  Effect.withSpan('get-keywords'),
 );

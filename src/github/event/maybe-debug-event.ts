@@ -1,15 +1,16 @@
 import { getInput, info } from '@actions/core';
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
-import { GithubEvent } from '../../types/github';
+import type { GithubEvent } from '../../types/github.types';
 
 export const maybeDebugEvent = (event?: GithubEvent) =>
-  Effect.withSpan(__filename)(
+  pipe(
     Effect.try(() => {
       const debugEvent = getInput('debug') === 'true';
       if (debugEvent) {
-        info(`🕵️ Github event:`);
+        info('🕵️ Github event:');
         info(JSON.stringify(event, null, 2));
       }
     }),
+    Effect.withSpan('maybe-debug-event', { attributes: { event } }),
   );

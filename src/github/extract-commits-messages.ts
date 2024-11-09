@@ -1,7 +1,7 @@
-import { Effect } from 'effect';
+import { Effect, pipe } from 'effect';
 
 import { CommitMessagesExtractionError } from '../errors/commit-messages-extraction.error';
-import { GithubEvent } from '../types/github';
+import type { GithubEvent } from '../types/github.types';
 
 const extractSquashCommitMessage = (message: string) =>
   message
@@ -10,8 +10,8 @@ const extractSquashCommitMessage = (message: string) =>
     .map((el) => el.substring(el.indexOf('* ') + 2));
 
 export const extractCommitsMessages = (event: GithubEvent) =>
-  Effect.withSpan(__filename)(
-    Effect.gen(function* (_) {
+  pipe(
+    Effect.gen(function* () {
       const isSquashCommit =
         Array.isArray(event.commits) &&
         event.commits.length === 1 &&
@@ -34,6 +34,11 @@ export const extractCommitsMessages = (event: GithubEvent) =>
         return event.commits.map((el) => el.message);
       }
 
-      return yield* _(new CommitMessagesExtractionError());
+      return yield* Effect.fail(
+        new CommitMessagesExtractionError({
+          cause: 'Failed to extract commit message',
+        }),
+      );
     }),
+    Effect.withSpan('extract-commits-messages', { attributes: { event } }),
   );

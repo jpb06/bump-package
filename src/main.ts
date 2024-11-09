@@ -1,4 +1,5 @@
-import { runPromise } from './effects/run-promise';
+import { runPromise } from 'effect-errors';
+
 import { actionWorkflow } from './workflow/action-workflow';
 
 runPromise(actionWorkflow);
