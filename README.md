@@ -316,13 +316,13 @@ jobs:
         cwd: ./libs/my-package
 ```
 
-#### The pushed version tag will look like this: `<package_name>@v<version>`.
+#### The pushed version tag will look like this: `<package_name>@v<version>`
 
 Example:
 
 > `my-package@v2.3.0`
 
-#### The bump commit will have the following message: `chore(<package_name>): bump version to <version>`.
+#### The bump commit will have the following message: `chore(<package_name>): bump version to <version>`
 
 Eexample:
 
