@@ -127,14 +127,10 @@ describe('actionWorkflow function', () => {
   });
 
   it('should bump the package', async () => {
-    const oldVersion = '1.1.1';
     const newVersion = '2.0.0';
 
     getInput.calledWith('cwd').mockReturnValue('.');
 
-    vi.mocked(readFile).mockResolvedValueOnce(
-      `{ "name": "frontend-app", "version": "${oldVersion}" }`,
-    );
     vi.mocked(readFile).mockResolvedValueOnce(`{ "version": "${newVersion}" }`);
     vi.mocked(readFileSync).mockReturnValueOnce(
       Buffer.from(
@@ -157,9 +153,9 @@ describe('actionWorkflow function', () => {
       [
         'major',
         '--force',
-        '--tag-version-prefix=frontend-app@v',
+        '--tag-version-prefix=v',
         '--m',
-        'chore(frontend-app): bump version to %s',
+        'chore: bump version to %s',
       ],
       { cwd: '.' },
     );

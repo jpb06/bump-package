@@ -8,16 +8,21 @@ import type { PackageJson } from '../types/index.js';
 export const getGitBumpData = (cwd: string) =>
   pipe(
     Effect.gen(function* () {
-      const packageData = yield* readJsonEffect<PackageJson>(
-        path.join(cwd, 'package.json'),
-      );
+      const isMonorepo = cwd !== '.';
+      if (isMonorepo) {
+        const packageData = yield* readJsonEffect<PackageJson>(
+          path.join(cwd, 'package.json'),
+        );
 
-      const tagPrefix = `${packageData.name}@v`;
-      const message = `chore(${packageData.name}): bump version to %s`;
+        return {
+          tagPrefix: `${packageData.name}@v`,
+          message: `chore(${packageData.name}): bump version to %s`,
+        };
+      }
 
       return {
-        tagPrefix,
-        message,
+        tagPrefix: 'v',
+        message: 'chore: bump version to %s',
       };
     }),
     Effect.catchAll(
