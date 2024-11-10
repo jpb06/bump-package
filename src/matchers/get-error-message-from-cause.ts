@@ -6,6 +6,7 @@ import type {
   GithubActionsExecError,
   InvalidKeywordsError,
   NoGithubEventError,
+  PackageJsonNameFetchingError,
   PackageJsonVersionFetchingError,
   UnknownCurrentBranchError,
   UnknownDefaultBranchError,
@@ -20,7 +21,8 @@ export const getErrorMessageFrom = (
     | GithubActionsExecError
     | CommitMessagesExtractionError
     | InvalidKeywordsError
-    | PackageJsonVersionFetchingError,
+    | PackageJsonVersionFetchingError
+    | PackageJsonNameFetchingError,
 ) =>
   Match.value(cause).pipe(
     Match.when(
@@ -45,7 +47,11 @@ export const getErrorMessageFrom = (
     ),
     Match.when(
       { _tag: 'package-json-version-fetching-failure' },
-      () => '❌ Failed to read package json file.',
+      () => '❌ Failed to extract version from package json file.',
+    ),
+    Match.when(
+      { _tag: 'package-json-name-fetching-failure' },
+      () => '❌ Failed to extract name package json file.',
     ),
     Match.orElse(() => '❌ Oh no! An unknown error occured.'),
   );

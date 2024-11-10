@@ -4,7 +4,7 @@ import { env } from 'node:process';
 import { Effect, pipe } from 'effect';
 
 import { NoGithubEventError } from '../../errors/index.js';
-import type { GithubEvent } from '../../types/github.types.js';
+import type { GithubEvent } from '../../types/index.js';
 
 export const readGithubEvent = pipe(
   pipe(

@@ -100,6 +100,12 @@ jobs:
 
 ## ⚡ Inputs
 
+### 🔶 `cwd`
+
+Path location of the package to bump. Useful for monorepos.
+
+> Default value: **.**
+
 ### 🔶 `major-keywords`
 
 Commits messages starting with these keywords will trigger a major bump. Commas may be used to specify more than one keyword
@@ -277,3 +283,47 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
+
+You can also get the new version using `new-version` output:
+
+```yaml
+- name: Display action output
+  run: |
+    echo "New version: ${{ steps.bumping-version.outputs.new-version }}"
+```
+
+### 🔶 Monorepos
+
+You can use the input `cwd` to perform a bump for a monorepo app or package. The following job would bump the package.json file located at `./libs/my-package/package.json`:
+
+```yaml
+name: ⚡ Package version bump
+on: [push]
+jobs:
+  bump:
+    name: 🆕 Version bump
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v4
+
+    [...]
+
+    - name: ⏫ Bumping version
+      uses: jpb06/bump-package@latest
+      with:
+        cwd: ./libs/my-package
+```
+
+#### The pushed version tag will look like this: `<package_name>@v<version>`.
+
+Example:
+
+> `my-package@v2.3.0`
+
+#### The bump commit will have the following message: `chore(<package_name>): bump version to <version>`.
+
+Eexample:
+
+> `chore(my-package): bump version to v2.3.0`

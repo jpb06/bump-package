@@ -24,6 +24,7 @@ export const getKeywords = pipe(
       ) {
         error(`⚠️ Expecting at least one ${type} keyword but got 0.`);
       }
+
       return array;
     });
 
