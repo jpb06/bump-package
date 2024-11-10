@@ -127,8 +127,15 @@ describe('actionWorkflow function', () => {
   });
 
   it('should bump the package', async () => {
-    const version = '2.0.0';
-    vi.mocked(readFile).mockResolvedValueOnce(`{ "version": "${version}" }`);
+    const oldVersion = '1.1.1';
+    const newVersion = '2.0.0';
+
+    getInput.calledWith('cwd').mockReturnValue('.');
+
+    vi.mocked(readFile).mockResolvedValueOnce(
+      `{ "name": "frontend-app", "version": "${oldVersion}" }`,
+    );
+    vi.mocked(readFile).mockResolvedValueOnce(`{ "version": "${newVersion}" }`);
     vi.mocked(readFileSync).mockReturnValueOnce(
       Buffer.from(
         JSON.stringify({
@@ -144,9 +151,64 @@ describe('actionWorkflow function', () => {
     await runPromise(actionWorkflow);
 
     expect(exec).toHaveBeenCalledTimes(5);
+    expect(exec).toHaveBeenNthCalledWith(
+      3,
+      'npm version',
+      [
+        'major',
+        '--force',
+        '--tag-version-prefix=frontend-app@v',
+        '--m',
+        'chore(frontend-app): bump version to %s',
+      ],
+      { cwd: '.' },
+    );
     expect(setFailed).toHaveBeenCalledTimes(0);
     expect(info).toHaveBeenCalledTimes(0);
     expect(setOutput).toHaveBeenCalledWith('bump-performed', true);
-    expect(setOutput).toHaveBeenCalledWith('new-version', version);
+    expect(setOutput).toHaveBeenCalledWith('new-version', newVersion);
+  });
+
+  it('should handle sub paths', async () => {
+    const oldVersion = '1.1.1';
+    const newVersion = '2.0.0';
+
+    getInput.calledWith('cwd').mockReturnValue('./apps/frontend-app');
+
+    vi.mocked(readFile).mockResolvedValueOnce(
+      `{ "name": "frontend-app", "version": "${oldVersion}" }`,
+    );
+    vi.mocked(readFile).mockResolvedValueOnce(`{ "version": "${newVersion}" }`);
+    vi.mocked(readFileSync).mockReturnValueOnce(
+      Buffer.from(
+        JSON.stringify({
+          ref: 'refs/heads/main',
+          repository: { default_branch: 'main' },
+          commits: [{ message: '[Major]: yolo' }, { message: 'bro: cool' }],
+        }),
+      ),
+    );
+
+    const { actionWorkflow } = await import('./action-workflow.js');
+
+    await runPromise(actionWorkflow);
+
+    expect(exec).toHaveBeenCalledTimes(5);
+    expect(exec).toHaveBeenNthCalledWith(
+      3,
+      'npm version',
+      [
+        'major',
+        '--force',
+        '--tag-version-prefix=frontend-app@v',
+        '--m',
+        'chore(frontend-app): bump version to %s',
+      ],
+      { cwd: './apps/frontend-app' },
+    );
+    expect(setFailed).toHaveBeenCalledTimes(0);
+    expect(info).toHaveBeenCalledTimes(0);
+    expect(setOutput).toHaveBeenCalledWith('bump-performed', true);
+    expect(setOutput).toHaveBeenCalledWith('new-version', newVersion);
   });
 });

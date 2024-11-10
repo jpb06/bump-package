@@ -3,12 +3,11 @@ import { Effect, pipe } from 'effect';
 
 import { PackageJsonVersionFetchingError } from '../errors/index.js';
 import { readJsonEffect } from '../fs/fs.effects.js';
+import type { PackageJson } from '../types/index.js';
 
 export const outputVersion = pipe(
   Effect.gen(function* () {
-    const packageData = yield* readJsonEffect<{ version: string }>(
-      './package.json',
-    );
+    const packageData = yield* readJsonEffect<PackageJson>('./package.json');
 
     setOutput('new-version', packageData.version);
   }),

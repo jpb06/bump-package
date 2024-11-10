@@ -1,7 +1,7 @@
 import { Effect, pipe } from 'effect';
 
 import { NotRunningOnDefaultBranchError } from '../errors/index.js';
-import type { GithubEvent } from '../types/github.types.js';
+import type { GithubEvent } from '../types/index.js';
 
 import { getCurrentBranch } from './get-current-branch.js';
 
