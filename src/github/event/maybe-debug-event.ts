@@ -12,5 +12,7 @@ export const maybeDebugEvent = (event?: GithubEvent) =>
         info(JSON.stringify(event, null, 2));
       }
     }),
-    Effect.withSpan('maybe-debug-event', { attributes: { event } }),
+    Effect.withSpan('maybe-debug-event', {
+      attributes: { event: JSON.stringify(event, null, 2) },
+    }),
   );

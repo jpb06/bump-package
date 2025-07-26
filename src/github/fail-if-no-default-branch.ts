@@ -15,5 +15,7 @@ export const failIfNoDefaultBranch = (event?: GithubEvent) =>
         );
       }
     }),
-    Effect.withSpan('fail-if-no-default-branch', { attributes: { event } }),
+    Effect.withSpan('fail-if-no-default-branch', {
+      attributes: { event: JSON.stringify(event, null, 2) },
+    }),
   );

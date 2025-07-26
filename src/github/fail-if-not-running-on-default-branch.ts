@@ -20,6 +20,6 @@ export const failIfNotRunningOnDefaultBranch = (event: GithubEvent) =>
       }
     }),
     Effect.withSpan('fail-if-not-running-on-current-branch', {
-      attributes: { event },
+      attributes: { event: JSON.stringify(event, null, 2) },
     }),
   );

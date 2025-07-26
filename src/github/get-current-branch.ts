@@ -23,5 +23,7 @@ export const getCurrentBranch = (event: GithubEvent) =>
         }),
       );
     }),
-    Effect.withSpan('get-current-branch', { attributes: { event } }),
+    Effect.withSpan('get-current-branch', {
+      attributes: { event: JSON.stringify(event, null, 2) },
+    }),
   );
