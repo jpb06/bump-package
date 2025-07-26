@@ -35,9 +35,8 @@ describe('actionWorkflow function', () => {
   });
 
   it('should fail the task if github event data is missing', async () => {
-    const { FsTestLayer } = makeFsTestLayer({
-      readFileString: Effect.succeed(''),
-    });
+    delete env.GITHUB_EVENT_PATH;
+    const { FsTestLayer } = makeFsTestLayer({});
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
