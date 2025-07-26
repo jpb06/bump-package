@@ -23,9 +23,8 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an error message when there is no github event', async () => {
-    const { FsTestLayer } = makeFsTestLayer({
-      readFileString: Effect.succeed('{}'),
-    });
+    delete env.GITHUB_EVENT_PATH;
+    const { FsTestLayer } = makeFsTestLayer({});
 
     const program = pipe(
       getGithubEventData,
