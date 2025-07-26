@@ -15,9 +15,9 @@
   },
   "scripts": {
     "update-deps": "bunx npm-check-updates --root --format group -i",
-    "cleanDist": "rimraf ./dist && rimraf ./lib",
-    "build": "bun cleanDist && tsc --project tsconfig.prod.json && ncc build -m",
-    "build-esbuild": "bun cleanDist && tsc --project tsconfig.prod.json && esbuild lib/main.js --bundle --platform=node --format=cjs --external:./node_modules/* --minify --outfile=dist/index.js",
+    "clean-dist": "rm -rf ./dist && rm -rf ./lib",
+    "build": "bun clean-dist && esbuild ./src/main.ts --bundle --tsconfig=tsconfig.prod.json --minify --sourcemap --outfile=./lib/main.js --platform=node",
+    "postbuild": "echo '{\"type\": \"commonjs\"}' > lib/package.json",
     "type-check": "tsc --noEmit",
     "format": "biome format --write ./src",
     "format-ci": "biome format ./src",
@@ -27,6 +27,7 @@
     "test-ci": "vitest --coverage --run",
     "test-dev": "vitest --coverage",
     "test-coverage": "vitest run --coverage",
+    "run-local": "bun run build && act -P ubuntu-latest=-self-hosted --job version-bump",
     "sync-icons": "bun generateReadmeIcons -h 50"
   },
   "dependencies": {
@@ -34,22 +35,20 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.1",
     "comment-json": "^4.2.5",
-    "effect": "^3.10.13",
-    "effect-errors": "^1.7.29"
+    "effect": "^3.17.2",
+    "effect-errors": "^1.10.14"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
-    "@types/node": "^22.9.0",
-    "@vercel/ncc": "^0.38.2",
-    "@vitest/coverage-v8": "^2.1.4",
-    "esbuild": "^0.24.0",
+    "@biomejs/biome": "^2.1.2",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@types/node": "^24.1.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "esbuild": "^0.25.8",
     "readme-package-icons": "^1.2.2",
-    "rimraf": "^6.0.1",
-    "ts-pattern": "^5.5.0",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.4",
-    "vitest-mock-extended": "^2.0.2"
+    "ts-pattern": "^5.7.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "vitest-mock-extended": "^3.1.0"
   }
 }

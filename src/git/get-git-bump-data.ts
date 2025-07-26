@@ -1,8 +1,9 @@
 import path from 'node:path';
+
 import { Effect, pipe } from 'effect';
 
 import { PackageJsonNameFetchingError } from '../errors/index.js';
-import { readJsonEffect } from '../fs/fs.effects.js';
+import { readJsonEffect } from '../fs/read-json/index.js';
 import type { PackageJson } from '../types/index.js';
 
 export const getGitBumpData = (cwd: string) =>

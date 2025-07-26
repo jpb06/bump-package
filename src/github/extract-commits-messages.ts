@@ -40,5 +40,7 @@ export const extractCommitsMessages = (event: GithubEvent) =>
         }),
       );
     }),
-    Effect.withSpan('extract-commits-messages', { attributes: { event } }),
+    Effect.withSpan('extract-commits-messages', {
+      attributes: { event: JSON.stringify(event, null, 2) },
+    }),
   );

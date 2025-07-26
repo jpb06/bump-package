@@ -1,6 +1,5 @@
 {
-	"include": ["src"],
-	"exclude": ["node_modules", "lib"],
+	"exclude": ["node_modules", "dist", "./vite.config.mts", "./src/temp"],
 	"compilerOptions": {
 		// Enable latest features
 		"lib": ["ES2023", "ES2023.Array", "DOM", "DOM.Iterable"],
@@ -8,10 +7,10 @@
 		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleDetection": "force",
-		"moduleResolution": "NodeNext",
 		"allowJs": false,
 		"incremental": false,
 		"composite": false,
+		"moduleResolution": "NodeNext",
 		"noEmit": true,
 
 		// Best practices
@@ -36,7 +35,7 @@
 		"exactOptionalPropertyTypes": true,
 		"noPropertyAccessFromIndexSignature": false,
 
-		// Paths
+		// alias
 		"rootDir": "./src"
 	}
 }

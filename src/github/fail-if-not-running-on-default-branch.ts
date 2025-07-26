@@ -2,7 +2,6 @@ import { Effect, pipe } from 'effect';
 
 import { NotRunningOnDefaultBranchError } from '../errors/index.js';
 import type { GithubEvent } from '../types/index.js';
-
 import { getCurrentBranch } from './get-current-branch.js';
 
 export const failIfNotRunningOnDefaultBranch = (event: GithubEvent) =>
@@ -21,6 +20,6 @@ export const failIfNotRunningOnDefaultBranch = (event: GithubEvent) =>
       }
     }),
     Effect.withSpan('fail-if-not-running-on-current-branch', {
-      attributes: { event },
+      attributes: { event: JSON.stringify(event, null, 2) },
     }),
   );
