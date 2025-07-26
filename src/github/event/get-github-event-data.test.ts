@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { env } from 'node:process';
 
 import { error, getInput, info } from '@actions/core';
 import { Effect, pipe } from 'effect';
@@ -12,14 +12,10 @@ import {
   UnknownCurrentBranchError,
   UnknownDefaultBranchError,
 } from '../../errors/index.js';
-
+import { makeFsTestLayer } from '../../tests/layers/file-system.test-layer.js';
 import { getGithubEventData } from './get-github-event-data.js';
 
 vi.mock('@actions/core');
-vi.mock('fs', () => ({
-  promises: { access: vi.fn() },
-  readFileSync: vi.fn(),
-}));
 
 describe('getGithubEventData function', () => {
   beforeEach(() => {
@@ -27,108 +23,154 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an error message when there is no github event', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce({} as never);
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed('{}'),
+    });
 
-    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
+    const program = pipe(
+      getGithubEventData,
+      Effect.flip,
+      Effect.provide(FsTestLayer),
+    );
+    const result = await runPromise(program);
     expect(result).toBeInstanceOf(NoGithubEventError);
   });
 
   it('should send an error message if the default branch is missing in repository infos', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        ref: 'refs/heads/pr',
-        commits: [
-          {
-            message: 'yolo',
-          },
-        ],
-        repository: {},
-      }),
-    );
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          ref: 'refs/heads/pr',
+          commits: [
+            {
+              message: 'yolo',
+            },
+          ],
+          repository: {},
+        }),
+      ),
+    });
 
-    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
+    const program = pipe(
+      getGithubEventData,
+      Effect.flip,
+      Effect.provide(FsTestLayer),
+    );
+    const result = await runPromise(program);
 
     expect(result).toBeInstanceOf(UnknownDefaultBranchError);
   });
 
   it('should send an error message if repository infos are missing', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        ref: 'refs/heads/pr',
-        commits: [
-          {
-            message: 'yolo',
-          },
-        ],
-      }),
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          ref: 'refs/heads/pr',
+          commits: [
+            {
+              message: 'yolo',
+            },
+          ],
+        }),
+      ),
+    });
+
+    const task = pipe(
+      getGithubEventData,
+      Effect.flip,
+      Effect.provide(FsTestLayer),
     );
 
-    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
+    const result = await runPromise(task);
 
     expect(result).toBeInstanceOf(UnknownDefaultBranchError);
   });
 
   it('should send an error message if the current branch cannot be defined', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        commits: [
-          {
-            message: 'yolo',
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          commits: [
+            {
+              message: 'yolo',
+            },
+          ],
+          repository: {
+            default_branch: 'master',
           },
-        ],
-        repository: {
-          default_branch: 'master',
-        },
-      }),
-    );
+        }),
+      ),
+    });
 
-    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
+    const program = pipe(
+      getGithubEventData,
+      Effect.flip,
+      Effect.provide(FsTestLayer),
+    );
+    const result = await runPromise(program);
 
     expect(result).toBeInstanceOf(UnknownCurrentBranchError);
   });
 
   it('should send an error message when commit messages are missing', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        ref: 'refs/heads/master',
-        repository: {
-          default_branch: 'master',
-        },
-      }),
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          ref: 'refs/heads/master',
+          repository: {
+            default_branch: 'master',
+          },
+        }),
+      ),
+    });
+
+    const program = pipe(
+      getGithubEventData,
+      Effect.flip,
+      Effect.provide(FsTestLayer),
     );
 
-    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
+    const result = await runPromise(program);
 
     expect(result).toBeInstanceOf(CommitMessagesExtractionError);
   });
 
   it('should return relevant data', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        ref: 'refs/heads/master',
-        commits: [
-          {
-            message: 'yolo',
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          ref: 'refs/heads/master',
+          commits: [
+            {
+              message: 'yolo',
+            },
+            {
+              message: 'bro',
+            },
+          ],
+          repository: {
+            default_branch: 'master',
           },
-          {
-            message: 'bro',
-          },
-        ],
-        repository: {
-          default_branch: 'master',
-        },
-      }),
-    );
+        }),
+      ),
+    });
 
-    const messages = await runPromise(getGithubEventData);
+    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+
+    const messages = await runPromise(program);
 
     expect(error).toHaveBeenCalledTimes(0);
-
     expect(messages).toStrictEqual(['yolo', 'bro']);
     expect(info).toHaveBeenCalledTimes(0);
   });
 
   it('should display github event in debug mode', async () => {
+    env.GITHUB_EVENT_PATH = './github-event-path';
     const event = {
       ref: 'refs/heads/master',
       commits: [
@@ -143,10 +185,14 @@ describe('getGithubEventData function', () => {
         default_branch: 'master',
       },
     };
-    vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify(event));
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(JSON.stringify(event)),
+    });
     vi.mocked(getInput).mockReturnValueOnce('true');
 
-    await runPromise(getGithubEventData);
+    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+
+    await runPromise(program);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -156,26 +202,31 @@ describe('getGithubEventData function', () => {
   });
 
   it('should return squashed commits messages', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        ref: 'refs/heads/master',
-        commits: [
-          {
-            message:
-              '3 (#3)\n\n* useless\r\n\r\n* chore: displaying event\r\n\r\n* yolo',
-            committer: {
-              name: 'GitHub',
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          ref: 'refs/heads/master',
+          commits: [
+            {
+              message:
+                '3 (#3)\n\n* useless\r\n\r\n* chore: displaying event\r\n\r\n* yolo',
+              committer: {
+                name: 'GitHub',
+              },
+              distinct: true,
             },
-            distinct: true,
+          ],
+          repository: {
+            default_branch: 'master',
           },
-        ],
-        repository: {
-          default_branch: 'master',
-        },
-      }),
-    );
+        }),
+      ),
+    });
 
-    const messages = await runPromise(getGithubEventData);
+    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+
+    const messages = await runPromise(program);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -188,23 +239,28 @@ describe('getGithubEventData function', () => {
   });
 
   it('should return squashed commits messages from a completed workflow event', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        action: 'completed',
-        workflow_run: {
-          head_branch: 'master',
-          head_commit: {
-            message:
-              '3 (#3)\n\n* useless\r\n\r\n* chore: displaying event\r\n\r\n* yolo',
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          action: 'completed',
+          workflow_run: {
+            head_branch: 'master',
+            head_commit: {
+              message:
+                '3 (#3)\n\n* useless\r\n\r\n* chore: displaying event\r\n\r\n* yolo',
+            },
           },
-        },
-        repository: {
-          default_branch: 'master',
-        },
-      }),
-    );
+          repository: {
+            default_branch: 'master',
+          },
+        }),
+      ),
+    });
 
-    const messages = await runPromise(getGithubEventData);
+    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+
+    const messages = await runPromise(program);
 
     expect(error).toHaveBeenCalledTimes(0);
 
@@ -217,24 +273,33 @@ describe('getGithubEventData function', () => {
   });
 
   it('should send an info when branch is not master', async () => {
-    vi.mocked(readFileSync).mockReturnValueOnce(
-      JSON.stringify({
-        ref: 'refs/heads/pr',
-        commits: [
-          {
-            message: 'yolo',
+    env.GITHUB_EVENT_PATH = './github-event-path';
+    const { FsTestLayer } = makeFsTestLayer({
+      readFileString: Effect.succeed(
+        JSON.stringify({
+          ref: 'refs/heads/pr',
+          commits: [
+            {
+              message: 'yolo',
+            },
+            {
+              message: 'bro',
+            },
+          ],
+          repository: {
+            default_branch: 'master',
           },
-          {
-            message: 'bro',
-          },
-        ],
-        repository: {
-          default_branch: 'master',
-        },
-      }),
+        }),
+      ),
+    });
+
+    const program = pipe(
+      getGithubEventData,
+      Effect.flip,
+      Effect.provide(FsTestLayer),
     );
 
-    const result = await runPromise(pipe(getGithubEventData, Effect.flip));
+    const result = await Effect.runPromise(program);
 
     expect(result).toBeInstanceOf(NotRunningOnDefaultBranchError);
   });
