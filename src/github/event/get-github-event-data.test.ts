@@ -1,9 +1,9 @@
 import { env } from 'node:process';
 
-import { error, getInput, info } from '@actions/core';
-import { Effect, pipe } from 'effect';
+import { Effect, Layer, pipe } from 'effect';
 import { runPromise } from 'effect-errors';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mockFn } from 'vitest-mock-extended';
 
 import {
   CommitMessagesExtractionError,
@@ -13,9 +13,8 @@ import {
   UnknownDefaultBranchError,
 } from '../../errors/index.js';
 import { makeFsTestLayer } from '../../tests/layers/file-system.test-layer.js';
+import { makeGithubActionsTestLayer } from '../../tests/layers/github-actions.test-layer.js';
 import { getGithubEventData } from './get-github-event-data.js';
-
-vi.mock('@actions/core');
 
 describe('getGithubEventData function', () => {
   beforeEach(() => {
@@ -25,11 +24,14 @@ describe('getGithubEventData function', () => {
   it('should send an error message when there is no github event', async () => {
     delete env.GITHUB_EVENT_PATH;
     const { FsTestLayer } = makeFsTestLayer({});
+    const { GithubActionsTestLayer } = makeGithubActionsTestLayer({
+      error: Effect.void,
+    });
 
     const program = pipe(
       getGithubEventData,
       Effect.flip,
-      Effect.provide(FsTestLayer),
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
     );
     const result = await runPromise(program);
     expect(result).toBeInstanceOf(NoGithubEventError);
@@ -50,11 +52,15 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      getInput: Effect.succeed(''),
+    });
 
     const program = pipe(
       getGithubEventData,
       Effect.flip,
-      Effect.provide(FsTestLayer),
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
     );
     const result = await runPromise(program);
 
@@ -75,11 +81,15 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      getInput: Effect.succeed(''),
+    });
 
     const task = pipe(
       getGithubEventData,
       Effect.flip,
-      Effect.provide(FsTestLayer),
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
     );
 
     const result = await runPromise(task);
@@ -103,11 +113,15 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      getInput: Effect.succeed(''),
+    });
 
     const program = pipe(
       getGithubEventData,
       Effect.flip,
-      Effect.provide(FsTestLayer),
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
     );
     const result = await runPromise(program);
 
@@ -126,11 +140,15 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      getInput: Effect.succeed(''),
+    });
 
     const program = pipe(
       getGithubEventData,
       Effect.flip,
-      Effect.provide(FsTestLayer),
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
     );
 
     const result = await runPromise(program);
@@ -158,14 +176,23 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer, errorMock, infoMock } =
+      makeGithubActionsTestLayer({
+        error: Effect.void,
+        info: Effect.void,
+        getInput: Effect.succeed(''),
+      });
 
-    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+    const program = pipe(
+      getGithubEventData,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
 
     const messages = await runPromise(program);
 
-    expect(error).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
+    expect(infoMock).toHaveBeenCalledTimes(0);
     expect(messages).toStrictEqual(['yolo', 'bro']);
-    expect(info).toHaveBeenCalledTimes(0);
   });
 
   it('should display github event in debug mode', async () => {
@@ -187,17 +214,26 @@ describe('getGithubEventData function', () => {
     const { FsTestLayer } = makeFsTestLayer({
       readFileString: Effect.succeed(JSON.stringify(event)),
     });
-    vi.mocked(getInput).mockReturnValueOnce('true');
 
-    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+    const { GithubActionsTestLayer, errorMock, infoMock } =
+      makeGithubActionsTestLayer({
+        error: Effect.void,
+        info: Effect.void,
+        getInput: mockFn().mockReturnValueOnce(Effect.succeed('true')),
+      });
+
+    const program = pipe(
+      getGithubEventData,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
 
     await runPromise(program);
 
-    expect(error).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
 
-    expect(info).toHaveBeenCalledTimes(2);
-    expect(info).toHaveBeenNthCalledWith(1, '🕵️ Github event:');
-    expect(info).toHaveBeenNthCalledWith(2, JSON.stringify(event, null, 2));
+    expect(infoMock).toHaveBeenCalledTimes(2);
+    expect(infoMock).toHaveBeenNthCalledWith(1, '🕵️ Github event:');
+    expect(infoMock).toHaveBeenNthCalledWith(2, JSON.stringify(event, null, 2));
   });
 
   it('should return squashed commits messages', async () => {
@@ -222,19 +258,28 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer, errorMock, infoMock } =
+      makeGithubActionsTestLayer({
+        error: Effect.void,
+        info: Effect.void,
+        getInput: Effect.succeed(''),
+      });
 
-    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+    const program = pipe(
+      getGithubEventData,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
 
     const messages = await runPromise(program);
 
-    expect(error).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
 
     expect(messages).toStrictEqual([
       'useless',
       'chore: displaying event',
       'yolo',
     ]);
-    expect(info).toHaveBeenCalledTimes(0);
+    expect(infoMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return squashed commits messages from a completed workflow event', async () => {
@@ -256,19 +301,28 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer, errorMock, infoMock } =
+      makeGithubActionsTestLayer({
+        error: Effect.void,
+        info: Effect.void,
+        getInput: Effect.succeed(''),
+      });
 
-    const program = pipe(getGithubEventData, Effect.provide(FsTestLayer));
+    const program = pipe(
+      getGithubEventData,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
 
     const messages = await runPromise(program);
 
-    expect(error).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
 
     expect(messages).toStrictEqual([
       'useless',
       'chore: displaying event',
       'yolo',
     ]);
-    expect(info).toHaveBeenCalledTimes(0);
+    expect(infoMock).toHaveBeenCalledTimes(0);
   });
 
   it('should send an info when branch is not master', async () => {
@@ -291,11 +345,16 @@ describe('getGithubEventData function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      info: Effect.void,
+      getInput: Effect.succeed(''),
+    });
 
     const program = pipe(
       getGithubEventData,
       Effect.flip,
-      Effect.provide(FsTestLayer),
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
     );
 
     const result = await Effect.runPromise(program);

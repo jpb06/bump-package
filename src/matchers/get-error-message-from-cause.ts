@@ -3,7 +3,6 @@ import type { UnknownException } from 'effect/Cause';
 
 import type {
   CommitMessagesExtractionError,
-  GithubActionsExecError,
   InvalidKeywordsError,
   NoGithubEventError,
   PackageJsonNameFetchingError,
@@ -18,7 +17,6 @@ export const getErrorMessageFrom = (
     | NoGithubEventError
     | UnknownDefaultBranchError
     | UnknownCurrentBranchError
-    | GithubActionsExecError
     | CommitMessagesExtractionError
     | InvalidKeywordsError
     | PackageJsonVersionFetchingError
