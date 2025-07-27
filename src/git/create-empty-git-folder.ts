@@ -15,5 +15,5 @@ export const createEmptyGitFolder = (cwd: string) =>
 
       yield* makeDirectory(gitFolderPath);
     }),
-    Effect.withSpan('create-empty-git-folder'),
+    Effect.withSpan('create-empty-git-folder', { attributes: { cwd } }),
   );
