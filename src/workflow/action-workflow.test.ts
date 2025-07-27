@@ -219,7 +219,9 @@ describe('actionWorkflow function', () => {
       .calledWith('./package.json')
       .mockReturnValue(Effect.succeed(`{ "version": "${newVersion}" }`));
 
-    const { FsTestLayer } = makeFsTestLayer({
+    const { FsTestLayer, makeDirectoryMock } = makeFsTestLayer({
+      exists: Effect.succeed(false),
+      makeDirectory: Effect.void,
       readFileString: readFileStringMock,
     });
 
@@ -266,6 +268,7 @@ describe('actionWorkflow function', () => {
     expect(errorMock).toHaveBeenCalledTimes(0);
     expect(setOutputMock).toHaveBeenCalledWith('bump-performed', true);
     expect(setOutputMock).toHaveBeenCalledWith('new-version', newVersion);
+    expect(makeDirectoryMock).toHaveBeenCalledTimes(0);
   });
 
   it('should handle sub paths', async () => {
@@ -316,8 +319,10 @@ describe('actionWorkflow function', () => {
         ),
       );
 
-    const { FsTestLayer } = makeFsTestLayer({
+    const { FsTestLayer, existsMock, makeDirectoryMock } = makeFsTestLayer({
+      exists: Effect.succeed(false),
       readFileString: readFileStringMock,
+      makeDirectory: Effect.void,
     });
 
     const { actionWorkflow } = await import('./action-workflow.js');
@@ -346,5 +351,8 @@ describe('actionWorkflow function', () => {
     expect(errorMock).toHaveBeenCalledTimes(0);
     expect(setOutputMock).toHaveBeenCalledWith('bump-performed', true);
     expect(setOutputMock).toHaveBeenCalledWith('new-version', newVersion);
+    expect(existsMock).toHaveBeenCalledTimes(1);
+    expect(makeDirectoryMock).toHaveBeenCalledTimes(1);
+    expect(makeDirectoryMock).toHaveBeenCalledWith(`${cwd}/.git`);
   });
 });

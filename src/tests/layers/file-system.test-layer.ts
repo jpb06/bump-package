@@ -32,18 +32,26 @@ const init = <T>(
 };
 
 type FsTestLayerInput = {
+  exists?: Effect.Effect<boolean> | Mock;
+  makeDirectory?: Effect.Effect<void> | Mock;
   readFileString?: Effect.Effect<string> | Mock;
 };
 
 export const makeFsTestLayer = (input: FsTestLayerInput) => {
+  const existsMock = init(input.exists, 'exists');
+  const makeDirectoryMock = init(input.makeDirectory, 'makeDirectory');
   const readFileStringMock = init(input.readFileString, 'readFileString');
 
   const make: Partial<FileSystem> = {
+    exists: existsMock,
+    makeDirectory: makeDirectoryMock,
     readFileString: readFileStringMock,
   };
 
   return {
     FsTestLayer: Layer.succeed(FileSystem, FileSystem.of(make as never)),
+    existsMock,
+    makeDirectoryMock,
     readFileStringMock,
   };
 };
