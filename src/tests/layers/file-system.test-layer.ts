@@ -3,6 +3,13 @@ import { Effect, Layer } from 'effect';
 import { TaggedError } from 'effect/Data';
 import { type Mock, vi } from 'vitest';
 
+export class FileSystemTestLayerError extends TaggedError(
+  'file-system-test-layer-error',
+)<{
+  cause?: unknown;
+  message?: string;
+}> {}
+
 const init = <T>(
   input: Effect.Effect<T> | Mock | undefined,
   name: keyof FileSystem,
@@ -10,7 +17,7 @@ const init = <T>(
   if (input === undefined) {
     return vi.fn().mockReturnValue(
       Effect.fail(
-        new TestLayerError({
+        new FileSystemTestLayerError({
           cause: `No implementation provided for ${name}`,
         }),
       ),
@@ -23,11 +30,6 @@ const init = <T>(
 
   return input;
 };
-
-export class TestLayerError extends TaggedError('test-layer-error')<{
-  cause?: unknown;
-  message?: string;
-}> {}
 
 type FsTestLayerInput = {
   readFileString?: Effect.Effect<string> | Mock;

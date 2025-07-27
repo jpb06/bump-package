@@ -1,54 +1,67 @@
 import { env } from 'node:process';
 
-import { Effect, pipe } from 'effect';
+import { Effect, Layer, pipe } from 'effect';
 import { runPromise } from 'effect-errors';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockFn } from 'vitest-mock-extended';
 
 import { InvalidKeywordsError, NoGithubEventError } from '../errors/index.js';
 import { makeFsTestLayer } from '../tests/layers/file-system.test-layer.js';
-import { mockActionsCore, mockActionsExec } from '../tests/mocks/index.js';
-
-vi.mock('@actions/github', () => ({
-  context: {
-    actor: 'actor',
-  },
-}));
+import { makeGithubActionsTestLayer } from '../tests/layers/github-actions.test-layer.js';
 
 describe('actionWorkflow function', () => {
-  const { getInput, setOutput, info, setFailed } = mockActionsCore();
-  const { exec } = mockActionsExec();
+  const getInputMock = mockFn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetAllMocks();
 
-    getInput.calledWith('major-keywords').mockReturnValue('[Major]:');
-    getInput.calledWith('minor-keywords').mockReturnValue('[Minor]:');
-    getInput.calledWith('patch-keywords').mockReturnValue('[Patch]:');
-  });
-
-  beforeAll(() => {
-    exec.mockResolvedValue(0);
-    getInput.calledWith('should-default-to-patch').mockReturnValue('true');
-    getInput.calledWith('commit-user').mockReturnValue('');
-    getInput.calledWith('commit-user-email').mockReturnValue('');
+    getInputMock.calledWith('cwd').mockReturnValue(Effect.succeed('.'));
+    getInputMock.calledWith('debug').mockReturnValue(Effect.succeed('false'));
+    getInputMock
+      .calledWith('should-default-to-patch')
+      .mockReturnValue(Effect.succeed('true'));
+    getInputMock.calledWith('commit-user').mockReturnValue(Effect.succeed(''));
+    getInputMock
+      .calledWith('commit-user-email')
+      .mockReturnValue(Effect.succeed(''));
+    getInputMock
+      .calledWith('major-keywords')
+      .mockReturnValue(Effect.succeed('[Major]:'));
+    getInputMock
+      .calledWith('minor-keywords')
+      .mockReturnValue(Effect.succeed('[Minor]:'));
+    getInputMock
+      .calledWith('patch-keywords')
+      .mockReturnValue(Effect.succeed('[Patch]:'));
   });
 
   it('should fail the task if github event data is missing', async () => {
     delete env.GITHUB_EVENT_PATH;
+
     const { FsTestLayer } = makeFsTestLayer({});
+    const { GithubActionsTestLayer, setOutputMock } =
+      makeGithubActionsTestLayer({
+        getInput: getInputMock,
+        setOutput: Effect.void,
+      });
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
-    const task = pipe(actionWorkflow, Effect.flip, Effect.provide(FsTestLayer));
+    const task = pipe(
+      actionWorkflow,
+      Effect.flip,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
     const result = await Effect.runPromise(task);
 
     expect(result).toBeInstanceOf(NoGithubEventError);
-    expect(setOutput).toHaveBeenCalledTimes(0);
+    expect(setOutputMock).toHaveBeenCalledTimes(0);
   });
 
   it('should not fail if not running on default branch', async () => {
     env.GITHUB_EVENT_PATH = './github-event-path';
+
     const { FsTestLayer } = makeFsTestLayer({
       readFileString: Effect.succeed(
         JSON.stringify({
@@ -58,21 +71,32 @@ describe('actionWorkflow function', () => {
         }),
       ),
     });
+    const { GithubActionsTestLayer, setOutputMock, infoMock } =
+      makeGithubActionsTestLayer({
+        exec: Effect.succeed(0),
+        getInput: getInputMock,
+        info: Effect.void,
+        setOutput: Effect.void,
+      });
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
-    const task = pipe(actionWorkflow, Effect.provide(FsTestLayer));
+    const task = pipe(
+      actionWorkflow,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
     await runPromise(task);
 
-    expect(info).toHaveBeenCalledTimes(1);
-    expect(info).toHaveBeenCalledWith(
+    expect(infoMock).toHaveBeenCalledTimes(1);
+    expect(infoMock).toHaveBeenCalledWith(
       'ℹ️ Task cancelled: not running on default branch.',
     );
-    expect(setOutput).toHaveBeenCalledTimes(0);
+    expect(setOutputMock).toHaveBeenCalledTimes(0);
   });
 
   it('should fail the task if some keywords are missing', async () => {
     env.GITHUB_EVENT_PATH = './github-event-path';
+
     const { FsTestLayer } = makeFsTestLayer({
       readFileString: Effect.succeed(
         JSON.stringify({
@@ -83,19 +107,50 @@ describe('actionWorkflow function', () => {
       ),
     });
 
-    getInput.calledWith('major-keywords').mockReturnValueOnce('');
-    getInput.calledWith('minor-keywords').mockReturnValueOnce('');
-    getInput.calledWith('patch-keywords').mockReturnValueOnce('');
+    getInputMock
+      .calledWith('major-keywords')
+      .mockReturnValueOnce(Effect.succeed(''));
+    getInputMock
+      .calledWith('minor-keywords')
+      .mockReturnValueOnce(Effect.succeed(''));
+    getInputMock
+      .calledWith('patch-keywords')
+      .mockReturnValueOnce(Effect.succeed(''));
+    const { GithubActionsTestLayer, setOutputMock, errorMock } =
+      makeGithubActionsTestLayer({
+        error: Effect.void,
+        exec: Effect.succeed(0),
+        getContext: Effect.succeed({ actor: 'actor' }),
+        getInput: getInputMock,
+        info: Effect.void,
+        setOutput: Effect.void,
+      });
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
-    const task = pipe(actionWorkflow, Effect.flip, Effect.provide(FsTestLayer));
+    const task = pipe(
+      actionWorkflow,
+      Effect.flip,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
 
     const result = await runPromise(task);
 
     expect(result).toBeInstanceOf(InvalidKeywordsError);
 
-    expect(setOutput).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(2);
+    expect(errorMock).toHaveBeenNthCalledWith(
+      1,
+      '⚠️ Expecting at least one minor keyword but got 0.',
+      undefined,
+    );
+    expect(errorMock).toHaveBeenNthCalledWith(
+      2,
+      '⚠️ Expecting at least one major keyword but got 0.',
+      undefined,
+    );
+
+    expect(setOutputMock).toHaveBeenCalledTimes(0);
   });
 
   it('should drop the task if no bump has been requested', async () => {
@@ -110,19 +165,40 @@ describe('actionWorkflow function', () => {
       ),
     });
 
-    getInput.calledWith('should-default-to-patch').mockReturnValue('false');
+    getInputMock
+      .calledWith('should-default-to-patch')
+      .mockReturnValue(Effect.succeed('false'));
+    const {
+      GithubActionsTestLayer,
+      setFailedMock,
+      setOutputMock,
+      errorMock,
+      infoMock,
+    } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      exec: Effect.succeed(0),
+      getContext: Effect.succeed({ actor: 'actor' }),
+      getInput: getInputMock,
+      info: Effect.void,
+      setFailed: Effect.void,
+      setOutput: Effect.void,
+    });
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
-    const task = pipe(actionWorkflow, Effect.provide(FsTestLayer));
+    const task = pipe(
+      actionWorkflow,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
     await runPromise(task);
 
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(info).toHaveBeenCalledTimes(1);
-    expect(info).toHaveBeenCalledWith(
+    expect(setFailedMock).toHaveBeenCalledTimes(0);
+    expect(infoMock).toHaveBeenCalledTimes(1);
+    expect(infoMock).toHaveBeenCalledWith(
       'ℹ️ Task cancelled: no version bump requested.',
     );
-    expect(setOutput).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
+    expect(setOutputMock).toHaveBeenCalledTimes(0);
   });
 
   it('should bump the package', async () => {
@@ -147,15 +223,33 @@ describe('actionWorkflow function', () => {
       readFileString: readFileStringMock,
     });
 
-    getInput.calledWith('cwd').mockReturnValue('.');
+    const {
+      GithubActionsTestLayer,
+      execMock,
+      setFailedMock,
+      setOutputMock,
+      errorMock,
+      infoMock,
+    } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      exec: Effect.succeed(0),
+      getContext: Effect.succeed({ actor: 'actor' }),
+      getInput: getInputMock,
+      info: Effect.void,
+      setFailed: Effect.void,
+      setOutput: Effect.void,
+    });
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
-    const task = pipe(actionWorkflow, Effect.provide(FsTestLayer));
+    const task = pipe(
+      actionWorkflow,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
     await runPromise(task);
 
-    expect(exec).toHaveBeenCalledTimes(5);
-    expect(exec).toHaveBeenNthCalledWith(
+    expect(execMock).toHaveBeenCalledTimes(5);
+    expect(execMock).toHaveBeenNthCalledWith(
       3,
       'npm version',
       [
@@ -167,10 +261,11 @@ describe('actionWorkflow function', () => {
       ],
       { cwd: '.' },
     );
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(info).toHaveBeenCalledTimes(0);
-    expect(setOutput).toHaveBeenCalledWith('bump-performed', true);
-    expect(setOutput).toHaveBeenCalledWith('new-version', newVersion);
+    expect(setFailedMock).toHaveBeenCalledTimes(0);
+    expect(infoMock).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
+    expect(setOutputMock).toHaveBeenCalledWith('bump-performed', true);
+    expect(setOutputMock).toHaveBeenCalledWith('new-version', newVersion);
   });
 
   it('should handle sub paths', async () => {
@@ -180,7 +275,23 @@ describe('actionWorkflow function', () => {
     const newVersion = '2.0.0';
 
     const cwd = './apps/frontend-app';
-    getInput.calledWith('cwd').mockReturnValue(cwd);
+    getInputMock.calledWith('cwd').mockReturnValue(Effect.succeed(cwd));
+    const {
+      GithubActionsTestLayer,
+      execMock,
+      setFailedMock,
+      setOutputMock,
+      errorMock,
+      infoMock,
+    } = makeGithubActionsTestLayer({
+      error: Effect.void,
+      exec: Effect.succeed(0),
+      getContext: Effect.succeed({ actor: 'actor' }),
+      getInput: getInputMock,
+      info: Effect.void,
+      setFailed: Effect.void,
+      setOutput: Effect.void,
+    });
 
     const readFileStringMock = mockFn();
     readFileStringMock.calledWith(env.GITHUB_EVENT_PATH).mockReturnValue(
@@ -211,11 +322,14 @@ describe('actionWorkflow function', () => {
 
     const { actionWorkflow } = await import('./action-workflow.js');
 
-    const task = pipe(actionWorkflow, Effect.provide(FsTestLayer));
+    const task = pipe(
+      actionWorkflow,
+      Effect.provide(Layer.mergeAll(FsTestLayer, GithubActionsTestLayer)),
+    );
     await runPromise(task);
 
-    expect(exec).toHaveBeenCalledTimes(5);
-    expect(exec).toHaveBeenNthCalledWith(
+    expect(execMock).toHaveBeenCalledTimes(5);
+    expect(execMock).toHaveBeenNthCalledWith(
       3,
       'npm version',
       [
@@ -227,9 +341,10 @@ describe('actionWorkflow function', () => {
       ],
       { cwd: './apps/frontend-app' },
     );
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(info).toHaveBeenCalledTimes(0);
-    expect(setOutput).toHaveBeenCalledWith('bump-performed', true);
-    expect(setOutput).toHaveBeenCalledWith('new-version', newVersion);
+    expect(setFailedMock).toHaveBeenCalledTimes(0);
+    expect(infoMock).toHaveBeenCalledTimes(0);
+    expect(errorMock).toHaveBeenCalledTimes(0);
+    expect(setOutputMock).toHaveBeenCalledWith('bump-performed', true);
+    expect(setOutputMock).toHaveBeenCalledWith('new-version', newVersion);
   });
 });
