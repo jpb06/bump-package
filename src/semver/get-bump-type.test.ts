@@ -3,7 +3,6 @@ import { runPromise } from 'effect-errors';
 import { describe, expect, it } from 'vitest';
 
 import { NoVersionBumpRequestedError } from '../errors/index.js';
-
 import { getBumpType } from './get-bump-type.js';
 
 describe('getBumpType function', () => {
