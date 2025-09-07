@@ -11,7 +11,7 @@
 	"author": "jpb06 <jpb.06@outlook.com>",
 	"license": "MIT",
 	"engines": {
-		"node": "20.x"
+		"node": "22.x"
 	},
 	"scripts": {
 		"update-deps": "bunx npm-check-updates --root --format group -i",
