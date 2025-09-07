@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 
+// biome-ignore lint/style/noDefaultExport: vite
 export default defineConfig({
   test: {
     coverage: {

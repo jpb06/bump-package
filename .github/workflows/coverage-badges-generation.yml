@@ -16,15 +16,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: 📦 Setup bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version-file: '.node-version'
           registry-url: 'https://registry.npmjs.org'
@@ -37,4 +37,4 @@ jobs:
         run: bun test-ci
 
       - name: ⚙️ Generating coverage badges
-        uses: jpb06/coverage-badges-action@latest
+        uses: jpb06/coverage-badges-action@a8a7d7d2ed0dad57494b4417e82da9f9d188fbcb # v1.4.1
