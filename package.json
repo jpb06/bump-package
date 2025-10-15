@@ -41,7 +41,7 @@
 		"effect-github-actions-layer": "1.3.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.2.3",
+		"@biomejs/biome": "2.2.6",
 		"@commitlint/cli": "20.1.0",
 		"@commitlint/config-conventional": "20.0.0",
 		"@types/node": "24.7.2",
