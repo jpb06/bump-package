@@ -33,7 +33,7 @@
 	},
 	"dependencies": {
 		"@actions/core": "3.0.0",
-		"@actions/exec": "1.1.1",
+		"@actions/exec": "3.0.0",
 		"@actions/github": "6.0.1",
 		"comment-json": "4.4.1",
 		"effect": "3.19.19",
