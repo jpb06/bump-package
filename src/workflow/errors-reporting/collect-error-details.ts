@@ -10,9 +10,7 @@ export const collectErrorDetails = <E>(cause: Cause<E>) =>
     Effect.gen(function* () {
       yield* GithubActionsLayer.setOutput('bump-performed', false);
 
-      const captured = yield* captureErrors(cause, {
-        stripCwd: true,
-      });
+      const captured = yield* captureErrors(cause, true);
       const message = prettyPrintFromCapturedErrors(captured, {
         hideStackTrace: true,
         stripCwd: true,
