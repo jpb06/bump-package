@@ -32,7 +32,7 @@
 		"sync-icons": "bun generateReadmeIcons -h 50"
 	},
 	"dependencies": {
-		"@actions/core": "1.11.1",
+		"@actions/core": "3.0.0",
 		"@actions/exec": "1.1.1",
 		"@actions/github": "6.0.1",
 		"comment-json": "4.4.1",
