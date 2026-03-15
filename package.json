@@ -42,8 +42,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.6",
-		"@commitlint/cli": "20.4.4",
-		"@commitlint/config-conventional": "20.4.4",
+		"@commitlint/cli": "20.5.0",
+		"@commitlint/config-conventional": "20.5.0",
 		"@types/node": "25.5.0",
 		"@vitest/coverage-v8": "4.1.0",
 		"esbuild": "0.27.4",
