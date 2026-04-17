@@ -37,4 +37,4 @@ jobs:
         run: bun test-ci
 
       - name: ⚙️ Generating coverage badges
-        uses: jpb06/coverage-badges-action@ef388ddcb4354e2d8cf4a629eaf8c7863d90d25c # v1.4.8
+        uses: jpb06/coverage-badges-action@85dba5a1dd89f23d1408dfc99a971ae5f2e04356 # v1.4.10
